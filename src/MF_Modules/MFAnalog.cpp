@@ -1,8 +1,18 @@
 // MFSegments.cpp
 //
 // Copyright (C) 2021
-
+#include <Arduino.h>
+#include "MFBoards.h"
+#include "commandmessenger.h"
+#include "registerpin.h"
 #include "MFAnalog.h"
+
+
+#if MF_ANALOG_SUPPORT == 1
+
+/* **********************************************************************************
+  class MFAnalog
+********************************************************************************** */
 
 analogEvent   MFAnalog::_handler = NULL; 
 
@@ -39,3 +49,5 @@ void MFAnalog::attachHandler(analogEvent newHandler)
 {
   _handler = newHandler;
 }
+
+#endif

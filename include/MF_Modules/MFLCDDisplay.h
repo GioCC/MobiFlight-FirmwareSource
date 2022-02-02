@@ -9,13 +9,7 @@
 #ifndef MFLCDDisplay_h
 #define MFLCDDisplay_h
 
-#if ARDUINO >= 100
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#include <wiring.h>
-#endif
-
 #include <LiquidCrystal_I2C.h>
 
 /////////////////////////////////////////////////////////////////////

@@ -9,13 +9,7 @@
 #ifndef MFSegments_h
 #define MFSegments_h
 
-#if ARDUINO >= 100
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#include <wiring.h>
-#endif
-
 #include <LedControl.h>
 
 /////////////////////////////////////////////////////////////////////

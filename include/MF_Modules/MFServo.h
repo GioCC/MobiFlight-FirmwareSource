@@ -9,17 +9,9 @@
 #ifndef MFServo_h
 #define MFServo_h
 
-#include <stdlib.h>
+#include <Arduino.h>
 #include <Servo.h>
 
-#if ARDUINO >= 100
-#include <Arduino.h>
-#else
-#include <WProgram.h>
-#endif
-
-/////////////////////////////////////////////////////////////////////
-/// \class MFServo MFServo.h <MFServo.h>
 class MFServo
 {
 public:

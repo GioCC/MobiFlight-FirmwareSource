@@ -4,7 +4,7 @@
 
 #include "MFBoards.h"
 #include "MFStepper.h"
-#include "MFButton.h"
+
 
 uint8_t MFStepper_stepperCount = 0;
 MFStepper *MFStepper_steppers[MAX_STEPPERS];
@@ -21,7 +21,7 @@ _zeroPin(btnPin5),
 _zeroPinState(HIGH)
 {
   if(_zeroPin) {
-    pinMode(_zeroPin, INPUT_PULLUP);     // set pin to input
+    pinMode(_zeroPin, INPUT_PULLUP);
   }  
 
   _resetting = false;

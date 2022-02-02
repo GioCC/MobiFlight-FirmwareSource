@@ -9,11 +9,15 @@
 #ifndef MFAnalog_h
 #define MFAnalog_h
 
-#if ARDUINO >= 100
-#include <Arduino.h>
-#else
-#include <WProgram.h>
-#endif
+
+void AddAnalog(uint8_t pin, char const *name, uint8_t sensitivity);
+void ClearAnalog();
+void readAnalog();
+void readAnalogAverage();
+
+/* **********************************************************************************
+  class
+********************************************************************************** */
 
 #define ADC_MAX_AVERAGE                 8           // must be 2^n
 #define ADC_MAX_AVERAGE_LOG2            3           // please calculate LOG2(ADC_MAX_AVERAGE)
@@ -47,4 +51,5 @@ private:
     volatile uint8_t ADC_Average_Pointer = 0;       // points to the actual position in ADC_BUFFER
     uint32_t      _lastReadBuffer;
 };
+
 #endif 

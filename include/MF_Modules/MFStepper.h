@@ -9,19 +9,11 @@
 #ifndef MFStepper_h
 #define MFStepper_h
 
-#include <stdlib.h>
 #include <AccelStepper.h>
 #include "MFButton.h"
 
-#if ARDUINO >= 100
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#include <wiring.h>
-#endif
 
-/////////////////////////////////////////////////////////////////////
-/// \class MFStepper MFStepper.h <MFServo.h>
 class MFStepper
 {
 public:
