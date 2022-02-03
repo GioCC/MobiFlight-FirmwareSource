@@ -24,8 +24,8 @@ class In_Base
 
         In_Base() {}
 
-        virtual uint8_t getSize(void)   = 0;
-        virtual uint8_t getType(void)   = 0;
+        // virtual uint8_t getSize(void)   = 0;
+        // virtual uint8_t getType(void)   = 0;
         
         virtual void Update(void)       = 0;
         //! virtual void OnChange(void) = 0;
@@ -50,8 +50,8 @@ class In_Button : public In_Base
         MFButton    _button;
     
     public:
-        inline uint8_t getType(void) { return BUTTON; }
-        inline uint8_t getSize(void) { return sizeof(In_Button); }
+        static uint8_t getType(void) { return BUTTON; }
+        static uint8_t getSize(void) { return sizeof(In_Button); }
 
         In_Button()     {}
         void Update()   { _button.update(); }

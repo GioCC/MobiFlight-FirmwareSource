@@ -20,6 +20,19 @@ namespace Button
     // MFButton buttons[MAX_BUTTONS];
     // uint8_t buttonsRegistered = 0;
 
+    // (original) handler.
+    // Options for the handler:
+    // supply to the class...
+    // ...a function that can accepts all its varied data (and will compose the message), e.g.
+    //     >>> button_callback(uint8_t data1, uint16_t data2, uint8_t data3, char *name)
+    // ...a generic 'send' function (or fns) that can accepts different-typed data
+    //    (and will compose the message), e.g. 
+    //     >>> callback_StartStop(STARTMSG);    // callback_StartStop(uint8_t code)
+    //     >>> callback_Attach(&data1, NULL);   // callback_Attach(uint16_t* arg1, char* arg2) 
+    //     >>> callback_Attach(&data2, NULL);
+    //     >>> callback_Attach(&data3, NULL);
+    //     >>> callback_Attach(NULL,   name);
+    //     >>> callback_StartStop(ENDMSG);
 
     void handlerOnButton(uint8_t eventId, uint8_t pin, const char *name)
     {
@@ -29,6 +42,7 @@ namespace Button
         cmdMessenger.sendCmdEnd();
     };
 
+    // Specialized form (need to supply params)
     void Add(uint8_t pin = 1, char const *name = "Button")
     {
         uint8_t *inBut;
@@ -52,6 +66,22 @@ namespace Button
         }
     }
 
+    // Generic form (the param init will use the returned pointer)
+    template <typename T> T* Add(T* dummy, StowManager *SM)
+    {
+        // dummy argument only used to set signature
+        // Or make it 'Add(T** res, ...)' and take advantage of it to 
+        // carry the return value 
+        uint8_t *in;
+        in = SM->add(T::getSize(), T::getType()); 
+        if(in != NULL) {
+            new ((void *)in) T;
+            // TODO: param init, e.g. ((In_Button *)inBut)->init(pin, name); 
+        }
+        return (T*) in;
+    }
+
+
     void UpdateAll()
     {
         In_Button *inBut;
@@ -60,6 +90,16 @@ namespace Button
             inBut->Update();
         }
     }
+
+    void UpdateAll(uint8_t type)
+    {
+        In_Base *in;
+        InStow.reset();
+        while((in = (In_Base *)(InStow.getNext(type))) != NULL) {
+            in->Update();
+        }
+    }
+
 
 }
 
