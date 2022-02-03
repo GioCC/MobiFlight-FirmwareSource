@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "commandmessenger.h"
 #include "config.h"
+#include "stowManager.h"
 #include "registerpin.h"
 #include "MFButton.h"
 #include "MFAnalog.h"
@@ -8,7 +9,7 @@
 #include "MFInputShifter.h"
 #include "inputMgr.h"
 
-#include "commandmessenger.h"
+extern StowManager  InStow;
 
 // ---------------------------------------------------
 //  Button
@@ -30,19 +31,36 @@ namespace Button
 
     void Add(uint8_t pin = 1, char const *name = "Button")
     {
-        if (buttonsRegistered == MAX_BUTTONS) return;
-        if (isPinRegistered(pin)) return;
+        uint8_t *inBut;
+        //if (buttonsRegistered == MAX_BUTTONS) return;
+        //if (isPinRegistered(pin)) return;
         
-        buttons[buttonsRegistered] = MFButton(pin, name);
-        buttons[buttonsRegistered].attachHandler(handlerOnButton);
-        buttonsRegistered++;
-        
-        registerPin(pin, kTypeButton);
-        
-        #ifdef DEBUG
-        cmdMessenger.sendCmd(kStatus, F("Added button ") /* + name */);
-        #endif
+        inBut = InStow.add(sizeof(In_Button), In_Base::BUTTON); 
+        if(inBut != NULL) {
+            new ((void *)inBut) In_Button();  // or In_Button(pin, name);
+            // TODO: ((In_Button *)inBut)->init(pin, name); 
+
+            //buttons[buttonsRegistered] = MFButton(pin, name);
+            //buttons[buttonsRegistered].attachHandler(handlerOnButton);
+            //buttonsRegistered++;
+            
+            //registerPin(pin, kTypeButton);
+
+            #ifdef DEBUG
+            cmdMessenger.sendCmd(kStatus, F("Added button ") /* + name */);
+            #endif
+        }
     }
+
+    void UpdateAll()
+    {
+        In_Button *inBut;
+        InStow.reset();
+        while((inBut = (In_Button *)(InStow.getNext(In_Base::BUTTON))) != NULL) {
+            inBut->Update();
+        }
+    }
+
 }
 
 // ---------------------------------------------------

@@ -6,100 +6,101 @@
 
 #include "stowManager.h"
 
+
 // Adds item to end of buffer, returns false if full
-template <class T> 
-uint8_t* StowManager<T>::
-add(T item)
+uint8_t* StowManager::
+add(uint8_t reqdSize, uint8_t typeTag)
 {   
     uint8_t *res = NULL;
-    uint16_t newSize = tail + item.getSize();
-    if(newSize >= max) {
-        res = &buf[tail];
-        tail = newSize;
+    uint8_t *newTail;
+    
+    newTail = tail + reqdSize + 2;
+    if(newTail < max) {
+        *tail++ = reqdSize + 2;
+        *tail++ = typeTag;
+        res = tail;
+        tail = newTail;
         i_count++;
     }
     return res; 
 }    
 
 // Resets current item to first one
-template <class T> 
-inline void StowManager<T>::
+inline void StowManager::
 reset(void)
 {   
-    curr = 0;
+    curr = buf;
+    i_curr = 0;
 }    
 
 // Empties buffer (resets pointers)
-template <class T> 
-inline void StowManager<T>::
+inline void StowManager::
 wipe(void)
 {
-    tail = 0;
-    curr = 0;
+    tail = buf;
+    curr = buf;
     i_count = 0;
+    i_curr = 0;
 }    
 
 // helper function
-template <class T> 
-T* StowManager<T>::
-_next(uint16_t *ptr)
+uint8_t* StowManager::
+_next(uint8_t **ptr)
 {
-    T* res = NULL;
+    uint8_t* res = NULL;
     if(*ptr < tail) {
-        res = &buf[*ptr];
-        *ptr += res->getSize();
+        res = *ptr;   // returns the complete data with size & type tag 
+        *ptr += *res;
+        i_curr++;
     }
     return res;
 }    
 
 // returns the next item
-template <class T> 
-inline T* StowManager<T>::
+inline uint8_t* StowManager::
 getNext(void)
 {
-    return _next(&curr);
+    uint8_t* res = _next(&curr);
+    return (res != NULL ? res+2 : NULL);  // +2 to strip size & type tag
+}    
+
+// returns the next item with typecode <type> (AFFECTS current item pointer)
+uint8_t* StowManager::
+getNext(uint8_t type)
+{
+    uint8_t* res;
+    do {
+        res = _next(&curr);
+    } while( (res!= NULL) && (*(res+1) != type)); 
+    return (res != NULL ? res+2 : NULL);
 }    
 
 // returns the n-th item from the start (does not affect current item pointer)
-template <class T> 
-T* StowManager<T>::
+uint8_t* StowManager::
 getNth(t_index nth)
 {
-    T* res;
-    uint16_t ptr = 0;
+    uint8_t* res;
+    uint8_t* ptr = 0;
     t_index  cnt = 0;
     do {
         res = _next(&ptr);
         cnt++;
     } while( (res!= NULL) && (cnt <= nth)); 
-    return res;
-}    
-
-// returns the next item with typecode <type> (AFFECTS current item pointer)
-template <class T> 
-T* StowManager<T>::
-getNext(uint8_t type)
-{
-    T* res;
-    do {
-        res = _next(&curr);
-    } while( (res!= NULL) && (res->getType() != type)); 
-    return res;
+    return (res != NULL ? res+2 : NULL);
 }    
 
 // returns the n-th item with typecode <type> from the start (does not affect current item pointer)
-template <class T> 
-T* StowManager<T>::
+uint8_t* StowManager::
 getNth(uint8_t type, t_index nth)
 {
-    T* res;
-    uint16_t ptr = 0;
+    uint8_t* res;
+    uint8_t* ptr = 0;
     t_index  cnt = 0;
     do {
         res = _next(&ptr);
-        cnt++;
-    } while( (res!= NULL) && (res->getType() != type) && (cnt <= nth)); 
-    return res;
+        if((*(res+1) == type)) cnt++;
+    } while( (res!= NULL) && /* (*(res+1) != type) && */ (cnt <= nth)); 
+    return (res != NULL ? res+2 : NULL);
 }    
 
 // stowManager.cpp

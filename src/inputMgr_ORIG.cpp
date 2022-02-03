@@ -119,9 +119,9 @@ void read()
 }
 }       // end of namespace encoder
 
-#if MF_ANALOG_SUPPORT == 1
 namespace Analog
 {
+#if MF_ANALOG_SUPPORT == 1
 MFAnalog analog[MAX_ANALOG_INPUTS];
 uint8_t analogRegistered = 0;
 
@@ -174,13 +174,12 @@ void readAverage()
     analog[i].readBuffer();
     }
 }
-}       // end of namespace Analog
 #endif
+}       // end of namespace Analog
 
-
-#if MF_INPUT_SHIFTER_SUPPORT == 1
 namespace InputShifter
 {
+#if MF_INPUT_SHIFTER_SUPPORT == 1
 MFInputShifter inputShifters[MAX_INPUT_SHIFTERS];
 uint8_t inputShiftersRegistered = 0;
 
@@ -243,5 +242,5 @@ void OnTrigger()
         inputShifters[i].retrigger();
     }
 }
-}       // end of namespace InputShifter
 #endif
+}       // end of namespace InputShifter
