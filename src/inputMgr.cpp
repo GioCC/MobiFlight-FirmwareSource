@@ -30,16 +30,15 @@ namespace Button
 
     void Add(uint8_t pin = 1, char const *name = "Button")
     {
-        if (buttonsRegistered == MAX_BUTTONS)
-            return;
-
-        if (isPinRegistered(pin))
-            return;
-
+        if (buttonsRegistered == MAX_BUTTONS) return;
+        if (isPinRegistered(pin)) return;
+        
         buttons[buttonsRegistered] = MFButton(pin, name);
         buttons[buttonsRegistered].attachHandler(handlerOnButton);
-        registerPin(pin, kTypeButton);
         buttonsRegistered++;
+        
+        registerPin(pin, kTypeButton);
+        
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added button ") /* + name */);
         #endif
@@ -65,18 +64,17 @@ namespace Encoder
 
     void Add(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t encoder_type = 0, char const *name = "Encoder")
     {
-        if (encodersRegistered == MAX_ENCODERS)
-            return;
-        if (isPinRegistered(pin1) || isPinRegistered(pin2))
-            return;
+        if (encodersRegistered == MAX_ENCODERS) return;
+        if (isPinRegistered(pin1) || isPinRegistered(pin2)) return;
 
         encoders[encodersRegistered] = MFEncoder();
         encoders[encodersRegistered].attach(pin1, pin2, encoder_type, name);
         encoders[encodersRegistered].attachHandler(handlerOnEncoder);
+        encodersRegistered++;
         
         registerPin(pin1, kTypeEncoder);
         registerPin(pin2, kTypeEncoder);
-        encodersRegistered++;
+        
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added encoder"));
         #endif
@@ -104,16 +102,15 @@ namespace Analog
 
     void Add(uint8_t pin = 1, char const *name = "AnalogInput", uint8_t sensitivity = 3)
     {
-        if (analogRegistered == MAX_ANALOG_INPUTS)
-            return;
-
-        if (isPinRegistered(pin))
-            return;
+        if (analogRegistered == MAX_ANALOG_INPUTS) return;
+        if (isPinRegistered(pin)) return;
 
         analog[analogRegistered] = MFAnalog(pin, name, sensitivity);
         analog[analogRegistered].attachHandler(handlerOnAnalogChange);
-        registerPin(pin, kTypeAnalogInput);
         analogRegistered++;
+        
+        registerPin(pin, kTypeAnalogInput);
+        
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added analog device "));
         #endif
@@ -143,17 +140,16 @@ namespace InputShifter
 
     void Add(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name = "Shifter")
     {
-        if (inputShiftersRegistered == MAX_INPUT_SHIFTERS)
-            return;
+        if (inputShiftersRegistered == MAX_INPUT_SHIFTERS) return;
+
         inputShifters[inputShiftersRegistered].attach(latchPin, clockPin, dataPin, modules, name);
         inputShifters[inputShiftersRegistered].clear();
+        inputShifters[inputShiftersRegistered].attachHandler(handlerInputShifterOnChange);
+        inputShiftersRegistered++;
+
         registerPin(latchPin, kTypeInputShifter);
         registerPin(clockPin, kTypeInputShifter);
         registerPin(dataPin, kTypeInputShifter);
-
-        inputShifters[inputShiftersRegistered].attachHandler(handlerInputShifterOnChange);
-
-        inputShiftersRegistered++;
 
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added input shifter"));
