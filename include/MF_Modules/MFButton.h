@@ -28,12 +28,12 @@ enum
 class MFButton
 {
 public:
-    MFButton(uint8_t pin = 1, const char * name = "Button");
+    MFButton(void);
+    MFButton(uint8_t pin, const char * name);
     static void attachHandler(buttonEvent newHandler);    
+    void attach(uint8_t pin, const char * name);
     void update();
     void trigger(uint8_t state);
-    void triggerOnPress();
-    void triggerOnRelease();
     const char *  _name;
     uint8_t       _pin;
     

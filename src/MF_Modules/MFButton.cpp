@@ -6,7 +6,18 @@
 
 buttonEvent   MFButton::_handler = NULL;
 
+
 MFButton::MFButton(uint8_t pin, const char * name)
+{ 
+    attach(1, "Button");
+}
+
+MFButton::MFButton(uint8_t pin, const char * name)
+{ 
+    attach(pin, name);
+}
+
+void MFButton::attach(uint8_t pin, const char * name)
 {   
   _pin  = pin;
   _name = name;
@@ -25,20 +36,12 @@ void MFButton::update()
 
 void MFButton::trigger(uint8_t state)
 {
-    (state==LOW) ? triggerOnPress() : triggerOnRelease();
-}
-
-void MFButton::triggerOnPress()
-{
-    if (_handler && _state==LOW) {
-        (*_handler)(btnOnPress, _pin, _name);
-    }
-}
-
-void MFButton::triggerOnRelease()
-{
-    if (_handler && _state==HIGH) {
-        (*_handler)(btnOnRelease, _pin, _name);
+    if(_handler) {
+        if (_state==LOW) {
+            (*_handler)(btnOnPress, _pin, _name);
+        } else {
+            (*_handler)(btnOnRelease, _pin, _name);
+        }
     }
 }
 
