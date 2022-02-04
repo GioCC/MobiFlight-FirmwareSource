@@ -3,6 +3,7 @@
 #include "config.h"
 #include "MFEEPROM.h"
 #include "commandmessenger.h"
+#include "StowManager.h"
 #include "inputHub.h"
 
 #include "output.h"
@@ -28,7 +29,11 @@
 #define STR_VALUE(arg) STRINGIZER(arg)
 #define VERSION STR_VALUE(BUILD_VERSION)
 
-MFEEPROM MFeeprom;
+MFEEPROM      MFeeprom;
+
+const int     MEM_LEN_STOW = MEMLEN_CONFIG/2;   //TODO
+uint8_t       stowBuf[MEM_LEN_STOW];
+StowManager   InStow(stowBuf, MEM_LEN_STOW);
 
 const uint8_t MEM_OFFSET_NAME = 0;
 const uint8_t MEM_LEN_NAME = 48;
@@ -39,7 +44,8 @@ const uint8_t MEM_OFFSET_CONFIG = MEM_OFFSET_NAME + MEM_LEN_NAME + MEM_LEN_SERIA
 const char    type[sizeof(MOBIFLIGHT_TYPE)] = MOBIFLIGHT_TYPE;
 char          serial[MEM_LEN_SERIAL] = MOBIFLIGHT_SERIAL;
 char          name[MEM_LEN_NAME] = MOBIFLIGHT_NAME;
-const int     MEM_LEN_CONFIG = MEMLEN_CONFIG;
+//const int     MEM_LEN_CONFIG = MEMLEN_CONFIG;
+const int     MEM_LEN_CONFIG = MEMLEN_CONFIG/2;   //TODO
 char          configBuffer[MEM_LEN_CONFIG] = "";
 uint16_t      configLength = 0;
 boolean       configActivated = false;

@@ -26,7 +26,8 @@ add(uint8_t reqdSize, uint8_t typeTag)
 }    
 
 // Resets current item to first one
-inline void StowManager::
+//inline 
+void StowManager::
 reset(void)
 {   
     curr = buf;
@@ -34,7 +35,8 @@ reset(void)
 }    
 
 // Empties buffer (resets pointers)
-inline void StowManager::
+//inline 
+void StowManager::
 wipe(void)
 {
     tail = buf;
@@ -57,7 +59,8 @@ _next(uint8_t **ptr)
 }    
 
 // returns the next item
-inline uint8_t* StowManager::
+//inline 
+uint8_t* StowManager::
 getNext(void)
 {
     uint8_t* res = _next(&curr);
