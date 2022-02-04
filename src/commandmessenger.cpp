@@ -3,7 +3,7 @@
 #include "commandmessenger.h"
 #include "config.h"
 #include "mobiflight.h"
-#include "inputMgr.h"
+#include "inputHub.h"
 
 #include "output.h"
 #if MF_SEGMENT_SUPPORT == 1
@@ -81,13 +81,6 @@ void attachCommandCallbacks()
 #endif
 }
 
-// Called when a received command has no attached function
-void OnUnknownCommand()
-{
-  lastCommand = millis();
-  cmdMessenger.sendCmd(kStatus, F("n/a"));
-}
-
 uint32_t getLastCommandMillis() {
   return lastCommand;
 }
@@ -96,10 +89,18 @@ void setLastCommandMillis(uint32_t time) {
   lastCommand = time;
 }
 
+// Called when a received command has no attached function
+void OnUnknownCommand()
+{
+  lastCommand = millis();
+  cmdMessenger.sendCmd(kStatus, F("n/a"));
+}
+
 void OnTrigger()
 {
-  Button::OnTrigger();
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-  InputShifter::OnTrigger();
-#endif
+    //   Button::OnTrigger();
+    // #if MF_INPUT_SHIFTER_SUPPORT == 1
+    //   InputShifter::OnTrigger();
+    // #endif
+    RetriggerAll();
 }

@@ -3,7 +3,7 @@
 #include "config.h"
 #include "MFEEPROM.h"
 #include "commandmessenger.h"
-#include "inputMgr.h"
+#include "inputHub.h"
 
 #include "output.h"
 #if MF_SEGMENT_SUPPORT == 1
@@ -100,10 +100,16 @@ void OnSetConfig()
 
 void resetConfig()
 {
-  Button::Clear();
-  Encoder::Clear();
-  ClearOutputs();
+  ClearDeviceConfig();  // This will do all devices
 
+// #if MF_ANALOG_SUPPORT == 1
+//   Analog::Clear();
+// #endif
+// #if MF_INPUT_SHIFTER_SUPPORT == 1
+//   InputShifter::Clear();
+// #endif
+
+  ClearOutputs();       // As in "Digital output pins"
 #if MF_SEGMENT_SUPPORT == 1
   ClearLedSegments();
 #endif
@@ -120,16 +126,8 @@ void resetConfig()
   ClearLcdDisplays();
 #endif
 
-#if MF_ANALOG_SUPPORT == 1
-  Analog::Clear();
-#endif
-
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
   ClearShifters();
-#endif
-
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-  InputShifter::Clear();
 #endif
 
   configLength = 0;
@@ -177,7 +175,9 @@ void readConfig()
     case kTypeButton:
       params[0] = strtok_r(NULL, ".", &p); // pin
       params[1] = strtok_r(NULL, ":", &p); // name
-      Button::Add(atoi(params[0]), params[1]);
+      //Button::Add(atoi(params[0]), params[1]);
+      AddButton(atoi(params[0]), params[1]);
+      
       break;
 
     case kTypeOutput:
@@ -235,7 +235,8 @@ void readConfig()
       params[0] = strtok_r(NULL, ".", &p); // pin1
       params[1] = strtok_r(NULL, ".", &p); // pin2
       params[2] = strtok_r(NULL, ":", &p); // Name
-      Encoder::Add(atoi(params[0]), atoi(params[1]), 0, params[2]);
+      //Encoder::Add(atoi(params[0]), atoi(params[1]), 0, params[2]);
+      AddEncoder(atoi(params[0]), atoi(params[1]), 0, params[2]);
       break;
 
     case kTypeEncoder:
@@ -243,7 +244,8 @@ void readConfig()
       params[1] = strtok_r(NULL, ".", &p); // pin2
       params[2] = strtok_r(NULL, ".", &p); // encoder_type
       params[3] = strtok_r(NULL, ":", &p); // Name
-      Encoder::Add(atoi(params[0]), atoi(params[1]), atoi(params[2]), params[3]);
+      //Encoder::Add(atoi(params[0]), atoi(params[1]), atoi(params[2]), params[3]);
+      AddEncoder(atoi(params[0]), atoi(params[1]), atoi(params[2]), params[3]);
       break;
 
 #if MF_LCD_SUPPORT == 1
@@ -261,7 +263,8 @@ void readConfig()
       params[0] = strtok_r(NULL, ".", &p); // pin
       params[1] = strtok_r(NULL, ".", &p); // sensitivity
       params[2] = strtok_r(NULL, ":", &p); // name
-      Analog::Add(atoi(params[0]), params[2], atoi(params[1]));
+      //Analog::Add(atoi(params[0]), params[2], atoi(params[1]));
+      AddAnalog(atoi(params[0]), atoi(params[1]), params[2]);
 #endif
       break;
 
@@ -283,7 +286,8 @@ void readConfig()
       params[2] = strtok_r(NULL, ".", &p); // pin data
       params[3] = strtok_r(NULL, ".", &p); // number of daisy chained modules
       params[4] = strtok_r(NULL, ":", &p); // name
-      InputShifter::Add(atoi(params[0]), atoi(params[1]), atoi(params[2]), atoi(params[3]), params[4]);
+      //InputShifter::Add(atoi(params[0]), atoi(params[1]), atoi(params[2]), atoi(params[3]), params[4]);
+      AddInputShiftReg(atoi(params[0]), atoi(params[1]), atoi(params[2]), atoi(params[3]), params[4]);
       break;
 #endif
 

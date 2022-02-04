@@ -2,6 +2,7 @@
 #include "MFBoards.h"
 #include "commandmessenger.h"
 #include "registerpin.h"
+#include "config.h"
 #include "MFOutput.h"
 
 

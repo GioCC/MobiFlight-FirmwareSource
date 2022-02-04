@@ -3,6 +3,7 @@
 #include "commandmessenger.h"
 #include "registerpin.h"
 #include "MFLCDDisplay.h"
+#include "config.h"
 
 
 #if MF_LCD_SUPPORT == 1

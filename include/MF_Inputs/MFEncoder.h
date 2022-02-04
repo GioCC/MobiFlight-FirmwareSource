@@ -22,6 +22,7 @@
 #define MFEncoder_h
 
 #include <Arduino.h>
+#include "MFInBase.h"
 
 extern "C"
 {
@@ -34,48 +35,36 @@ extern "C"
 // this defines the delta value limit for triggering onFast
 #define MF_ENC_FAST_LIMIT 50 // 50
 
-enum
-{
-  encLeft,
-  encLeftFast,
-  encRight,
-  encRightFast
-};
-
-typedef struct {
-	// Detent positions in the quadrature (by value, not position)
-	bool    detents[4];
-
-	// Bit shift to apply given the detent resolution of this encoder.
-	//
-	// Example: An encoder with 1 detent per quadrature cycle has a useful resolution of
-  // 1/4 of the number of pulses so we can apply a simple bit shift of 2 to 
-	// determine the effective position of the encoder.
-	uint8_t resolutionShift;
-} encoderType;
-
 /////////////////////////////////////////////////////////////////////
 /// \class MFEncoder MFEncoder.h <MFEncoder.h>
-class MFEncoder
+
+class MFEncoder: public MFInBase
 {
+private:
+
+    enum {
+        ENC_LEFT,
+        ENC_LEFT_FAST,
+        ENC_RIGHT,
+        ENC_RIGHT_FAST,
+    };
+
 public:
-    static void attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
+    typedef struct {
+        // Detent positions in the quadrature (by value, not position)
+        bool    detents[4];     
+        // Bit shift to apply given the detent resolution of this encoder.
+        // Example: An encoder with 1 detent per quadrature cycle has a useful resolution of
+        // 1/4 of the number of pulses so we can apply a simple bit shift of 2 to 
+        // determine the effective position of the encoder.
+        uint8_t resolutionShift;
+    } encoderType;
 
 private:
-    static encoderEventHandler       _handler;
+    static encoderEventHandler  _handler;
+    static const int8_t         KnobDir[];
+    static const encoderType    EncoderTypes[];
 
-public:
-    MFEncoder();
-	  void attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
-    void update();
-// call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
-    void tick(void);
-// retrieve the current position
-    int16_t  getPosition();
-// adjust the current position
-    void setPosition(int16_t newPosition);
-    
-private:
     uint8_t                   _pin1;              
     uint8_t                   _pin2;
     bool                      _initialized;
@@ -90,5 +79,23 @@ private:
     uint32_t                  _positionTime;        // time last position change was detected
     uint32_t                  _positionTimePrev;    // time previous position change was detected
     uint32_t                  _lastFastDec;
+
+
+public:
+    static uint8_t getType(void) { return kTypeEncoder; }
+    static uint8_t getSize(void) { return sizeof(MFEncoder); }
+    static void attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
+
+    MFEncoder();
+	void setup(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
+
+    void update();
+    void onReset(void) {};
+    void detach(void)  {};
+
+    void    tick(void);     // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
+    int16_t getPosition()   { return _positionExt; }    // retrieve the current position
+    void    setPosition(int16_t newPosition);           // adjust the current position
+    
 };
 #endif 

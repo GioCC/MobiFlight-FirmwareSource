@@ -15,7 +15,7 @@ add(uint8_t reqdSize, uint8_t typeTag)
     uint8_t *newTail;
     
     newTail = tail + reqdSize + 2;
-    if(newTail < max) {
+    if(newTail < bufTop) {
         *tail++ = reqdSize + 2;
         *tail++ = typeTag;
         res = tail;

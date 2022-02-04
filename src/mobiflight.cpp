@@ -4,7 +4,7 @@
 #include "commandmessenger.h"
 #include "MFBoards.h"
 #include "config.h"
-#include "inputMgr.h"
+#include "inputHub.h"
 
 #include "output.h"
 #if MF_SEGMENT_SUPPORT == 1
@@ -140,12 +140,14 @@ void loop()
     if (millis() - lastButtonUpdate >= MF_BUTTON_DEBOUNCE_MS)
     {
       lastButtonUpdate = millis();
-      Button::read();
+      //Button::read();
+      UpdateAllInputs(kTypeButton);
     }
     if (millis() - lastEncoderUpdate >= MF_ENCODER_DEBOUNCE_MS)
     {
       lastEncoderUpdate = millis();
-      Encoder::read();
+      //Encoder::read();
+      UpdateAllInputs(kTypeEncoder);
     }
 #if MF_STEPPER_SUPPORT == 1
     updateSteppers();
@@ -161,19 +163,22 @@ void loop()
     if (millis() - lastAnalogRead >= MF_ANALOGREAD_DELAY_MS)
     {
       lastAnalogRead = millis();
-      Analog::read();
+      //Analog::read();
+      UpdateAllInputs(kTypeAnalogInput);
     }
     if (millis() - lastAnalogAverage >= MF_ANALOGAVERAGE_DELAY_MS)
     {
       lastAnalogAverage = millis();
-      Analog::readAverage();
+      //Analog::readAverage();
+      UpdateAnalogAvg();
     }
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
     if (millis() - lastInputShifterUpdate >= MF_ENCODER_DEBOUNCE_MS)
     {
       lastInputShifterUpdate = millis();
-      InputShifter::read();
+      //InputShifter::read();     // <update
+      UpdateAllInputs(kTypeInputShifter);
     }
 #endif
     // lcds, outputs, segments do not need update

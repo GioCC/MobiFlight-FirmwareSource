@@ -10,6 +10,7 @@
 #define MFButton_h
 
 #include <Arduino.h>
+#include "MFInBase.h"
 
 extern "C"
 {
@@ -25,29 +26,31 @@ enum
 
 /////////////////////////////////////////////////////////////////////
 /// \class MFButton MFButton.h <MFButton.h>
-class MFButton
+
+class MFButton: public MFInBase
 {
- 
-public:
-    static void attachHandler(buttonEventHandler newHandler) { _handler = newHandler; }   
-
-    static uint8_t getType(void) { return kTypeButton; }
-    static uint8_t getSize(void) { return sizeof(MFButton); }
-
 private:
     static buttonEventHandler   _handler;    
-
-public:
-    MFButton(void);
-    MFButton(uint8_t pin, const char * name);
-    void attach(uint8_t pin, const char * name);
-    void update();
-    void trigger(uint8_t state);
+    
     const char *  _name;
     uint8_t       _pin;
+    bool          _state;
+ 
+public:
+    static uint8_t getType(void) { return kTypeButton; }
+    static uint8_t getSize(void) { return sizeof(MFButton); }
+    static void attachHandler(buttonEventHandler newHandler) { _handler = newHandler; }   
+
+    MFButton(void);
+    //MFButton(uint8_t pin, const char * name);
     
-private:
-    bool                 _state;
+    void setup(uint8_t pin, const char * name = "Button");
+ 
+    void update();
+    void onReset(void);
+    void detach(void)  {};
+ 
+    void trigger(uint8_t state);    // could be private
     
 };
 #endif 

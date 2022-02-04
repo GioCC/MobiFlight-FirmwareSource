@@ -1,4 +1,4 @@
-// MFSegments.h
+// MFAnalog.h
 //
 /// \mainpage MF MFAnalog module for MobiFlight Framework
 /// \par Revision History
@@ -9,15 +9,7 @@
 #ifndef MFAnalog_h
 #define MFAnalog_h
 
-
-void AddAnalog(uint8_t pin, char const *name, uint8_t sensitivity);
-void ClearAnalog();
-void readAnalog();
-void readAnalogAverage();
-
-/* **********************************************************************************
-  class
-********************************************************************************** */
+#include "MFInBase.h"
 
 #define ADC_MAX_AVERAGE                 8           // must be 2^n
 #define ADC_MAX_AVERAGE_LOG2            3           // please calculate LOG2(ADC_MAX_AVERAGE)
@@ -31,29 +23,40 @@ extern "C"
 
 /////////////////////////////////////////////////////////////////////
 /// \class MFAnalog MFAnalog.h <MFAnalog.h>
-class MFAnalog
-{
-public:
-    static void attachHandler(analogEventHandler handler)  { _handler = newHandler; }   
 
+class MFAnalog: public MFInBase
+{
 private:
     static analogEventHandler   _handler; 
 
-public:
-    MFAnalog(uint8_t pin = 1, const char * name = "Analog Input", uint8_t sensitivity = 2);
-    void update();
-    void readBuffer();   
-    const char *  _name;
-    uint8_t       _pin;
-    
-private:
-    int          _lastValue;
-    uint8_t       _sensitivity;
+    const char* _name;
+    uint8_t     _pin;
 
-    uint16_t ADC_Buffer[ADC_MAX_AVERAGE] = {0};     // Buffer for all values from each channel  
-    uint16_t ADC_Average_Total = 0;                 // sum of sampled values, must be divided by ADC_MAX_AVERAGE to get actual value
-    volatile uint8_t ADC_Average_Pointer = 0;       // points to the actual position in ADC_BUFFER
-    uint32_t      _lastReadBuffer;
+    int         _lastValue;
+    uint8_t     _sensitivity;
+
+    uint16_t    ADC_Buffer[ADC_MAX_AVERAGE] = {0};     // Buffer for all values from each channel  
+    uint16_t    ADC_Average_Total = 0;                 // sum of sampled values, must be divided by ADC_MAX_AVERAGE to get actual value
+    volatile 
+    uint8_t     ADC_Average_Pointer = 0;       // points to the actual position in ADC_BUFFER
+    uint32_t    _lastReadBuffer;
+
+public:
+    static uint8_t getType(void) { return kTypeAnalogInput; }
+    static uint8_t getSize(void) { return sizeof(MFAnalog); }
+    static void attachHandler(analogEventHandler newHandler)  { _handler = newHandler; }   
+
+    MFAnalog(void)  {};
+    
+    //MFAnalog(uint8_t pin = 1, const char * name = "Analog Input", uint8_t sensitivity = 2);
+    void setup(uint8_t pin, uint8_t sensitivity = 2, const char *name = "Analog Input" );
+
+    void update();
+    void onReset(void)      {};
+    void detach(void)       {};
+
+    void updateAverage();   
+    
 };
 
 #endif 

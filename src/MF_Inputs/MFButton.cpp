@@ -6,17 +6,17 @@
 
 buttonEventHandler   MFButton::_handler = NULL;
 
-MFButton::MFButton(uint8_t pin, const char * name)
+MFButton::MFButton(void)
 { 
-    attach(1, "Button");
+    setup(0xFF, "Button");
 }
 
-MFButton::MFButton(uint8_t pin, const char * name)
-{ 
-    attach(pin, name);
-}
+// MFButton::MFButton(uint8_t pin, const char * name)
+// { 
+//     setup(pin, name);
+// }
 
-void MFButton::attach(uint8_t pin, const char * name)
+void MFButton::setup(uint8_t pin, const char * name)
 {   
   _pin  = pin;
   _name = name;
@@ -37,9 +37,17 @@ void MFButton::trigger(uint8_t state)
 {
     if(_handler) {
         if (_state==LOW) {
-            (*_handler)(btnOnPress, _pin, _name);
+            (*_handler)(btnOnPress,   _pin, _name);
         } else {
             (*_handler)(btnOnRelease, _pin, _name);
         }
+    }
+}
+
+void MFButton::onReset(void)
+{
+    if(_handler) {
+        (*_handler)(btnOnRelease, _pin, _name);
+        (*_handler)(btnOnPress,   _pin, _name);
     }
 }

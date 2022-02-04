@@ -8,6 +8,7 @@
 #include <stdint.h>
 
 #include "MFBoards.h"
+#include "StowManager.h"
 #include "config.h"
 
 extern StowManager  InStow;
@@ -18,6 +19,10 @@ extern CmdMessenger cmdMessenger;
 void SetInputHandlers(void);
 void UpdateAllInputs(uint8_t type);
 void UpdateAllInputs();
+void UpdateAnalogAvg(void);
+void RetriggerAll(void);
+
+void ClearDeviceConfig(void);   // Inputs + outputs!
 
 // Handlers to be assigned to input device classes
 
@@ -33,11 +38,10 @@ void OnInputShiftRegChange(uint8_t eventId, uint8_t pin, const char *name);
 // Device add functions
 template <typename T> T* AddItem(T** dummy, StowManager *SM = &InStow);
 
-
 void AddButton(uint8_t pin, char const *name = "Button");
 void AddEncoder(uint8_t pin1, uint8_t pin2, uint8_t encoder_type, char const *name = "Encoder");
 #if MF_ANALOG_SUPPORT == 1
-void AddAnalog(uint8_t pin, char const *name = "AnalogInput", uint8_t sensitivity = 3);
+void AddAnalog(uint8_t pin, uint8_t sensitivity = 3, char const *name = "AnalogInput");
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 void AddInputShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t nModules, char const *name = "InShiftReg");

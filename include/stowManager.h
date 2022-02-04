@@ -18,7 +18,7 @@ class StowManager
         typedef uint8_t      t_index;
         
         uint8_t *buf;
-        uint8_t *max;
+        uint8_t *bufTop;
         uint8_t *tail;
         uint8_t *curr;
         
@@ -30,7 +30,7 @@ class StowManager
     public:
 
         StowManager(uint8_t *buffer, uint16_t maxSize)
-        : buf(buffer), max(buffer+maxSize), tail(buffer), curr(buffer), i_count(0)
+        : buf(buffer), bufTop(buffer+maxSize), tail(buffer), curr(buffer), i_count(0)
         {}
         
         uint8_t* add(uint8_t reqdSize, uint8_t typeTag);  // Adds item to end of buffer, returns null if full
