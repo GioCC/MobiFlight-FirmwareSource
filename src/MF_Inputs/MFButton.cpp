@@ -4,8 +4,7 @@
 
 #include "MFButton.h"
 
-buttonEvent   MFButton::_handler = NULL;
-
+buttonEventHandler   MFButton::_handler = NULL;
 
 MFButton::MFButton(uint8_t pin, const char * name)
 { 
@@ -43,9 +42,4 @@ void MFButton::trigger(uint8_t state)
             (*_handler)(btnOnRelease, _pin, _name);
         }
     }
-}
-
-void MFButton::attachHandler(buttonEvent newHandler)
-{
-  _handler = newHandler;
 }

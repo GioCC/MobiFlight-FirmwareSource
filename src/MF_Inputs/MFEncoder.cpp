@@ -166,7 +166,3 @@ void MFEncoder::setPosition(int16_t newPosition) {
   _positionExt = newPosition;
 }
 
-void MFEncoder::attachHandler(encoderEvent newHandler)
-{
-  _handler = newHandler;
-}

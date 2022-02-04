@@ -25,7 +25,7 @@
 
 extern "C"
 {
-  typedef void (*encoderEvent) (uint8_t, uint8_t, const char *);
+  typedef void (*encoderEventHandler) (uint8_t, uint8_t, const char *);
 };
 
 // this prevents the internal position overflow.
@@ -59,8 +59,13 @@ typedef struct {
 class MFEncoder
 {
 public:
+    static void attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
+
+private:
+    static encoderEventHandler       _handler;
+
+public:
     MFEncoder();
-    static void attachHandler(encoderEvent newHandler);
 	  void attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
     void update();
 // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
@@ -71,7 +76,6 @@ public:
     void setPosition(int16_t newPosition);
     
 private:
-    static encoderEvent       _handler;
     uint8_t                   _pin1;              
     uint8_t                   _pin2;
     bool                      _initialized;

@@ -14,7 +14,7 @@
   class MFAnalog
 ********************************************************************************** */
 
-analogEvent   MFAnalog::_handler = NULL; 
+analogEventHandler   MFAnalog::_handler = NULL; 
 
 MFAnalog::MFAnalog(uint8_t pin, const char * name, uint8_t sensitivity)
 {   
@@ -45,9 +45,5 @@ void MFAnalog::readBuffer(){                                // read ADC and calc
   ADC_Average_Pointer &= (ADC_MAX_AVERAGE-1);               // limit max. values for floating average
 }
 
-void MFAnalog::attachHandler(analogEvent newHandler)
-{
-  _handler = newHandler;
-}
 
 #endif

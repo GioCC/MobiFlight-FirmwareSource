@@ -1,9 +1,11 @@
 //
-// Everything moved to MFAnalog.h
+// MFInBase.h
+//
+// (virtual) Base class for MF_xxx input devices 
 //
 
-#ifndef _INPUTMGR_H
-#define _INPUTMGR_H
+#ifndef _MFINBASE_H
+#define _MFINBASE_H
 
 #include <stdint.h>
 
@@ -26,21 +28,21 @@ class In_Base
 
         // virtual uint8_t getSize(void)   = 0;
         // virtual uint8_t getType(void)   = 0;
+        // virtual void OnChange(void) = 0;
+        // virtual void Add(void) = 0;
         
         virtual void Update(void)       = 0;
-        //! virtual void OnChange(void) = 0;
-        //! virtual void Add(void) = 0;
         virtual void OnReset(void)      {};
         virtual void Detach(void)       {};
         virtual void Retrigger(void)    {};
-        //void Add(uint8_t pin, char const *name);    // ...how?
 };
 
+#endif // _MFINBASE_H
+
 // ==============================================================
-//  ALL FOLLOWING CLASSES TO BE MERGED WITH THE CORRESPONDING
+//  ALL FOLLOWING TEMPORARY CLASSES TO BE MERGED WITH THE CORRESPONDING
 //  "MF_" CLASS (which will inherit from In_Base)
 // ==============================================================
-
 
 #include "MFButton.h"
 
@@ -123,5 +125,4 @@ class In_ShiftReg : public In_Base
 };
 #endif
 
-#endif // _INPUTMGR_H
 

@@ -145,12 +145,6 @@ void MFInputShifter::trigger(uint8_t pin, bool state)
   }
 }
 
-// Attaches a new event handler for the specified event.
-void MFInputShifter::attachHandler(inputShifterEvent newHandler)
-{
-  _inputHandler = newHandler;
-}
-
 void MFInputShifter::detach()
 {
   if (!_initialized)

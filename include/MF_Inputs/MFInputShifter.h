@@ -17,7 +17,7 @@
 
 extern "C"
 {
-  typedef void (*inputShifterEvent)(byte, uint8_t, const char *);
+  typedef void (*inputShifterEventHandler)(byte, uint8_t, const char *);
 };
 
 enum
@@ -31,9 +31,14 @@ enum
 class MFInputShifter
 {
 public:
+  static void attachHandler(inputShifterEventHandler newHandler) { _handler = newHandler; }
+
+private:
+  static inputShifterEventHandler _inputHandler;
+
+public:
   MFInputShifter(const char *name = "InputShifter");
   void attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount, const char *name);
-  static void attachHandler(inputShifterEvent newHandler);
   void clear();
   void detach();
   void retrigger();
@@ -51,6 +56,5 @@ private:
   void detectChanges(uint8_t lastState, uint8_t currentState, uint8_t module);
   void trigger(uint8_t pin, bool state);
   void clearLastState();
-  static inputShifterEvent _inputHandler;
 };
 #endif

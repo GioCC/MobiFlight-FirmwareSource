@@ -14,7 +14,7 @@
 extern "C"
 {
   // callback functions always follow the signature: void cmd(void);
-  typedef void (*buttonEvent) (byte, uint8_t, const char *);
+  typedef void (*buttonEventHandler) (byte, uint8_t, const char *);
 };
 
 enum
@@ -27,10 +27,19 @@ enum
 /// \class MFButton MFButton.h <MFButton.h>
 class MFButton
 {
+ 
+public:
+    static void attachHandler(buttonEventHandler newHandler) { _handler = newHandler; }   
+
+    static uint8_t getType(void) { return kTypeButton; }
+    static uint8_t getSize(void) { return sizeof(MFButton); }
+
+private:
+    static buttonEventHandler   _handler;    
+
 public:
     MFButton(void);
     MFButton(uint8_t pin, const char * name);
-    static void attachHandler(buttonEvent newHandler);    
     void attach(uint8_t pin, const char * name);
     void update();
     void trigger(uint8_t state);
@@ -38,8 +47,7 @@ public:
     uint8_t       _pin;
     
 private:
-    static buttonEvent   _handler;    
-    bool          _state;
+    bool                 _state;
     
 };
 #endif 

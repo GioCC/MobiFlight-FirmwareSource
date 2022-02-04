@@ -25,7 +25,7 @@ void readAnalogAverage();
 extern "C"
 {
   // callback functions
-  typedef void (*analogEvent) (int, uint8_t, const char *);
+  typedef void (*analogEventHandler) (int, uint8_t, const char *);
 };
 
 
@@ -34,15 +34,19 @@ extern "C"
 class MFAnalog
 {
 public:
+    static void attachHandler(analogEventHandler handler)  { _handler = newHandler; }   
+
+private:
+    static analogEventHandler   _handler; 
+
+public:
     MFAnalog(uint8_t pin = 1, const char * name = "Analog Input", uint8_t sensitivity = 2);
-    static void attachHandler(analogEvent handler);    
     void update();
     void readBuffer();   
     const char *  _name;
     uint8_t       _pin;
     
 private:
-    static analogEvent   _handler; 
     int          _lastValue;
     uint8_t       _sensitivity;
 
