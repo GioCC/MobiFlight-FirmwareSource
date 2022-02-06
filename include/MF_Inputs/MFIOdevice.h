@@ -18,8 +18,6 @@ class MFIOdevice
 
         virtual void clear(void)           = 0;     //     [OUT] Clear/initialize the module state
         virtual void powerSave(uint8_t mode){};     // [IN][OUT] Set power saving state
-        virtual void detach(void)           {};     // [IN][OUT] Called "Clear" in old FW
-
         virtual void update(void)       = 0;        // [IN][OUT] Fetch values (I)/ Update internal state (O)
         virtual void onReset(void)      {};
         virtual void detach(void)       {};         // [IN][OUT] Cleanup resources when stood down

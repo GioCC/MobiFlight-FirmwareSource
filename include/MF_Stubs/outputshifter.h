@@ -12,7 +12,7 @@ void MFOutputShifter::detach();
 
 // ==== Specialized ====
 // setup
-void AddShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name);
+void AddShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name = "Shifter");
 // setval
 void OnSetShiftRegisterPins(char* pins, uint8_t value);
 

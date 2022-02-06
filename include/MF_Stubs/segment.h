@@ -18,6 +18,7 @@ void OnSetModule(byte module, char *string, byte points, byte mask, bool convert
 
 // ==== Additional ====
 void OnSetModuleBrightness();
+void PowerSaveLedSegment(bool state);
 
 
 #endif

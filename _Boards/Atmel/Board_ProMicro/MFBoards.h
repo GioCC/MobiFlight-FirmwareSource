@@ -22,6 +22,13 @@
 #ifndef MF_INPUT_SHIFTER_SUPPORT
 #define MF_INPUT_SHIFTER_SUPPORT 1
 #endif
+#ifndef MF_MUX_SUPPORT
+#define MF_MUX_SUPPORT       1
+#endif
+#ifndef MF_DIGIN_MUX_SUPPORT
+#define MF_MUX_SUPPORT       1
+#define MF_DIGIN_MUX_SUPPORT 1
+#endif
 
 #define MODULE_MAX_PINS 21
 #define MAX_OUTPUTS 18
@@ -43,7 +50,9 @@
 #define MOBIFLIGHT_SERIAL "0987654321"
 #define MOBIFLIGHT_NAME "MobiFlight Micro"
 #define EEPROM_SIZE 1024 // EEPROMSizeMicro
-#define MEMLEN_CONFIG 440
+#define MEMLEN_CONFIG           440     // max. size for config which wil be stored in EEPROM
+#define MEMLEN_CONFIG_BUFFER    350     // max. size for configBuffer, contains only names from inputs
+#define MF_MAX_DEVICEMEM        400     // max. memory size for devices
 
 #define RANDOM_SEED_INPUT A0
 

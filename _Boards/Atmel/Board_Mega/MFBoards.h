@@ -22,8 +22,15 @@
 #ifndef MF_INPUT_SHIFTER_SUPPORT
 #define MF_INPUT_SHIFTER_SUPPORT 1
 #endif
+#ifndef MF_MUX_SUPPORT
+#define MF_MUX_SUPPORT       1
+#endif
+#ifndef MF_DIGIN_MUX_SUPPORT
+#define MF_MUX_SUPPORT       1
+#define MF_DIGIN_MUX_SUPPORT 1
+#endif
 
-#define MODULE_MAX_PINS 69
+//#define MODULE_MAX_PINS 69
 #define MAX_OUTPUTS 40
 #define MAX_BUTTONS 68
 #define MAX_LEDSEGMENTS 4
@@ -44,6 +51,8 @@
 #define MOBIFLIGHT_NAME "MobiFlight Mega"
 #define EEPROM_SIZE 4096 // EEPROMSizeMega
 #define MEMLEN_CONFIG 1496
+#define MEMLEN_CONFIG_BUFFER    1000    // max. size for configBuffer, contains only names from inputs
+#define MF_MAX_DEVICEMEM        1500    // max. memory size for devices
 
 #define RANDOM_SEED_INPUT A0
 

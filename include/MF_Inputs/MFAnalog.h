@@ -52,9 +52,6 @@ public:
     void setup(uint8_t pin, uint8_t sensitivity = 2, const char *name = "Analog Input" );
 
     void update();
-    void onReset(void)      {};
-    void detach(void)       {};
-
     void updateAverage();   
     
 };

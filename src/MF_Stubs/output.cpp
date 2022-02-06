@@ -10,7 +10,7 @@ MFOutput outputs[MAX_OUTPUTS];
 uint8_t outputsRegistered = 0;
 
 
-void AddOutput(uint8_t pin = 1, char const *name = "Output")
+void AddOutput(uint8_t pin, char const *name)
 {
   if (outputsRegistered == MAX_OUTPUTS)
     return;

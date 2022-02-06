@@ -1,10 +1,19 @@
+// The build version comes from an environment variable
+#define STRINGIZER(arg) #arg
+#define STR_VALUE(arg) STRINGIZER(arg)
+#define VERSION STR_VALUE(BUILD_VERSION)
+
+//#define DEBUG 1
+
 
 #include <Arduino.h>
 #include "mobiflight.h"
+#include "allocateMem.h"
 #include "commandmessenger.h"
 #include "MFBoards.h"
 #include "config.h"
 #include "inputHub.h"
+#include "MFEEPROM.h"
 
 #include "output.h"
 #if MF_SEGMENT_SUPPORT == 1
@@ -26,6 +35,7 @@
 
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
+
 uint32_t lastButtonUpdate= 0;
 uint32_t lastEncoderUpdate = 0;
 #if MF_SERVO_SUPPORT == 1
@@ -47,7 +57,9 @@ void SetPowerSavingMode(bool state)
 {
   // disable the lights ;)
   powerSavingMode = state;
+
   PowerSaveOutputs(state);
+
 #if MF_SEGMENT_SUPPORT == 1
   PowerSaveLedSegment(state);
 #endif
@@ -64,27 +76,25 @@ void updatePowerSaving()
 {
   if (!powerSavingMode && ((millis() - getLastCommandMillis()) > (POWER_SAVING_TIME * 1000)))
   {
-    // enable power saving
-    SetPowerSavingMode(true);
+    SetPowerSavingMode(true);   // enable power saving
   }
   else if (powerSavingMode && ((millis() - getLastCommandMillis()) < (POWER_SAVING_TIME * 1000)))
   {
-    // disable power saving
-    SetPowerSavingMode(false);
+    SetPowerSavingMode(false);  // disable power saving
   }
 }
 
 // ************************************************************
 // Reset Board
 // ************************************************************
+
+/*
 void OnResetBoard()
 {
-  eepromInit();
-  generateSerial(false);
-  setLastCommandMillis(millis());
-  loadConfig();
-  _restoreName();
+  resetConfig();        // was part of loadConfig(), but not needed on initial start up
+  ResetBoard();
 }
+*/
 
 // ************************************************************
 // Setup
@@ -94,32 +104,27 @@ void setup()
   Serial.begin(115200);
   attachCommandCallbacks();
   cmdMessenger.printLfCr();
-  OnResetBoard();
+  ResetBoard();
 
-  lastButtonUpdate = millis();
-  lastEncoderUpdate = millis() + 2;
-
-#if MF_ANALOG_SUPPORT == 1
-  lastAnalogAverage = millis() + 4;
-  lastAnalogRead = millis() + 4;
-#endif
-
+  // Time Gap between Inputs, do not read at the same loop
 #if MF_SERVO_SUPPORT == 1
   lastServoUpdate = millis();
 #endif
 
-  // Time Gap between Inputs, do not read at the same loop
-#if MF_INPUTSHIFTER_SUPPORT == 1
-  lastInputShifterUpdate = millis() + 6;
-#endif
+  lastButtonUpdate = millis();
+  lastEncoderUpdate = millis();           // encoders will be updated every 1ms
+
 #if MF_ANALOG_SUPPORT == 1
   lastAnalogAverage = millis() + 4;
   lastAnalogRead = millis() + 4;
 #endif
-  lastButtonUpdate= millis() + 0;
-  lastEncoderUpdate = millis();           // encoders will be updated every 1ms
+
+#if MF_INPUTSHIFTER_SUPPORT == 1
+  lastInputShifterUpdate = millis() + 6;
+#endif
 #if MF_SERVO_SUPPORT == 1
   lastServoUpdate = millis() + 8;
+
 #endif
 }
 
@@ -178,7 +183,7 @@ void loop()
     {
       lastInputShifterUpdate = millis();
       //InputShifter::read();     // <update
-      UpdateAllInputs(kTypeInputShifter);
+      UpdateAllInputs(kTypeInShiftReg);
     }
 #endif
     // lcds, outputs, segments do not need update

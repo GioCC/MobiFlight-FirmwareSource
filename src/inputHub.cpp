@@ -64,17 +64,6 @@ void RetriggerAll(void)
     }
 }
 
-//TODO This will be used also for outputs!!! 
-void ClearDeviceConfig(void)
-{
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->detach();
-    }
-    Stowage.wipe();
-}
-
 // Generic form (the param init will use the returned pointer)
 // template <typename T> T* AddItem(T** itemPtr, StowManager *SM)
 // {

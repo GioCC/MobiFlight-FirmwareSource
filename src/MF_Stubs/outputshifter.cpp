@@ -9,7 +9,7 @@ MFOutputShifter shiftregisters[MAX_OUTPUT_SHIFTERS];
 uint8_t shiftregisterRegistered = 0;
 
 
-void AddShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name = "Shifter")
+void AddShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name)
 {
   if (shiftregisterRegistered == MAX_OUTPUT_SHIFTERS)
     return;

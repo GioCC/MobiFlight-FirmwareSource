@@ -48,7 +48,6 @@ public:
  
     void update();
     void onReset(void);
-    void detach(void)  {};
  
     void trigger(uint8_t state);    // could be private
     

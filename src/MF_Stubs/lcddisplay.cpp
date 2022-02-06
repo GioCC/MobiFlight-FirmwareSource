@@ -12,7 +12,7 @@ MFLCDDisplay lcd_I2C[MAX_MFLCD_I2C];
 uint8_t lcd_12cRegistered = 0;
 
 
-void AddLcdDisplay(uint8_t address = 0x24, uint8_t cols = 16, uint8_t lines = 2, char const *name = "LCD")
+void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *name)
 {
   if (lcd_12cRegistered == MAX_MFLCD_I2C)
     return;

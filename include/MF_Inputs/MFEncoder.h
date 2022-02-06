@@ -90,8 +90,6 @@ public:
 	void setup(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
 
     void update();
-    void onReset(void) {};
-    void detach(void)  {};
 
     void    tick(void);     // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
     int16_t getPosition()   { return _positionExt; }    // retrieve the current position

@@ -12,7 +12,7 @@ void MFLCDDisplay::detach();
 
 // ==== Specialized ====
 // setup
-void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *name);
+void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *name = "LCD");
 // setval
 void OnSetLcdDisplayI2C();
 

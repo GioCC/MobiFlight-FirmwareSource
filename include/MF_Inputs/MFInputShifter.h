@@ -43,7 +43,7 @@ private:
   void clearLastState();
 
 public:
-    static uint8_t getType(void) { return kTypeInputShifter; }
+    static uint8_t getType(void) { return kTypeInShiftReg; }
     static uint8_t getSize(void) { return sizeof(MFInputShifter); }
     static void attachHandler(inputShifterEventHandler newHandler) { _handler = newHandler; }
 
