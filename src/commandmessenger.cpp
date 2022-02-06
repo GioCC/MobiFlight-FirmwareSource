@@ -1,9 +1,10 @@
 #include <Arduino.h>
 #include "MFBoards.h"
-#include "commandmessenger.h"
 #include "config.h"
-#include "mobiflight.h"
 #include "inputHub.h"
+#include "outputHub.h"
+#include "commandmessenger.h"
+#include "mobiflight.h"
 
 #include "output.h"
 #if MF_SEGMENT_SUPPORT == 1
@@ -26,14 +27,15 @@
 CmdMessenger cmdMessenger = CmdMessenger(Serial);
 unsigned long lastCommand;
 
+// Prototypes for forward declarations
 void OnTrigger();
 void OnUnknownCommand();
+
 
 // Callbacks define on which received commands we take action
 void attachCommandCallbacks()
 {
-  // Attach callback methods
-  cmdMessenger.attach(OnUnknownCommand);
+  cmdMessenger.attach(OnUnknownCommand);    // Attach all callback methods
 
 #if MF_SEGMENT_SUPPORT == 1
   cmdMessenger.attach(kInitModule, OnInitModule);

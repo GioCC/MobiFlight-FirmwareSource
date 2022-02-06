@@ -43,12 +43,12 @@ enum
   kDebug = 0xFF          // 255 -> for Debug print later, changes in UI are required
 };
 
-void attachCommandCallbacks();
-uint32_t getLastCommandMillis(void);
-void setLastCommandMillis(uint32_t time);
+void        attachCommandCallbacks();
+uint32_t    getLastCommandMillis(void);
+void        setLastCommandMillis(uint32_t time);
 
-extern CmdMessenger cmdMessenger;
-extern unsigned long lastCommand;
+extern CmdMessenger     cmdMessenger;
+extern unsigned long    lastCommand;
 
 
 #endif
