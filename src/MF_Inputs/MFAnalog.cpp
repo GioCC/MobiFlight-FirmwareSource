@@ -6,7 +6,7 @@
 #include "commandmessenger.h"
 #include "registerpin.h"
 #include "MFAnalog.h"
-#include "MFInBase.h"
+#include "MFIOdevice.h"
 
 #if MF_ANALOG_SUPPORT == 1
 

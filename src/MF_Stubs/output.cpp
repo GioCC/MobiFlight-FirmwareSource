@@ -25,7 +25,7 @@ void AddOutput(uint8_t pin = 1, char const *name = "Output")
 #endif
 }
 
-void ClearOutputs()
+void detach()
 {
   clearRegisteredPins(kTypeOutput);
   outputsRegistered = 0;

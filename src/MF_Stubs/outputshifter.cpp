@@ -44,7 +44,6 @@ void OnInitShiftRegister()
 
 void OnSetShiftRegisterPins()
 {
-
   int module = cmdMessenger.readInt16Arg();
   char *pins = cmdMessenger.readStringArg();
   int value = cmdMessenger.readInt16Arg();

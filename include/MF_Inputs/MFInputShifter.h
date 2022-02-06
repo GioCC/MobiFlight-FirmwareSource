@@ -4,7 +4,7 @@
 #define MFInputShifter_h
 
 #include <Arduino.h>
-#include "MFInBase.h"
+#include "MFIOdevice.h"
 
 // Maximum number of shifters allowed on an individual chain. While this is currently set to 4
 // there is no technical limit in the code for how many can be chained. It is constrained only
@@ -25,7 +25,7 @@ enum
 /////////////////////////////////////////////////////////////////////
 /// \class MFInputShifter MFInputShifter.h <MFInputShifter.h>
 
-class MFInputShifter: public MFInBase
+class MFInputShifter: public MFIOdevice
 {
 private:
   static inputShifterEventHandler _handler;

@@ -10,7 +10,7 @@
 #define MFButton_h
 
 #include <Arduino.h>
-#include "MFInBase.h"
+#include "MFIOdevice.h"
 
 extern "C"
 {
@@ -27,7 +27,7 @@ enum
 /////////////////////////////////////////////////////////////////////
 /// \class MFButton MFButton.h <MFButton.h>
 
-class MFButton: public MFInBase
+class MFButton: public MFIOdevice
 {
 private:
     static buttonEventHandler   _handler;    

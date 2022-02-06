@@ -9,7 +9,7 @@
 #include "config.h"
 #include "stowManager.h"
 //#include "registerpin.h"
-#include "MFInBase.h"
+#include "MFIOdevice.h"
 #include "MFButton.h"
 #include "MFAnalog.h"
 #include "MFEncoder.h"
@@ -28,52 +28,38 @@ void SetInputHandlers(void)
     MFInputShifter::attachHandler(OnInputShiftRegChange);
 }
 
-// Generic form (the param init will use the returned pointer)
-template <typename T> T* AddItem(T** itemPtr, StowManager *SM)
-{
-    // Since itemPtr argument is required to set signature anyway, 
-    // we take advantage of it to carry the return value 
-    uint8_t *in;
-    in = SM->add(T::getSize(), T::getType()); 
-    if(in != NULL) {
-        new ((void *)in) T;
-        // param init done outside by specialized functions
-    }
-    return (T*) in;
-}
-
 void UpdateAllInputs(void)
 {
-    MFInBase *in;
-    InStow.reset();
-    while((in = (MFInBase *)(InStow.getNext())) != NULL) {
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
         in->update();
     }
 }
 
 void UpdateAllInputs(uint8_t type)
 {
-    MFInBase *in;
-    InStow.reset();
-    while((in = (MFInBase *)(InStow.getNext(type))) != NULL) {
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext(type))) != NULL) {
         in->update();
     }
 }
 
 void UpdateAnalogAvg(void)
 {
-    MFInBase *in;
-    InStow.reset();
-    while((in = (MFInBase *)(InStow.getNext(kTypeAnalogInput))) != NULL) {
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext(kTypeAnalogInput))) != NULL) {
         ((MFAnalog *)in)->updateAverage();
     }
 }
 
 void RetriggerAll(void)
 {
-    MFInBase *in;
-    InStow.reset();
-    while((in = (MFInBase *)(InStow.getNext())) != NULL) {
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
         in->onReset();
     }
 }
@@ -81,13 +67,28 @@ void RetriggerAll(void)
 //TODO This will be used also for outputs!!! 
 void ClearDeviceConfig(void)
 {
-    MFInBase *in;
-    InStow.reset();
-    while((in = (MFInBase *)(InStow.getNext())) != NULL) {
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
         in->detach();
     }
-    InStow.wipe();
+    Stowage.wipe();
 }
+
+// Generic form (the param init will use the returned pointer)
+// template <typename T> T* AddItem(T** itemPtr, StowManager *SM)
+// {
+//     // Since itemPtr argument is required to set signature anyway, 
+//     // we take advantage of it to carry the return value 
+//     uint8_t *in;
+//     in = SM->add(T::getSize(), T::getType()); 
+//     if(in != NULL) {
+//         new ((void *)in) T;
+//         // param init done outside by specialized functions
+//     }
+//     if(*itemPtr != NULL) *itemPtr = <static_cast>(T*)in;
+//     return <static_cast>(T*) in;
+// }
 
 
 // ---------------------------------------------------
@@ -105,9 +106,9 @@ void OnButtonChange(uint8_t eventId, uint8_t pin, const char *name)
 void AddButton(uint8_t pin, char const *name)
 {
     MFButton *MFB;
-    AddItem(&MFB);
+    Stowage.AddItem(&MFB);
     // Non-templated alternative would be more memory-consuming (both RAM and flash!):
-    // MFB = (MFButton *)InStow.add(MFButton::getSize(), MFButton::getType());
+    // MFB = (MFButton *)Stowage.add(MFButton::getSize(), MFButton::getType());
     // if(MFB) new ((void *)MFB) MFButton;
 
     MFB->setup(pin, name);
@@ -133,7 +134,7 @@ void AddEncoder(uint8_t pin1, uint8_t pin2, uint8_t encoder_type, char const *na
 {
     MFEncoder *MFE;
 
-    AddItem(&MFE);
+    Stowage.AddItem(&MFE);
 
     MFE->setup(pin1, pin2, encoder_type, name);
     #ifdef DEBUG
@@ -159,7 +160,7 @@ void AddAnalog(uint8_t pin, uint8_t sensitivity, char const *name)
 {
     MFAnalog *MFA;
 
-    AddItem(&MFA);
+    Stowage.AddItem(&MFA);
     
     MFA->setup(pin, sensitivity, name);
     #ifdef DEBUG
@@ -188,7 +189,7 @@ void AddInputShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8
 {
     MFInputShifter *MFI;
 
-    AddItem(&MFI);
+    Stowage.AddItem(&MFI);
 
     MFI->setup(latchPin, clockPin, dataPin, nModules, name);
     #ifdef DEBUG

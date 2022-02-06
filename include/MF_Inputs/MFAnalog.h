@@ -9,7 +9,7 @@
 #ifndef MFAnalog_h
 #define MFAnalog_h
 
-#include "MFInBase.h"
+#include "MFIOdevice.h"
 
 #define ADC_MAX_AVERAGE                 8           // must be 2^n
 #define ADC_MAX_AVERAGE_LOG2            3           // please calculate LOG2(ADC_MAX_AVERAGE)
@@ -24,7 +24,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////
 /// \class MFAnalog MFAnalog.h <MFAnalog.h>
 
-class MFAnalog: public MFInBase
+class MFAnalog: public MFIOdevice
 {
 private:
     static analogEventHandler   _handler; 

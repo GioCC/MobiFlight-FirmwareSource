@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2021
 #include "MFInputShifter.h"
-#include "MFInBase.h"
+#include "MFIOdevice.h"
 #include "mobiflight.h"
 
 inputShifterEventHandler MFInputShifter::_handler = NULL;

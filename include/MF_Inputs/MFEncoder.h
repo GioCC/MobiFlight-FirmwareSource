@@ -22,7 +22,7 @@
 #define MFEncoder_h
 
 #include <Arduino.h>
-#include "MFInBase.h"
+#include "MFIOdevice.h"
 
 extern "C"
 {
@@ -38,7 +38,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////
 /// \class MFEncoder MFEncoder.h <MFEncoder.h>
 
-class MFEncoder: public MFInBase
+class MFEncoder: public MFIOdevice
 {
 private:
 

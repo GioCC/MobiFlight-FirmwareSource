@@ -11,7 +11,7 @@
 #include "StowManager.h"
 #include "config.h"
 
-extern StowManager  InStow;
+extern StowManager  Stowage;
 extern CmdMessenger cmdMessenger;
 
 // General Management functions
@@ -36,7 +36,7 @@ void OnInputShiftRegChange(uint8_t eventId, uint8_t pin, const char *name);
 #endif
 
 // Device add functions
-template <typename T> T* AddItem(T** dummy, StowManager *SM = &InStow);
+// template <typename T> T* AddItem(T** dummy, StowManager *SM = &Stowage);
 
 void AddButton(uint8_t pin, char const *name = "Button");
 void AddEncoder(uint8_t pin1, uint8_t pin2, uint8_t encoder_type, char const *name = "Encoder");

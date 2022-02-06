@@ -45,8 +45,17 @@ class StowManager
         
         uint8_t* getNth(t_index nth);     // returns the n-th item (base 0) from the start (does not affect current item pointer)
         uint8_t* getNth(uint8_t type, t_index nth);    // returns the n-th item (base 0) with typecode <type> from the start (does not affect current item pointer)
-};
 
+        // THIS METHOD IS STRICTLY APPLICATION-SPECIFIC
+        // It requires <T> objects to have two methods, T::getSize(), T::getType(), to be passed 
+        // as arguments to the ordinary "add()" 
+        // Beside reserving space, it performs a "placement new" of the object of type <T>.
+        // Please beware that the argument is a _pointer to_ an object pointer:
+        // since an argument referencing the templated type is required in order to set the 
+        // method signature, we may as well pass a reference to a pointer that will carry 
+        // the return value.
+        template <typename T> T* AddItem(T** itemPtr);
+};
 
 #endif // _STOWMGR_H
 

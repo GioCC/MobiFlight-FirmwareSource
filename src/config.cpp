@@ -33,7 +33,7 @@ MFEEPROM      MFeeprom;
 
 const int     MEM_LEN_STOW = MEMLEN_CONFIG/2;   //TODO
 uint8_t       stowBuf[MEM_LEN_STOW];
-StowManager   InStow(stowBuf, MEM_LEN_STOW);
+StowManager   Stowage(stowBuf, MEM_LEN_STOW);
 
 const uint8_t MEM_OFFSET_NAME = 0;
 const uint8_t MEM_LEN_NAME = 48;
