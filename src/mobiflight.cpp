@@ -33,6 +33,7 @@
 #define MF_ANALOGAVERAGE_DELAY_MS     10    // time between updating the analog average calculation
 #define MF_ANALOGREAD_DELAY_MS        50    // time between sending analog values
 #define MF_ENCODER_DEBOUNCE_MS        1     // time between updating encoders
+#define MF_INSHIFT_DELAY_MS           10    // time between updating input shift registers
 
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
@@ -165,66 +166,50 @@ void setup()
 #endif
 }
 
+//TODO compare mem size of macro & function version:
+#define checkUpdate(typ, tim, int) \
+    do{\
+        if (millis() - (*tim) >= (int)) { \
+            *tim = millis(); \
+            UpdateAll(typ);\
+        }   \
+    } while(0);
+
 // ************************************************************
 // Loop function
 // ************************************************************
 void loop()
 {
-  // Process incoming serial data, and perform callbacks
-  cmdMessenger.feedinSerialData();
-  updatePowerSaving();
+    // Process incoming serial data, and perform callbacks
+    cmdMessenger.feedinSerialData();
+    updatePowerSaving();
 
-  // if config has been reset and still is not activated
-  // do not perform updates
-  // to prevent mangling input for config (shared buffers)
-  if (getStatusConfig())
-  {
-    if (millis() - lastButtonUpdate >= MF_BUTTON_DEBOUNCE_MS)
-    {
-      lastButtonUpdate = millis();
-      //Button::read();
-      UpdateAll(kTypeButton);
+    // if config has been reset and still is not activated
+    // do not perform updates
+    // to prevent mangling input for config (shared buffers)
+    if (getStatusConfig()) {
+
+        checkUpdate(kTypeButton, &lastButtonUpdate, MF_BUTTON_DEBOUNCE_MS);
+        checkUpdate(kTypeEncoder, &lastEncoderUpdate, MF_ENCODER_DEBOUNCE_MS);
+        #if MF_SERVO_SUPPORT == 1
+        checkUpdate(kTypeServo, &lastServoUpdate, MF_SERVO_DELAY_MS);
+        #endif
+        #if MF_INPUT_SHIFTER_SUPPORT == 1
+        checkUpdate(kTypeInShiftReg, &lastInputShifterUpdate, MF_INSHIFT_DELAY_MS);
+        #endif
+        #if MF_ANALOG_SUPPORT == 1
+        checkUpdate(kTypeAnalogInput, &lastAnalogRead, MF_ANALOGREAD_DELAY_MS);
+        if (millis() - lastAnalogAverage >= MF_ANALOGAVERAGE_DELAY_MS) {
+            lastAnalogAverage = millis();
+            // Analog::readAverage();
+            UpdateAnalogAvg();
+        }
+        #endif
+        #if MF_STEPPER_SUPPORT == 1
+        UpdateAll(kTypeStepper);
+        #endif
+        // lcds, outputs, segments do not need update
     }
-    if (millis() - lastEncoderUpdate >= MF_ENCODER_DEBOUNCE_MS)
-    {
-      lastEncoderUpdate = millis();
-      //Encoder::read();
-      UpdateAll(kTypeEncoder);
-    }
-#if MF_STEPPER_SUPPORT == 1
-    //updateSteppers();
-    UpdateAll(kTypeServo);
-#endif
-#if MF_SERVO_SUPPORT == 1
-    if (millis() - lastServoUpdate >= MF_SERVO_DELAY_MS)
-    {
-        lastServoUpdate = millis();
-        //updateServos();
-        UpdateAll(kTypeServo);
-    }
-#endif
-#if MF_ANALOG_SUPPORT == 1
-    if (millis() - lastAnalogRead >= MF_ANALOGREAD_DELAY_MS)
-    {
-      lastAnalogRead = millis();
-      //Analog::read();
-      UpdateAll(kTypeAnalogInput);
-    }
-    if (millis() - lastAnalogAverage >= MF_ANALOGAVERAGE_DELAY_MS)
-    {
-      lastAnalogAverage = millis();
-      //Analog::readAverage();
-      UpdateAnalogAvg();
-    }
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-    if (millis() - lastInputShifterUpdate >= MF_ENCODER_DEBOUNCE_MS)
-    {
-      lastInputShifterUpdate = millis();
-      //InputShifter::read();     // <update
-      UpdateAll(kTypeInShiftReg);
-    }
-#endif
-    // lcds, outputs, segments do not need update
-  }
 }
+
+
