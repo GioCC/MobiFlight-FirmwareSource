@@ -8,23 +8,24 @@
 
 #include <Arduino.h>
 #include "mobiflight.h"
-#include "allocateMem.h"
+//#include "allocateMem.h"
+#include "MFEEPROM.h"
 #include "commandmessenger.h"
 #include "MFBoards.h"
 #include "config.h"
 #include "inputHub.h"
-#include "MFEEPROM.h"
+#include "outputHub.h"
 
-#include "output.h"
-#if MF_SEGMENT_SUPPORT == 1
-#include "segment.h"
-#endif
-#if MF_STEPPER_SUPPORT == 1
-#include "stepper.h"
-#endif
-#if MF_SERVO_SUPPORT == 1
-#include "servos.h"
-#endif
+// #include "output.h"
+// #if MF_SEGMENT_SUPPORT == 1
+// #include "segment.h"
+// #endif
+// #if MF_STEPPER_SUPPORT == 1
+// #include "stepper.h"
+// #endif
+// #if MF_SERVO_SUPPORT == 1
+// #include "servos.h"
+// #endif
 
 
 #define MF_BUTTON_DEBOUNCE_MS         10    // time between updating the buttons
@@ -49,20 +50,56 @@ uint32_t lastAnalogRead = 0;
 uint32_t lastInputShifterUpdate = 0;
 #endif
 
+// ************************************************************
+//  General I/O handling functions
+// ************************************************************
+
+void UpdateAll(void)
+{
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
+        in->update();
+    }
+}
+
+void UpdateAll(uint8_t type)
+{
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext(type))) != NULL) {
+        in->update();
+    }
+}
+
+void RetriggerAll(void)
+{
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
+        in->onReset();
+    }
+}
+
+void SetPowerSave(uint8_t mode)
+{
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
+        in->powerSave(mode);
+    }
+}
+
 
 // ************************************************************
-// Power saving
+// Power save management
 // ************************************************************
 void SetPowerSavingMode(bool state)
 {
   // disable the lights ;)
   powerSavingMode = state;
 
-  PowerSaveOutputs(state);
-
-#if MF_SEGMENT_SUPPORT == 1
-  PowerSaveLedSegment(state);
-#endif
+  SetPowerSave(state);
 
 #ifdef DEBUG
   if (state)
@@ -146,22 +183,24 @@ void loop()
     {
       lastButtonUpdate = millis();
       //Button::read();
-      UpdateAllInputs(kTypeButton);
+      UpdateAll(kTypeButton);
     }
     if (millis() - lastEncoderUpdate >= MF_ENCODER_DEBOUNCE_MS)
     {
       lastEncoderUpdate = millis();
       //Encoder::read();
-      UpdateAllInputs(kTypeEncoder);
+      UpdateAll(kTypeEncoder);
     }
 #if MF_STEPPER_SUPPORT == 1
-    updateSteppers();
+    //updateSteppers();
+    UpdateAll(kTypeServo);
 #endif
 #if MF_SERVO_SUPPORT == 1
     if (millis() - lastServoUpdate >= MF_SERVO_DELAY_MS)
     {
-      lastServoUpdate = millis();
-      updateServos();
+        lastServoUpdate = millis();
+        //updateServos();
+        UpdateAll(kTypeServo);
     }
 #endif
 #if MF_ANALOG_SUPPORT == 1
@@ -169,7 +208,7 @@ void loop()
     {
       lastAnalogRead = millis();
       //Analog::read();
-      UpdateAllInputs(kTypeAnalogInput);
+      UpdateAll(kTypeAnalogInput);
     }
     if (millis() - lastAnalogAverage >= MF_ANALOGAVERAGE_DELAY_MS)
     {
@@ -183,7 +222,7 @@ void loop()
     {
       lastInputShifterUpdate = millis();
       //InputShifter::read();     // <update
-      UpdateAllInputs(kTypeInShiftReg);
+      UpdateAll(kTypeInShiftReg);
     }
 #endif
     // lcds, outputs, segments do not need update

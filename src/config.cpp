@@ -3,27 +3,28 @@
 #include "config.h"
 #include "MFEEPROM.h"
 #include "MFIOdevice.h"
-#include "allocateMem.h"
+//#include "allocateMem.h"
 #include "commandmessenger.h"
 #include "StowManager.h"
 #include "inputHub.h"
+#include "outputHub.h"
 
-#include "output.h"
-#if MF_SEGMENT_SUPPORT == 1
-#include "segment.h"
-#endif
-#if MF_STEPPER_SUPPORT == 1
-#include "stepper.h"
-#endif
-#if MF_SERVO_SUPPORT == 1
-#include "servos.h"
-#endif
-#if MF_LCD_SUPPORT == 1
-#include "lcddisplay.h"
-#endif
-#if MF_OUTPUT_SHIFTER_SUPPORT == 1
-#include "outputshifter.h"
-#endif
+// #include "output.h"
+// #if MF_SEGMENT_SUPPORT == 1
+// #include "segment.h"
+// #endif
+// #if MF_STEPPER_SUPPORT == 1
+// #include "stepper.h"
+// #endif
+// #if MF_SERVO_SUPPORT == 1
+// #include "servos.h"
+// #endif
+// #if MF_LCD_SUPPORT == 1
+// #include "lcddisplay.h"
+// #endif
+// #if MF_OUTPUT_SHIFTER_SUPPORT == 1
+// #include "outputshifter.h"
+// #endif
 
 
 // The build version comes from an environment variable

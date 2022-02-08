@@ -28,47 +28,6 @@ void SetInputHandlers(void)
     MFInputShifter::attachHandler(OnInputShiftRegChange);
 }
 
-// INPUTS + OUTPUTS
-void UpdateAll(void)
-{
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->update();
-    }
-}
-
-// INPUTS + OUTPUTS
-void UpdateAll(uint8_t type)
-{
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext(type))) != NULL) {
-        in->update();
-    }
-}
-
-// INPUTS + OUTPUTS
-void RetriggerAll(void)
-{
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->onReset();
-    }
-}
-
-// INPUTS + OUTPUTS
-void SetPowerSave(uint8_t mode)
-{
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->powerSave(mode);
-    }
-}
-
-
 // ---------------------------------------------------
 //  Button
 // ---------------------------------------------------
