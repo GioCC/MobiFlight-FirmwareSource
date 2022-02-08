@@ -6,17 +6,17 @@
 #include <stdint.h>
 
 
-void AddOutput(uint8_t pin, char const *name);
-void ClearOutputs();
-void OnSetPin();
-void PowerSaveOutputs(bool state);
+// void AddOutput(uint8_t pin, char const *name);
+// void ClearOutputs();
+// void OnSetPin();
+// void PowerSaveOutputs(bool state);
 
-void AddLedSegment(int dataPin, int csPin, int clkPin, int numDevices, int brightness);
-void ClearLedSegments();
-void PowerSaveLedSegment(bool state);
-void OnInitModule();
-void OnSetModule();
-void OnSetModuleBrightness();
+// void AddLedSegment(int dataPin, int csPin, int clkPin, int numDevices, int brightness);
+// void ClearLedSegments();
+// void PowerSaveLedSegment(bool state);
+// void OnInitModule();
+// void OnSetModule();
+// void OnSetModuleBrightness();
 
 void AddServo(int pin);
 void ClearServos();

@@ -60,6 +60,7 @@ void resetConfig(void);
 void readConfig(void);
 void _storeConfig(void);
 void _activateConfig(void);
+void clearDeviceConfig(void);
 
 void eepromInit()
 {
@@ -141,7 +142,7 @@ void OnSetConfig()
 #endif
 }
 
-void ClearDeviceConfig(void)
+void clearDeviceConfig(void)
 {
     MFIOdevice *in;
     Stowage.reset();
@@ -152,9 +153,9 @@ void ClearDeviceConfig(void)
 }
 
 
-void resetConfig()
+void resetConfig(void)
 {
-  ClearDeviceConfig();  // This will do all devices
+  clearDeviceConfig();  // This will do all devices
 
 // #if MF_ANALOG_SUPPORT == 1
 //   Analog::Clear();

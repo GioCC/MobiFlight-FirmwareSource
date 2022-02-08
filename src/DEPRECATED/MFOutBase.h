@@ -17,7 +17,7 @@ class MFOutBase
 
         MFOutBase() {}
 
-        virtual void clear(void)           = 0;     // Clear/initialize the module state
+        virtual void onReset(void)          {};     // Clear/initialize the module state
         virtual void powerSave(uint8_t mode){};
         virtual void detach(void)           {};     // NOW CALLED "CLEAR"!!!
 

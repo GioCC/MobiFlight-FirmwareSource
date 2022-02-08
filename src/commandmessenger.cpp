@@ -38,8 +38,8 @@ void attachCommandCallbacks()
   cmdMessenger.attach(OnUnknownCommand);    // Attach all callback methods
 
 #if MF_SEGMENT_SUPPORT == 1
-  cmdMessenger.attach(kInitModule, OnInitModule);
-  cmdMessenger.attach(kSetModule, OnSetModule);
+  cmdMessenger.attach(kInitModule, OnInitSegments);
+  cmdMessenger.attach(kSetModule, OnSetSegments);
   cmdMessenger.attach(kSetModuleBrightness, OnSetModuleBrightness);
 #endif
 
@@ -79,23 +79,23 @@ void attachCommandCallbacks()
 #endif
 
 #ifdef DEBUG
-  cmdMessenger.sendCmd(kStatus, F("Attached callbacks"));
+    cmdMessenger.sendCmd(kStatus, F("Attached callbacks"));
 #endif
 }
 
 uint32_t getLastCommandMillis() {
-  return lastCommand;
+    return lastCommand;
 }
 
 void setLastCommandMillis(uint32_t time) {
-  lastCommand = time;
+    lastCommand = time;
 }
 
 // Called when a received command has no attached function
 void OnUnknownCommand()
 {
-  lastCommand = millis();
-  cmdMessenger.sendCmd(kStatus, F("n/a"));
+    lastCommand = millis();
+    cmdMessenger.sendCmd(kStatus, F("n/a"));
 }
 
 void OnTrigger()

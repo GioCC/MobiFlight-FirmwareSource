@@ -40,11 +40,11 @@ class StowManager
         
         t_index  getCount(void) { return i_count; }
 
-        uint8_t* getNext(void);           // returns the next item
-        uint8_t* getNext(uint8_t type);   // returns the next item with typecode <type> (AFFECTS current item pointer)
+        uint8_t* getNext(void);             // returns the next item
+        uint8_t* getNext(uint8_t type);     // returns the next item with typecode <type> (AFFECTS current item pointer)
         
-        uint8_t* getNth(t_index nth);     // returns the n-th item (base 0) from the start (does not affect current item pointer)
-        uint8_t* getNth(uint8_t type, t_index nth);    // returns the n-th item (base 0) with typecode <type> from the start (does not affect current item pointer)
+        // uint8_t* getNth(t_index nth);    // returns the n-th item (base 0) from the start (does not affect current item pointer)
+        uint8_t* getNth(t_index nth, uint8_t type = 0xFF);    // returns the n-th item (base 0) with typecode <type> from the start (does not affect current item pointer)
 
         // THIS METHOD IS STRICTLY APPLICATION-SPECIFIC
         // It requires <T> objects to have two methods, T::getSize(), T::getType(), to be passed 

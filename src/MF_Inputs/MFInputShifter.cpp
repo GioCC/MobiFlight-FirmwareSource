@@ -141,7 +141,7 @@ void MFInputShifter::detach()
 
 // Clears the internal state of the shifter, including all received bits
 // and the timestamp for the last time the data was read.
-void MFInputShifter::clear()
+void MFInputShifter::onReset()
 {
     clearLastState();
 }

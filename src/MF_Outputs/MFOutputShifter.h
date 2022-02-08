@@ -18,19 +18,24 @@
 #define MAX_CHAINED_OUTPUT_SHIFTERS 4
 
 
-/////////////////////////////////////////////////////////////////////
-/// \class MFOutputShifter MFOutputShifter.h <MFOutputShifter.h>
 class MFOutputShifter
 {
 public:
-    MFOutputShifter();
+    static uint8_t getType(void) { return kTypeOutShiftReg; }
+    static uint8_t getSize(void) { return sizeof(MFOutputShifter); }
+
+    MFOutputShifter(void);
+    void setup(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount);
+    
+    void onReset(void);
+    void update(void);
+    void powerSave(uint8_t state);
+    void detach(void);
+
     void setPin(uint8_t pin, uint8_t value, uint8_t refresh = 1);
     void setPins(char* pins, uint8_t value);
-    void attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount);
-    void detach();
-    void clear();
-    void test();
-    void updateShiftRegister();
+    void clear(void);
+    void test(void);
     
 private:
     uint8_t _latchPin;	    // Latch pin

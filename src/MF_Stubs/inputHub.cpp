@@ -8,7 +8,7 @@
 #include "commandmessenger.h"
 #include "config.h"
 #include "stowManager.h"
-//#include "registerpin.h"
+
 #include "MFIOdevice.h"
 #include "MFButton.h"
 #include "MFAnalog.h"
@@ -28,7 +28,8 @@ void SetInputHandlers(void)
     MFInputShifter::attachHandler(OnInputShiftRegChange);
 }
 
-void UpdateAllInputs(void)
+// INPUTS + OUTPUTS
+void UpdateAll(void)
 {
     MFIOdevice *in;
     Stowage.reset();
@@ -37,7 +38,8 @@ void UpdateAllInputs(void)
     }
 }
 
-void UpdateAllInputs(uint8_t type)
+// INPUTS + OUTPUTS
+void UpdateAll(uint8_t type)
 {
     MFIOdevice *in;
     Stowage.reset();
@@ -46,15 +48,7 @@ void UpdateAllInputs(uint8_t type)
     }
 }
 
-void UpdateAnalogAvg(void)
-{
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext(kTypeAnalogInput))) != NULL) {
-        ((MFAnalog *)in)->updateAverage();
-    }
-}
-
+// INPUTS + OUTPUTS
 void RetriggerAll(void)
 {
     MFIOdevice *in;
@@ -64,20 +58,15 @@ void RetriggerAll(void)
     }
 }
 
-// Generic form (the param init will use the returned pointer)
-// template <typename T> T* AddItem(T** itemPtr, StowManager *SM)
-// {
-//     // Since itemPtr argument is required to set signature anyway, 
-//     // we take advantage of it to carry the return value 
-//     uint8_t *in;
-//     in = SM->add(T::getSize(), T::getType()); 
-//     if(in != NULL) {
-//         new ((void *)in) T;
-//         // param init done outside by specialized functions
-//     }
-//     if(*itemPtr != NULL) *itemPtr = <static_cast>(T*)in;
-//     return <static_cast>(T*) in;
-// }
+// INPUTS + OUTPUTS
+void SetPowerSave(uint8_t mode)
+{
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
+        in->powerSave(mode);
+    }
+}
 
 
 // ---------------------------------------------------
@@ -100,11 +89,14 @@ void AddButton(uint8_t pin, char const *name)
     // MFB = (MFButton *)Stowage.add(MFButton::getSize(), MFButton::getType());
     // if(MFB) new ((void *)MFB) MFButton;
 
-    MFB->setup(pin, name);
-
-    #ifdef DEBUG
-    cmdMessenger.sendCmd(kStatus, F("Added encoder"));
-    #endif
+    if(MFB) {
+        MFB->setup(pin, name);
+        #ifdef DEBUG
+        cmdMessenger.sendCmd(kStatus, F("Added Button"));
+    } else {
+        cmdMessenger.sendCmd(kStatus, F("Button: Memory full"));
+        #endif
+    }
 }
 
 // ---------------------------------------------------
@@ -125,10 +117,14 @@ void AddEncoder(uint8_t pin1, uint8_t pin2, uint8_t encoder_type, char const *na
 
     Stowage.AddItem(&MFE);
 
-    MFE->setup(pin1, pin2, encoder_type, name);
-    #ifdef DEBUG
-    cmdMessenger.sendCmd(kStatus, F("Added encoder"));
-    #endif
+    if(MFE) {
+        MFE->setup(pin1, pin2, encoder_type, name);
+        #ifdef DEBUG
+        cmdMessenger.sendCmd(kStatus, F("Added Encoder"));
+    } else {
+        cmdMessenger.sendCmd(kStatus, F("Encoder: Memory full"));
+        #endif
+    }
 }
 
 // ---------------------------------------------------
@@ -151,10 +147,23 @@ void AddAnalog(uint8_t pin, uint8_t sensitivity, char const *name)
 
     Stowage.AddItem(&MFA);
     
-    MFA->setup(pin, sensitivity, name);
-    #ifdef DEBUG
-    cmdMessenger.sendCmd(kStatus, F("Added analog device "));
-    #endif
+    if(MFA) {
+        MFA->setup(pin, sensitivity, name);
+        #ifdef DEBUG
+        cmdMessenger.sendCmd(kStatus, F("Added Analog"));
+    } else {
+        cmdMessenger.sendCmd(kStatus, F("Analog: Memory full"));
+        #endif
+    }
+}
+
+void UpdateAnalogAvg(void)
+{
+    MFIOdevice *in;
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext(kTypeAnalogInput))) != NULL) {
+        ((MFAnalog *)in)->updateAverage();
+    }
 }
 
 #endif
@@ -180,10 +189,14 @@ void AddInputShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8
 
     Stowage.AddItem(&MFI);
 
-    MFI->setup(latchPin, clockPin, dataPin, nModules, name);
-    #ifdef DEBUG
-    cmdMessenger.sendCmd(kStatus, F("Added input shifter"));
-    #endif
+    if(MFI) {
+        MFI->setup(latchPin, clockPin, dataPin, nModules, name);
+        #ifdef DEBUG
+        cmdMessenger.sendCmd(kStatus, F("Added InShiftReg"));
+    } else {
+        cmdMessenger.sendCmd(kStatus, F("InShiftReg: Memory full"));
+        #endif
+    }
 }
 
 #endif

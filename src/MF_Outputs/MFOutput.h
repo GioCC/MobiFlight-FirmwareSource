@@ -14,10 +14,18 @@
 class MFOutput
 {
 public:
-    MFOutput(uint8_t pin = 1);
-    void set(uint8_t value);
-    void powerSavingMode(bool state);
+    static uint8_t getType(void) { return kTypeOutput; }
+    static uint8_t getSize(void) { return sizeof(MFOutput); }
+
+    MFOutput(void);
+    void setup(uint8_t pin);
+
+    void onReset(void);
+    void powerSave(uint8_t state);
+    void detach(void);
     
+    void setval(uint8_t value);
+
 private:
     uint8_t       _pin;
     uint8_t       _value;

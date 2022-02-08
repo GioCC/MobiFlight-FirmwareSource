@@ -2,9 +2,7 @@
 //
 /// \mainpage MF Button module for MobiFlight Framework
 /// \par Revision History
-/// \version 1.0 Initial release
-/// \author  Sebastian Moebius (mobiflight@moebiuz.de) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
-// Copyright (C) 2013-2014 Sebastian Moebius
+/// \version 2.0 
 
 #ifndef MFSegments_h
 #define MFSegments_h
@@ -12,21 +10,26 @@
 #include <Arduino.h>
 #include <LedControl.h>
 
-/////////////////////////////////////////////////////////////////////
-/// \class MFSegments MFSegments.h <MFSegments.h>
 class MFSegments
 {
 public:
-    MFSegments();
-    void display(byte module, char *string, byte points, byte mask, bool convertPoints = false);
-    void attach(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness);
-    void detach();
-    void test();
-    void powerSavingMode(bool state);
+    static uint8_t getType(void) { return kTypeLedSegment; }
+    static uint8_t getSize(void) { return sizeof(MFSegments); }
+
+    MFSegments(void);
+    void setup(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness);
+    
+    void onReset(void);
+    void powerSave(bool state);
+    void detach(void);
+    
+    void setval(byte module, char *string, byte points, byte mask, bool convertPoints = false);
+    
     void setBrightness(byte module, byte value);
+    void test(void);
 
 private:
-    LedControl  *_ledControl;
+    LedControl  _ledControl;
     byte        _moduleCount;
 };
 #endif

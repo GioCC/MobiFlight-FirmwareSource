@@ -4,22 +4,43 @@
 
 #include "MFOutput.h"
 
-MFOutput::MFOutput(uint8_t pin)
-{   
-  _pin  = pin;
-  _value = false;
-  pinMode(_pin, OUTPUT);    // set pin to input
-  set(_value);
+MFOutput::MFOutput(void)
+{
+    _pin = 0xFF;
+    _value = false;
 }
 
-void MFOutput::set(uint8_t value)
+void MFOutput::setup(uint8_t pin)
 {
-  _value = value;
-  analogWrite(_pin, _value);
+    _pin = pin;
+    pinMode(_pin, OUTPUT);
+    setval(false);
 }
 
-void MFOutput::powerSavingMode(bool state) 
+void MFOutput::onReset(void)
 {
-  if (state) set(0);
-  else set(_value);
+    setval(0);
 }
+
+void MFOutput::powerSave(uint8_t state)
+{
+    if (state) {
+        analogWrite(_pin, 0);
+    } else {
+        setval(_value);
+    }
+}
+
+void MFOutput::setval(uint8_t value)
+{
+    _value = value;
+    analogWrite(_pin, _value);
+}
+
+void MFOutput::detach(void)
+{
+    pinMode(_pin, INPUT);
+    _pin = 0xFF;
+}
+
+// MFoutput.cpp

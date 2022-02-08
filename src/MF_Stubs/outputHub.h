@@ -23,18 +23,43 @@
 extern StowManager  Stowage;
 extern CmdMessenger cmdMessenger;
 
-// General Management functions
 
+// Outputs
+void AddOutput(uint8_t pin);
+void OnSetPin(void);
+
+// LED Segments
+#if MF_SEGMENT_SUPPORT == 1
+void AddLedSegment(int dataPin, int csPin, int clkPin, int numDevices, int brightness);
+void OnInitSegments(void);
+void OnSetSegments(void);
+void OnSetModuleBrightness(void);
+#endif
+
+// Output Shift Registers
+#if MF_OUTPUT_SHIFTER_SUPPORT == 1
+void AddShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name);
+void OnInitShiftRegister(void);
+void OnSetShiftRegisterPins(void);
+#endif
+
+// Servos
+#if MF_SERVO_SUPPORT == 1
 void UpdateServos();
-void UpdateSteppers();
-void ClearAll();
-void PowerSave(uint8_t mode);
+#endif
 
-void ClearDeviceConfig(void);   // Inputs + outputs!
+// Steppers
+#if MF_STEPPER_SUPPORT == 1
+void UpdateSteppers();
+#endif
+
+// LCDs
+#if MF_LCD_SUPPORT == 1
+#endif
+
+
 
 // Device add functions
-// template <typename T> T* AddItem(T** dummy, StowManager *SM = &Stowage);
-
 
 #endif // _OUTPUTHUB_H
 

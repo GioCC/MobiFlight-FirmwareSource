@@ -93,29 +93,30 @@ getNext(uint8_t type)
 }    
 
 // returns the n-th item from the start (does not affect current item pointer)
-uint8_t* StowManager::
-getNth(t_index nth)
-{
-    uint8_t* res;
-    uint8_t* ptr = 0;
-    t_index  cnt = 0;
-    do {
-        res = _next(&ptr);
-        cnt++;
-    } while( (res!= NULL) && (cnt <= nth)); 
-    return (res != NULL ? res+2 : NULL);
-}    
+// >>> coalesced with "getNth(t_index nth, uint8_t type)" <<<
+// uint8_t* StowManager::
+// getNth(t_index nth)
+// {
+//     uint8_t* res;
+//     uint8_t* ptr = 0;
+//     t_index  cnt = 0;
+//     do {
+//         res = _next(&ptr);
+//         cnt++;
+//     } while( (res!= NULL) && (cnt <= nth)); 
+//     return (res != NULL ? res+2 : NULL);
+// }    
 
 // returns the n-th item with typecode <type> from the start (does not affect current item pointer)
 uint8_t* StowManager::
-getNth(uint8_t type, t_index nth)
+getNth(t_index nth, uint8_t type)
 {
     uint8_t* res;
     uint8_t* ptr = 0;
     t_index  cnt = 0;
     do {
         res = _next(&ptr);
-        if((*(res+1) == type)) cnt++;
+        if((type != 0xFF)&&(*(res+1) == type)) cnt++;
     } while( (res!= NULL) && /* (*(res+1) != type) && */ (cnt <= nth)); 
     return (res != NULL ? res+2 : NULL);
 }    

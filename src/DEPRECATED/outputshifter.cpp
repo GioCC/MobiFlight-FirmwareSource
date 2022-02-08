@@ -13,7 +13,7 @@ void AddShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t mod
 {
   if (shiftregisterRegistered == MAX_OUTPUT_SHIFTERS)
     return;
-  shiftregisters[shiftregisterRegistered].attach(latchPin, clockPin, dataPin, modules);
+  shiftregisters[shiftregisterRegistered].setup(latchPin, clockPin, dataPin, modules);
   shiftregisters[shiftregisterRegistered].clear();
   shiftregisterRegistered++;
 

@@ -16,13 +16,18 @@ extern CmdMessenger cmdMessenger;
 
 // General Management functions
 
-void SetInputHandlers(void);
-void UpdateAllInputs(uint8_t type);
-void UpdateAllInputs();
-void UpdateAnalogAvg(void);
+// Inputs + outputs:    
+//TODO: MOVE THESE FUNCTIONS TO OTHER FILE
+void UpdateAll(uint8_t type);
+void UpdateAll(void);
 void RetriggerAll(void);
+void SetPowerSave(uint8_t mode);
 
-void ClearDeviceConfig(void);   // Inputs + outputs!
+
+void SetInputHandlers(void);
+#if MF_ANALOG_SUPPORT == 1
+void UpdateAnalogAvg(void);
+#endif
 
 // Handlers to be assigned to input device classes
 
@@ -36,7 +41,6 @@ void OnInputShiftRegChange(uint8_t eventId, uint8_t pin, const char *name);
 #endif
 
 // Device add functions
-// template <typename T> T* AddItem(T** dummy, StowManager *SM = &Stowage);
 
 void AddButton(uint8_t pin, char const *name = "Button");
 void AddEncoder(uint8_t pin1, uint8_t pin2, uint8_t encoder_type, char const *name = "Encoder");

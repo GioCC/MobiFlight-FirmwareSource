@@ -24,8 +24,6 @@ enum
   btnOnRelease,
 };
 
-/////////////////////////////////////////////////////////////////////
-/// \class MFButton MFButton.h <MFButton.h>
 
 class MFButton: public MFIOdevice
 {

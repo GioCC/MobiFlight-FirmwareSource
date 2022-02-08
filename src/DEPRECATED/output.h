@@ -4,15 +4,15 @@
 
 // ==== Inherited ====  (-> MF_device.cpp)
 // -
-void MFSegments::clear() {}     // Set value = 0?
+void MFOutput::onReset() {}     // Set value = 0?
 // PowerSaveOutputs -> powerSavingMode
-void MFSegments::powerSave(bool state);
+void MFOutput::powerSave(bool state);
 // ClearOutputs
-void MFSegments::detach();
+void MFOutput::detach();
 
 // ==== Specialized ====
 // setup
-void AddOutput(uint8_t pin, char const *name = "Output");
+void AddOutput(uint8_t pin);
 // setval
 void OnSetPin(uint8_t pin, uint8_t state);
 
