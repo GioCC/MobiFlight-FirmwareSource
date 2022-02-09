@@ -126,13 +126,12 @@ void updatePowerSaving()
 // Reset Board
 // ************************************************************
 
-/*
 void OnResetBoard()
 {
-  resetConfig();        // was part of loadConfig(), but not needed on initial start up
-  ResetBoard();
+    resetConfig();        // was part of loadConfig(), but not needed on initial start up
+    ResetBoard();
 }
-*/
+
 
 // ************************************************************
 // Setup

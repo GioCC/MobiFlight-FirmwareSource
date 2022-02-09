@@ -9,8 +9,8 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <new>
 
-// Templating in not really necessary...
 class StowManager
 {
     //public typedef uint8_t      t_index;
@@ -56,6 +56,21 @@ class StowManager
         // the return value.
         template <typename T> T* AddItem(T** itemPtr);
 };
+
+template <typename T> T* StowManager::AddItem(T** itemPtr)
+{
+    // Since itemPtr argument is required to set signature anyway, 
+    // we take advantage of it to carry the return value 
+    uint8_t *in;
+    in = add(T::getSize(), T::getType()); 
+    if(in != NULL) {
+        new ((void *)in) T;
+        // param init done outside by specialized functions
+    }
+    if(*itemPtr != NULL) *itemPtr = (T*)in;
+    return (T*)in;
+}
+
 
 #endif // _STOWMGR_H
 

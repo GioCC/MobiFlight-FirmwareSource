@@ -11,6 +11,8 @@
 #define MFOutputShifter_h
 
 #include <Arduino.h>
+#include "MFIOdevice.h"
+
 
 // Maximum number of shifters allowed on an individual chain. While this is currently set to 4
 // there is no technical limit in the code for how many can be chained. It is constrained only
@@ -18,7 +20,7 @@
 #define MAX_CHAINED_OUTPUT_SHIFTERS 4
 
 
-class MFOutputShifter
+class MFOutputShifter: MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeOutShiftReg; }

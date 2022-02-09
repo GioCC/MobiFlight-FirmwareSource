@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include "MFBoards.h"
 #include "commandmessenger.h"
-#include "registerpin.h"
 #include "MFAnalog.h"
 #include "MFIOdevice.h"
 

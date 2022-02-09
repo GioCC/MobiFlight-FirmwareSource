@@ -3,7 +3,6 @@
 // Copyright (C) 2013-2014
 
 #include "MFLCDDisplay.h"
-#include "allocateMem.h"
 #include "mobiflight.h"
 
 MFLCDDisplay::MFLCDDisplay()
@@ -24,23 +23,22 @@ void MFLCDDisplay::display(const char *string)
 
 void MFLCDDisplay::attach(byte address, byte cols, byte lines)
 {
-  _address = address;
-  _cols = cols;
-  _lines = lines;
-  if (!FitInMemory(sizeof(LiquidCrystal_I2C)))
-	{
-		// Error Message to Connector
-    cmdMessenger.sendCmdStart(kDebug);
-    cmdMessenger.sendCmdArg(F("LCD does not fit in Memory!"));
-    cmdMessenger.sendCmdEnd();
-		return;
-	}
-  _lcdDisplay = new (allocateMemory(sizeof(LiquidCrystal_I2C))) LiquidCrystal_I2C;
-  _initialized = true;
-  _lcdDisplay->init((uint8_t)address, (uint8_t)cols, (uint8_t)lines);
-  _lcdDisplay->backlight();
-  Wire.setClock(400000);
-  test();
+    _address = address;
+    _cols    = cols;
+    _lines   = lines;
+    // if (!FitInMemory(sizeof(LiquidCrystal_I2C))) {
+    //     // Error Message to Connector
+    //     cmdMessenger.sendCmdStart(kDebug);
+    //     cmdMessenger.sendCmdArg(F("LCD does not fit in Memory!"));
+    //     cmdMessenger.sendCmdEnd();
+    //     return;
+    // }
+    _lcdDisplay = NULL; //= new (allocateMemory(sizeof(LiquidCrystal_I2C))) LiquidCrystal_I2C;
+    _initialized = true;
+    _lcdDisplay->init((uint8_t)address, (uint8_t)cols, (uint8_t)lines);
+    _lcdDisplay->backlight();
+    Wire.setClock(400000);
+    test();
 }
 
 void MFLCDDisplay::detach()

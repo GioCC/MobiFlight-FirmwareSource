@@ -11,6 +11,7 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
+#include "config.h"
 
 /////////////////////////////////////////////////////////////////////
 /// \class MFLCDDisplay MFLCDDisplay.h <MFLCDDisplay.h>

@@ -9,6 +9,7 @@
 
 #include "MFBoards.h"
 #include "StowManager.h"
+#include "commandmessenger.h"
 #include "config.h"
 
 extern StowManager  Stowage;

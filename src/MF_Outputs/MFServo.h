@@ -11,8 +11,10 @@
 
 #include <Arduino.h>
 #include <Servo.h>
+#include "MFIOdevice.h"
 
-class MFServo
+
+class MFServo: MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeServo; }

@@ -229,14 +229,14 @@ void _OnStepperEvent(uint8_t evt)
     int nStepper = cmdMessenger.readInt16Arg();
     MFS = (MFStepper *)(Stowage.getNth((uint8_t)nStepper, kTypeStepper));
     if(MFS) {
-        if(evt = 1) {
+        if(1 == evt) {
             int  value  = cmdMessenger.readInt32Arg();
             MFS->setval(value);
         } else
-        if(evt = 2) {
+        if(2 == evt) {
             MFS->onReset();
         } else
-        if(evt = 3) {
+        if(3 == evt) {
             MFS->setZero();
         } else
         {
@@ -268,6 +268,29 @@ void OnSetZeroStepper(void)
 // ---------------------------------------------------
 
 #if MF_LCD_SUPPORT == 1
+void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *name)
+{
+    // if (lcd_12cRegistered == MAX_MFLCD_I2C) return;
+    // registerPin(SDA, kTypeLcdDisplayI2C);
+    // registerPin(SCL, kTypeLcdDisplayI2C);
+
+    // lcd_I2C[lcd_12cRegistered].attach(address, cols, lines);
+    // lcd_12cRegistered++;
+    #ifdef DEBUG
+    cmdMessenger.sendCmd(kStatus, F("Added lcdDisplay"));
+    #endif
+
+}
+
+void OnSetLcdDisplayI2C(void) 
+{
+    int   address = cmdMessenger.readInt16Arg();
+    char *output  = cmdMessenger.readStringArg();
+    // lcd_I2C[address].display(output);
+    (void)address; (void)output;
+    setLastCommandMillis(millis());
+}
+
 #endif
 
 // outputHub.cpp

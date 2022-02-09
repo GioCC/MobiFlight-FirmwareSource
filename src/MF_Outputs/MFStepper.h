@@ -10,12 +10,12 @@
 #define MFStepper_h
 
 #include <stdlib.h>
+#include <Arduino.h>
 #include <AccelStepper.h>
 #include "MFButton.h"
+#include "MFIOdevice.h"
 
-#include <Arduino.h>
-
-class MFStepper
+class MFStepper: MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeStepper; }

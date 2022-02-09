@@ -20,11 +20,8 @@ enum
   kTypeDigInMux,            // 14 Digital input multiplexer support (example: 74HCT4067, 74HCT4051)
 };
 
-//void _restoreName();
-//void loadConfig();
-//void generateSerial(bool);
-
 void ResetBoard();
+void resetConfig();
 bool getStatusConfig();
 void OnSetConfig();
 void OnResetConfig();

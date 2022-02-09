@@ -55,13 +55,16 @@ const int     MEM_LEN_CONFIG = MEMLEN_CONFIG/2;   //TODO
 uint16_t      configLength = 0;
 boolean       configActivated = false;
 
-bool readConfigLength(void);
-void loadConfig(void);
-void resetConfig(void);
-void readConfig(void);
-void _storeConfig(void);
-void _activateConfig(void);
-void clearDeviceConfig(void);
+static bool readConfigLength(void);
+static void loadConfig(void);
+static void readConfig(void);
+static void _storeConfig(void);
+static void _activateConfig(void);
+static void clearDeviceConfig(void);
+static void _restoreName();
+static void loadConfig();
+static void generateSerial(bool);
+
 
 void eepromInit()
 {
@@ -70,12 +73,12 @@ void eepromInit()
 
 void ResetBoard()
 {
-  MFeeprom.init();
-  nameBuffer[0] = '\0';
-  generateSerial(false);
-  lastCommand = millis();
-  loadConfig();
-  _restoreName();
+    MFeeprom.init();
+    nameBuffer[0] = '\0';
+    generateSerial(false);
+    lastCommand = millis();
+    loadConfig();
+    _restoreName();
 }
 
 // ************************************************************
@@ -116,10 +119,10 @@ void loadConfig()
   }
 }
 
-// void _storeConfig()
-// {
+void _storeConfig()
+{
 //      MFeeprom.write_block(MEM_OFFSET_CONFIG, configBuffer, MEM_LEN_CONFIG);
-// }
+}
 
 void OnSetConfig()
 {
@@ -205,7 +208,7 @@ void resetConfig(void)
 //   ClearDigInMux();
 // #endif
 
-  ClearMemory();
+// ClearMemory();
 
   configLength = 0;
   configActivated = false;
@@ -393,7 +396,7 @@ void readConfig()
       params[1] = readUintFromEEPROM(&addreeprom);                // get the clock Pin
       params[2] = readUintFromEEPROM(&addreeprom);                // get the data Pin
       params[3] = readUintFromEEPROM(&addreeprom);                // get the number of daisy chained modules
-      AddShifter(params[0], params[1], params[2], params[3]);
+      AddShifter(params[0], params[1], params[2], params[3], &nameBuffer[addrbuffer]);
       copy_success = readEndCommandFromEEPROM(&addreeprom);       // check EEPROM until end of name
       break;
 #endif

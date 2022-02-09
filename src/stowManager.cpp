@@ -25,20 +25,6 @@ add(uint8_t reqdSize, uint8_t typeTag)
     return res; 
 }    
 
-template <typename T> T* StowManager::AddItem(T** itemPtr)
-{
-    // Since itemPtr argument is required to set signature anyway, 
-    // we take advantage of it to carry the return value 
-    uint8_t *in;
-    in = add(T::getSize(), T::getType()); 
-    if(in != NULL) {
-        new ((void *)in) T;
-        // param init done outside by specialized functions
-    }
-    if(*itemPtr != NULL) *itemPtr = <static_cast>(T*)in;
-    return <static_cast>(T*)in;
-}
-
 // Resets current item to first one
 //inline 
 void StowManager::

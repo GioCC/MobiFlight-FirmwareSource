@@ -10,8 +10,9 @@
 #define MFOutput_h
 
 #include <Arduino.h>
+#include "MFIOdevice.h"
 
-class MFOutput
+class MFOutput: MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeOutput; }

@@ -9,8 +9,10 @@
 
 #include <Arduino.h>
 #include <LedControl.h>
+#include "MFIOdevice.h"
 
-class MFSegments
+
+class MFSegments: MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeLedSegment; }
