@@ -3,20 +3,28 @@
 // Copyright (C) 2013-2014
 
 #include "MFServo.h"
-#include "allocateMem.h"
 #include "mobiflight.h"
 
-void MFServo::moveTo(int absolute)
+MFServo::MFServo() : _servo() {}
+
+MFServo::MFServo(uint8_t pin, bool enable) : _servo()
+{				
+	setup(pin, enable);
+}
+
+void MFServo::setup(uint8_t pin, bool enable)
 {
-	int newValue = map(absolute, _mapRange[0], _mapRange[1], _mapRange[2], _mapRange[3]);
-    if (_targetPos != newValue)
-    {
-			_targetPos = newValue;
-			if (!_initialized) {
-			  _servo->attach(_pin);
-				_initialized = true;
-			}
-    }
+	_initialized = false;
+	_targetPos = 0;
+	_currentPos = 0;
+	setExternalRange(0,180);
+	setInternalRange(0,180);
+	_pin = pin;	
+}
+
+void MFServo::onReset(void)
+{
+    //TODO: ?
 }
 
 void MFServo::update() {
@@ -30,40 +38,32 @@ void MFServo::update() {
     if (_currentPos > _targetPos) _currentPos--;
     else _currentPos++;
         
-    _servo->write(_currentPos);
+    _servo.write(_currentPos);
+}
+
+void MFServo::powerSave(uint8_t state)
+{
+    //TODO: ?
 }
 
 void MFServo::detach() { 
   if (_initialized) {
-    _servo->detach(); 
+    _servo.detach(); 
     _initialized = false; 
   }
 }
 
-void MFServo::attach(uint8_t pin, bool enable)
+void MFServo::setval(int absolute)
 {
-	if (!FitInMemory(sizeof(Servo)))
-	{
-		// Error Message to Connector
-		cmdMessenger.sendCmdStart(kDebug);
-		cmdMessenger.sendCmdArg(F("Servo does not fit in Memory"));
-		cmdMessenger.sendCmdEnd();
-		return;
-	}
-	_servo = new (allocateMemory(sizeof(Servo))) Servo;
-	_initialized = false;
-	_targetPos = 0;
-	_currentPos = 0;
-	setExternalRange(0,180);
-	setInternalRange(0,180);
-	_pin = pin;	
-}
-
-MFServo::MFServo() : _servo() {}
-
-MFServo::MFServo(uint8_t pin, bool enable) : _servo()
-{				
-	attach(pin, enable);
+	int newValue = map(absolute, _mapRange[0], _mapRange[1], _mapRange[2], _mapRange[3]);
+    if (_targetPos != newValue)
+    {
+			_targetPos = newValue;
+			if (!_initialized) {
+			    _servo.attach(_pin);
+				_initialized = true;
+			}
+    }
 }
 
 void MFServo::setExternalRange(int min, int max)

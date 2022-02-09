@@ -18,24 +18,33 @@
 class MFStepper
 {
 public:
+    static uint8_t getType(void) { return kTypeStepper; }
+    static uint8_t getSize(void) { return sizeof(MFStepper); }
+    
     MFStepper();
-    void attach(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t pin3 = 3, uint8_t pin4 = 4, uint8_t btnPin1 = 0);
-    void detach();
+    void setup(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t pin3 = 3, uint8_t pin4 = 4, uint8_t btnPin1 = 0);
+    
+    void onReset();
     void update();
-    void reset();
-    void moveTo(long absolute);
+    void powerSave(uint8_t state);
+    void detach();
+
+    void setval(long absolute);
+    
     void setMaxSpeed(float speed);
     void setAcceleration(float acceleration);
     void setZero();
     uint8_t getZeroPin();
 
 private:
-    bool    _initialized;
-    bool    _resetting;
-    AccelStepper *_stepper;
-    uint8_t _zeroPin;
-    uint8_t _zeroPinState;
-    long    _targetPos;
+    AccelStepper _stepper;
+    uint8_t     _zeroPin;
+    long        _targetPos;
+    struct {
+        uint8_t _initialized    :1;
+        uint8_t _resetting      :1;
+        uint8_t _zeroPinState   :1;
+    };
 
     void checkZeroPin(void);
     void setZeroInReset(void);

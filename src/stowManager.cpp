@@ -5,7 +5,7 @@
 // 
 
 #include "stowManager.h"
-
+#include <new>
 
 // Adds item to end of buffer, returns false if full
 uint8_t* StowManager::

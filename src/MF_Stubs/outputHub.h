@@ -45,12 +45,16 @@ void OnSetShiftRegisterPins(void);
 
 // Servos
 #if MF_SERVO_SUPPORT == 1
-void UpdateServos();
+void AddServo(int pin);
+void OnSetServo(void);
 #endif
 
 // Steppers
 #if MF_STEPPER_SUPPORT == 1
-void UpdateSteppers();
+void AddStepper(int pin1, int pin2, int pin3, int pin4, int zeroPin);
+void OnSetStepper(void);
+void OnResetStepper(void);
+void OnSetZeroStepper(void);
 #endif
 
 // LCDs

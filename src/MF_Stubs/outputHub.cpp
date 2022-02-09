@@ -1,7 +1,6 @@
 //
 // outputHub.cpp
 //
-
 #include <new>
 
 #include <Arduino.h>
@@ -16,6 +15,7 @@
 #include "MFStepper.h"
 #include "MFServo.h"
 #include "outputHub.h"
+
 
 // =============================================
 //  General functions
@@ -164,11 +164,33 @@ void OnSetShiftRegisterPins(void)
 
 #if MF_SERVO_SUPPORT == 1
 
-void UpdateServos(void)
+void AddServo(int pin)
 {
-    //TODO
+    MFServo *MFS;
+
+    Stowage.AddItem(&MFS);
+
+    if(MFS) {
+        MFS->setup(pin, true);
+        #ifdef DEBUG
+        cmdMessenger.sendCmd(kStatus, F("Added Servo"));
+    } else {
+        cmdMessenger.sendCmd(kStatus, F("Servo: Memory full"));
+        #endif
+    }
 }
 
+void OnSetServo(void)
+{
+    MFServo *MFS;
+    int nServo = cmdMessenger.readInt16Arg();
+    MFS = (MFServo *)(Stowage.getNth((uint8_t)nServo, kTypeServo));
+    if(MFS) {
+        int  value  = cmdMessenger.readInt16Arg();
+        MFS->setval(value);
+        setLastCommandMillis(millis());
+    }
+}
 #endif
 
 // ---------------------------------------------------
@@ -177,9 +199,66 @@ void UpdateServos(void)
 
 #if MF_STEPPER_SUPPORT == 1
 
-void UpdateSteppers(void)
+void AddStepper(int pin1, int pin2, int pin3, int pin4, int zeroPin)
 {
-    //TODO
+    MFStepper *MFS;
+
+    Stowage.AddItem(&MFS);
+
+    if(MFS) {
+        MFS->setup(pin1, pin2, pin3, pin4, zeroPin);
+
+        MFS->setMaxSpeed(STEPPER_SPEED);        //TODO move to constructor?
+        MFS->setAcceleration(STEPPER_ACCEL);    //TODO move to constructor?
+        if (zeroPin > 0)                        //TODO move to constructor?
+        {
+            MFS->onReset();
+        }
+        #ifdef DEBUG
+        cmdMessenger.sendCmd(kStatus, F("Added Stepper"));
+    } else {
+        cmdMessenger.sendCmd(kStatus, F("Stepper: Memory full"));
+        #endif
+    }
+}
+
+
+void _OnStepperEvent(uint8_t evt) 
+{
+    MFStepper *MFS;
+    int nStepper = cmdMessenger.readInt16Arg();
+    MFS = (MFStepper *)(Stowage.getNth((uint8_t)nStepper, kTypeStepper));
+    if(MFS) {
+        if(evt = 1) {
+            int  value  = cmdMessenger.readInt32Arg();
+            MFS->setval(value);
+        } else
+        if(evt = 2) {
+            MFS->onReset();
+        } else
+        if(evt = 3) {
+            MFS->setZero();
+        } else
+        {
+            evt = 0;
+        }
+        if(evt) setLastCommandMillis(millis());
+    }
+}
+
+void OnSetStepper(void)
+{
+    _OnStepperEvent(1);
+}
+
+void OnResetStepper(void)
+{
+    _OnStepperEvent(2);
+}
+
+void OnSetZeroStepper(void)
+{
+    _OnStepperEvent(3);
 }
 
 #endif

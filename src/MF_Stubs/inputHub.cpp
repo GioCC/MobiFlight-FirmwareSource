@@ -2,8 +2,6 @@
 // InputHub.cpp
 //
 
-#include <new>
-
 #include <Arduino.h>
 #include "commandmessenger.h"
 #include "config.h"
