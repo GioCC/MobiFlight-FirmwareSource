@@ -12,6 +12,12 @@
 #include "commandmessenger.h"
 #include "config.h"
 
+#include "MFIOdevice.h"
+#include "MFButton.h"
+#include "MFAnalog.h"
+#include "MFEncoder.h"
+#include "MFInputShifter.h"
+
 extern StowManager  Stowage;
 extern CmdMessenger cmdMessenger;
 
@@ -46,7 +52,7 @@ void OnInputShiftRegChange(uint8_t eventId, uint8_t pin, const char *name);
 void AddButton(uint8_t pin, char const *name = "Button");
 void AddEncoder(uint8_t pin1, uint8_t pin2, uint8_t encoder_type, char const *name = "Encoder");
 #if MF_ANALOG_SUPPORT == 1
-void AddAnalog(uint8_t pin, uint8_t sensitivity = 3, char const *name = "AnalogInput");
+void AddAnalog(uint8_t pin, uint8_t sensitivity = 3, char const *name = "AnalogIn");
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 void AddInputShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t nModules, char const *name = "InShiftReg");

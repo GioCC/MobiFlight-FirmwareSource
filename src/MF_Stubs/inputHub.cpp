@@ -7,12 +7,13 @@
 #include "config.h"
 #include "stowManager.h"
 
+#include "inputHub.h"
+// Included by inputHub.h:
 #include "MFIOdevice.h"
 #include "MFButton.h"
 #include "MFAnalog.h"
 #include "MFEncoder.h"
 #include "MFInputShifter.h"
-#include "inputHub.h"
 
 // =============================================
 //  General functions

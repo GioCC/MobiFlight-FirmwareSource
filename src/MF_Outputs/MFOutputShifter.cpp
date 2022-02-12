@@ -21,7 +21,7 @@ void MFOutputShifter::setup(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin,
     pinMode(_clockPin, OUTPUT);
     pinMode(_dataPin, OUTPUT);
 
-    clear();
+    onReset();
 }
 
 void MFOutputShifter::onReset(void)

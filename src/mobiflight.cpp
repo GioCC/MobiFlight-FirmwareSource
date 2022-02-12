@@ -5,9 +5,9 @@
 
 //#define DEBUG 1
 
+#define TESTING
 
 #include <Arduino.h>
-#include "mobiflight.h"
 //#include "allocateMem.h"
 #include "MFEEPROM.h"
 #include "commandmessenger.h"
@@ -132,6 +132,103 @@ void OnResetBoard()
     ResetBoard();
 }
 
+// ************************************************************
+// TEST FUNCTIONS
+// ************************************************************
+
+void printItemSize(void)
+{
+#ifdef TESTING
+    
+#define TST_WRITE(s, d) \
+    { sprintf(buf, fmt, s, d); \
+    cmdMessenger.sendCmd(kStatus, buf); \
+    delay(100); }
+        
+    char buf[40];
+    const char *fmt = "Size of each <%s>: %d bytes";
+    TST_WRITE("Output", MFOutput::getSize());
+    TST_WRITE("Button", MFButton::getSize());
+    TST_WRITE("Encoder", MFEncoder::getSize());
+    TST_WRITE("AnalogIn", MFAnalog::getSize());
+    TST_WRITE("InShiftReg", MFInputShifter::getSize());
+    TST_WRITE("LEDsegment", MFSegments::getSize());
+    TST_WRITE("Stepper", MFStepper::getSize());
+    TST_WRITE("Servo", MFServo::getSize());
+    TST_WRITE("OutShiftReg", MFOutputShifter::getSize());
+    TST_WRITE("LCDdisplay", MFLCDDisplay::getSize());
+#endif
+}
+
+void printReport(uint8_t nItems, const char *itemName)
+{
+#ifdef TESTING
+    char buf[40];
+    sprintf(buf, "Added %d %s", nItems, itemName);
+    cmdMessenger.sendCmd(kStatus, buf);
+    sprintf(buf, " used %d bytes, remaining %d", 
+            Stowage.getUsedSize(), 
+            Stowage.getFreeSize()
+            );
+    cmdMessenger.sendCmd(kStatus, buf);
+    delay(1000);
+#endif
+}
+
+void setupData(void)
+{
+uint8_t i;
+#ifdef TESTING
+delay(1000);
+
+printItemSize();
+
+Stowage.wipe();
+printReport(0, "-none-");
+
+// #define MAX_OUTPUTS 40
+for(i=0; i<MAX_OUTPUTS; i++) AddOutput(1);
+printReport(MAX_OUTPUTS, "Outputs");
+
+// #define MAX_BUTTONS 68
+for(i=0; i<MAX_BUTTONS; i++) AddButton(1);
+printReport(MAX_BUTTONS, "Buttons");
+
+// #define MAX_ENCODERS 20
+for(i=0; i<MAX_ENCODERS; i++) AddEncoder(1, 2, 1);
+printReport(MAX_ENCODERS, "Encoders");
+
+// #define MAX_ANALOG_INPUTS 16
+for(i=0; i<MAX_ANALOG_INPUTS; i++) AddAnalog(1);
+printReport(MAX_ANALOG_INPUTS, "AnalogIns");
+
+// #define MAX_INPUT_SHIFTERS 4
+for(i=0; i<MAX_INPUT_SHIFTERS; i++) AddInputShiftReg(1,2,3,2);
+printReport(MAX_INPUT_SHIFTERS, "InputShiftRegs");
+
+// #define MAX_LEDSEGMENTS 4
+for(i=0; i<MAX_LEDSEGMENTS; i++) AddLedSegment(1,2,3,2,15);
+printReport(MAX_LEDSEGMENTS, "LEDSegments");
+
+// #define MAX_STEPPERS 10
+for(i=0; i<MAX_STEPPERS; i++) AddStepper(1,2,3,4,5);
+printReport(MAX_STEPPERS, "Steppers");
+
+// #define MAX_MFSERVOS 10
+for(i=0; i<MAX_MFSERVOS; i++) AddServo(1);
+printReport(MAX_MFSERVOS, "Servos");
+
+// #define MAX_OUTPUT_SHIFTERS 4
+for(i=0; i<MAX_OUTPUT_SHIFTERS; i++) AddOutShiftReg(1,2,3,2);
+printReport(MAX_OUTPUT_SHIFTERS, "OutShiftRegs");
+
+// #define MAX_MFLCD_I2C 2
+for(i=0; i<MAX_MFLCD_I2C; i++) AddLcdDisplay(1, 40, 2);
+printReport(MAX_MFLCD_I2C, "LCD displays");
+
+#endif
+}
+
 
 // ************************************************************
 // Setup
@@ -162,6 +259,13 @@ void setup()
 #if MF_SERVO_SUPPORT == 1
   lastServoUpdate = millis() + 8;
 
+#endif
+
+#ifdef TESTING
+    while(1) {
+        setupData();
+        delay(60000);
+    }
 #endif
 }
 

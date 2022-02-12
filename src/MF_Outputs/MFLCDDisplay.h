@@ -11,23 +11,29 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
-#include "config.h"
+#include "MFIOdevice.h"
+//#include "config.h"
 
-/////////////////////////////////////////////////////////////////////
-/// \class MFLCDDisplay MFLCDDisplay.h <MFLCDDisplay.h>
-class MFLCDDisplay
+class MFLCDDisplay: MFIOdevice
 {
 public:
-    MFLCDDisplay();
-    void display(const char *string);
-    void attach(byte address, byte cols, byte lines);
-    void detach();
+    static uint8_t getType(void) { return kTypeLcdDisplayI2C; }
+    static uint8_t getSize(void) { return sizeof(MFLCDDisplay); }
+
+    MFLCDDisplay(void);
+    void setup(byte address, byte cols, byte lines);
+
+    void onReset(void);
+    void powerSave(bool state);
+    void detach(void);
+
+    void setval(const char *string);
+    
     void test();
-    void powerSavingMode(bool state);
 
 private:
-    LiquidCrystal_I2C *_lcdDisplay;
-    bool _initialized;
+    
+    LiquidCrystal_I2C _lcdDisplay;
     byte _address;
     byte _cols;
     byte _lines;

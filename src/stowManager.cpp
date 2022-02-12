@@ -7,6 +7,21 @@
 #include "stowManager.h"
 #include <new>
 
+
+// Returns the free size in bytes
+uint16_t StowManager::
+getFreeSize(void)
+{
+    return (uint16_t)(bufTop-tail);
+}
+
+// Returns the occupied size in bytes
+uint16_t StowManager::
+getUsedSize(void)
+{
+    return (uint16_t)(tail-buf);
+}
+
 // Adds item to end of buffer, returns false if full
 uint8_t* StowManager::
 add(uint8_t reqdSize, uint8_t typeTag)

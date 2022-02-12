@@ -38,7 +38,7 @@ void OnSetModuleBrightness(void);
 
 // Output Shift Registers
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
-void AddShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name);
+void AddOutShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name = "OutShiftReg");
 void OnInitShiftRegister(void);
 void OnSetShiftRegisterPins(void);
 #endif

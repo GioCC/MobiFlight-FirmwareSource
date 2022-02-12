@@ -8,6 +8,8 @@
 #ifndef MFEEPROM_H
 #define MFEEPROM_H
 
+#include <stdint.h>
+
 class MFEEPROM
 {
 	  

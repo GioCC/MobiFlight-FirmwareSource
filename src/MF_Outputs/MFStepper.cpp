@@ -4,7 +4,6 @@
 
 #include "MFBoards.h"
 #include "MFStepper.h"
-#include "mobiflight.h"
 #include <new>
 
 MFStepper::MFStepper() : _stepper()

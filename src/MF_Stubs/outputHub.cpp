@@ -8,13 +8,14 @@
 #include "config.h"
 #include "stowManager.h"
 
-#include "MFIOdevice.h"
-#include "MFOutput.h"
-#include "MFOutputShifter.h"
-#include "MFSegments.h"
-#include "MFStepper.h"
-#include "MFServo.h"
 #include "outputHub.h"
+// Included by outputHub.h:
+// #include "MFIOdevice.h"
+// #include "MFOutput.h"
+// #include "MFOutputShifter.h"
+// #include "MFSegments.h"
+// #include "MFStepper.h"
+// #include "MFServo.h"
 
 
 // =============================================
@@ -116,7 +117,7 @@ void OnSetModuleBrightness(void)
 
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
 
-void AddShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name)
+void AddOutShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name)
 {
     MFOutputShifter *MFS;
 
@@ -270,25 +271,35 @@ void OnSetZeroStepper(void)
 #if MF_LCD_SUPPORT == 1
 void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *name)
 {
-    // if (lcd_12cRegistered == MAX_MFLCD_I2C) return;
-    // registerPin(SDA, kTypeLcdDisplayI2C);
-    // registerPin(SCL, kTypeLcdDisplayI2C);
+    MFLCDDisplay *MFL;
+    Stowage.AddItem(&MFL);
 
     // lcd_I2C[lcd_12cRegistered].attach(address, cols, lines);
     // lcd_12cRegistered++;
-    #ifdef DEBUG
-    cmdMessenger.sendCmd(kStatus, F("Added lcdDisplay"));
-    #endif
-
+    if(MFL) {
+        MFL->setup(address, cols, lines);
+        #ifdef DEBUG
+        cmdMessenger.sendCmd(kStatus, F("Added LCD display"));
+    } else {
+        cmdMessenger.sendCmd(kStatus, F("LCD display: Memory full"));
+        #endif
+    }
 }
+
 
 void OnSetLcdDisplayI2C(void) 
 {
-    int   address = cmdMessenger.readInt16Arg();
-    char *output  = cmdMessenger.readStringArg();
-    // lcd_I2C[address].display(output);
-    (void)address; (void)output;
-    setLastCommandMillis(millis());
+    MFLCDDisplay *MFL;
+    //TODO check: address must be 0,1,2...n!
+    int address = cmdMessenger.readInt16Arg();
+    //MFS = static_cast<MFSegments *>(Stowage.getNth(module, kTypeLedSegment));
+    MFL = (MFLCDDisplay *)(Stowage.getNth((uint8_t)address, kTypeLcdDisplayI2C));
+    if(MFL) {
+        char *output    = cmdMessenger.readStringArg();
+        MFL->setval(output);
+        setLastCommandMillis(millis());
+    }
+
 }
 
 #endif

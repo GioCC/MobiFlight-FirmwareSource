@@ -3,11 +3,21 @@
 // Copyright (C) 2013-2021
 
 #include "MFSegments.h"
-#include "mobiflight.h"
 
 MFSegments::MFSegments()
 {
     _moduleCount = 0;
+}
+
+void MFSegments::setup(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness)
+{
+    _ledControl.begin(dataPin, clkPin, csPin, moduleCount);
+    _moduleCount = moduleCount;
+    for (int i = 0; i != _moduleCount; ++i) {
+        setBrightness(i, brightness);
+        //_ledControl.shutdown(i, false);
+        _ledControl.clearDisplay(i);
+    }
 }
 
 void MFSegments::setval(byte module, char *string, byte points, byte mask, bool convertPoints)
@@ -34,17 +44,6 @@ void MFSegments::setBrightness(byte module, byte value)
         } else {
             _ledControl.shutdown(module, true);
         }
-    }
-}
-
-void MFSegments::setup(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness)
-{
-    _ledControl.begin(dataPin, clkPin, csPin, moduleCount);
-    _moduleCount = moduleCount;
-    for (int i = 0; i != _moduleCount; ++i) {
-        setBrightness(i, brightness);
-        //_ledControl.shutdown(i, false);
-        _ledControl.clearDisplay(i);
     }
 }
 

@@ -32,7 +32,10 @@ class StowManager
         StowManager(uint8_t *buffer, uint16_t maxSize)
         : buf(buffer), bufTop(buffer+maxSize), tail(buffer), curr(buffer), i_count(0)
         {}
-        
+
+        uint16_t getFreeSize(void);     // Returns the free size in bytes
+        uint16_t getUsedSize(void);     // Returns the occupied size in bytes
+
         uint8_t* add(uint8_t reqdSize, uint8_t typeTag);  // Adds item to end of buffer, returns null if full
         
         void reset(void);           // Resets current item to first one
@@ -45,6 +48,7 @@ class StowManager
         
         // uint8_t* getNth(t_index nth);    // returns the n-th item (base 0) from the start (does not affect current item pointer)
         uint8_t* getNth(t_index nth, uint8_t type = 0xFF);    // returns the n-th item (base 0) with typecode <type> from the start (does not affect current item pointer)
+
 
         // THIS METHOD IS STRICTLY APPLICATION-SPECIFIC
         // It requires <T> objects to have two methods, T::getSize(), T::getType(), to be passed 
