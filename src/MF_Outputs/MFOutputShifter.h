@@ -29,7 +29,7 @@ public:
     MFOutputShifter(void);
     void attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount);
     
-    void onReset(void);
+    void onReset(uint8_t action);
     void update(void);
     void powerSave(uint8_t state);
     void detach(void);
@@ -45,6 +45,5 @@ private:
     uint8_t _dataPin;	    // Data/SI pin
     uint8_t _moduleCount;   // Number of 8 bit modules in series. For a shift register with 16 bit one needs to select 2 modules a 8......
     uint8_t _outputBuffer[MAX_CHAINED_OUTPUT_SHIFTERS];
-    bool _initialized = false;
 };
 #endif

@@ -44,10 +44,18 @@ void MFButton::trigger(uint8_t state)
     }
 }
 
-void MFButton::onReset(void)
+void MFButton::onReset(uint8_t action)
 {
+    // Handle retrigger logic according to:
+    // https://github.com/MobiFlight/MobiFlight-Connector/issues/497
+    // and  https://github.com/MobiFlight/MobiFlight-Connector/pull/502.
+    
     if(_handler) {
-        (*_handler)(btnOnRelease, _pin, _name);
-        (*_handler)(btnOnPress,   _pin, _name);
+        if (action == ONRESET_PRESS && _state == LOW) {
+            (*_handler)(btnOnPress,   _pin, _name);
+        } else 
+        if (action == ONRESET_RELEASE && _state != LOW) {
+            (*_handler)(btnOnRelease, _pin, _name);
+        }
     }
 }

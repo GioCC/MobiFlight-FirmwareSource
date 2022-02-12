@@ -17,9 +17,11 @@ void MFOutput::attach(uint8_t pin)
     setval(false);
 }
 
-void MFOutput::onReset(void)
+void MFOutput::onReset(uint8_t action)
 {
-    setval(0);
+    if(action == ONRESET_DEFAULT) {
+        setval(0);
+    }
 }
 
 void MFOutput::powerSave(uint8_t state)

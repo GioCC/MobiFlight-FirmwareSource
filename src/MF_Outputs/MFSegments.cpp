@@ -47,8 +47,9 @@ void MFSegments::setBrightness(byte module, byte value)
     }
 }
 
-void MFSegments::onReset(void)
+void MFSegments::onReset(uint8_t action)
 {
+    if (action != ONRESET_DEFAULT) return;
     if (_moduleCount == 0) return;
     for (int i = 0; i != _moduleCount; ++i) {
         setBrightness(i, 15);

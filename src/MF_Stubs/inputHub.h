@@ -17,6 +17,8 @@
 #include "MFAnalog.h"
 #include "MFEncoder.h"
 #include "MFInputShifter.h"
+#include "MFMuxDriver.h"
+#include "MFDigInMux.h"
 
 extern StowManager  Stowage;
 extern CmdMessenger cmdMessenger;
@@ -24,10 +26,6 @@ extern CmdMessenger cmdMessenger;
 // General Management functions
 
 // Inputs + outputs:    
-//TODO: MOVE THESE FUNCTIONS TO OTHER FILE
-void UpdateAll(uint8_t type);
-void UpdateAll(void);
-void RetriggerAll(void);
 void SetPowerSave(uint8_t mode);
 
 

@@ -21,7 +21,7 @@ public:
     MFSegments(void);
     void attach(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness);
     
-    void onReset(void);
+    void onReset(uint8_t action);
     void powerSave(bool state);
     void detach(void);
     

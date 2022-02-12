@@ -12,6 +12,9 @@
 #include "MFEEPROM.h"
 #include "commandmessenger.h"
 #include "MFBoards.h"
+#ifdef MF_MUX_SUPPORT
+#include "MFMuxDriver.h"
+#endif
 #include "config.h"
 #include "inputHub.h"
 #include "outputHub.h"
@@ -55,7 +58,23 @@ uint32_t lastInputShifterUpdate = 0;
 //  General I/O handling functions
 // ************************************************************
 
-void UpdateAll(void)
+void ResetDevices(void)
+{
+    MFIOdevice *in;
+    // Trigger all release events first for inputs, does nothing for outputs
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
+        in->onReset(MFIOdevice::ONRESET_RELEASE);
+    }
+    // ...then trigger all the press events for inputs, and clear outputs
+    Stowage.reset();
+    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
+        in->onReset(MFIOdevice::ONRESET_PRESS);
+    }
+    Stowage.reset();
+}
+
+void UpdateDevices(void)
 {
     MFIOdevice *in;
     Stowage.reset();
@@ -64,21 +83,12 @@ void UpdateAll(void)
     }
 }
 
-void UpdateAll(uint8_t type)
+void UpdateDevices(uint8_t type)
 {
     MFIOdevice *in;
     Stowage.reset();
     while((in = (MFIOdevice *)(Stowage.getNext(type))) != NULL) {
         in->update();
-    }
-}
-
-void RetriggerAll(void)
-{
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->onReset();
     }
 }
 
@@ -120,16 +130,6 @@ void updatePowerSaving()
   {
     SetPowerSavingMode(false);  // disable power saving
   }
-}
-
-// ************************************************************
-// Reset Board
-// ************************************************************
-
-void OnResetBoard()
-{
-    resetConfig();        // was part of loadConfig(), but not needed on initial start up
-    ResetBoard();
 }
 
 // ************************************************************
@@ -237,8 +237,10 @@ void setup()
 {
   Serial.begin(115200);
   attachCommandCallbacks();
+  SetInputHandlers();
+
   cmdMessenger.printLfCr();
-  ResetBoard();
+  resetBoard();
 
   // Time Gap between Inputs, do not read at the same loop
 #if MF_SERVO_SUPPORT == 1
@@ -261,6 +263,8 @@ void setup()
 
 #endif
 
+ResetDevices();
+
 #ifdef TESTING
     while(1) {
         setupData();
@@ -274,7 +278,7 @@ void setup()
     do{\
         if (millis() - (*tim) >= (int)) { \
             *tim = millis(); \
-            UpdateAll(typ);\
+            UpdateDevices(typ);\
         }   \
     } while(0);
 
@@ -309,7 +313,7 @@ void loop()
         }
         #endif
         #if MF_STEPPER_SUPPORT == 1
-        UpdateAll(kTypeStepper);
+        UpdateDevices(kTypeStepper);
         #endif
         // lcds, outputs, segments do not need update
     }

@@ -24,10 +24,10 @@ public:
     MFStepper();
     void attach(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t pin3 = 3, uint8_t pin4 = 4, uint8_t btnPin1 = 0);
     
-    void onReset();
-    void update();
+    void onReset(uint8_t action);
+    void update(void);
     void powerSave(uint8_t state);
-    void detach();
+    void detach(void);
 
     void setval(long absolute);
     

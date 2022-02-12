@@ -1,5 +1,5 @@
 #ifndef _mobiflight_h
 #define _mobiflight_h
 
-void OnResetBoard();
+void ResetDevices(void);
 #endif

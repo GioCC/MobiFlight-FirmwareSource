@@ -30,8 +30,10 @@ void MFStepper::attach(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4, u
     _resetting = false;
 }
 
-void MFStepper::onReset()
+void MFStepper::onReset(uint8_t action)
 {
+  if(action != ONRESET_DEFAULT) return;
+
   // we are not a auto reset stepper if this pin is 0
   if (_zeroPin == 0)
     return;

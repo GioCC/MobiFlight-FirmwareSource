@@ -9,11 +9,11 @@
 
 #include "inputHub.h"
 // Included by inputHub.h:
-#include "MFIOdevice.h"
-#include "MFButton.h"
-#include "MFAnalog.h"
-#include "MFEncoder.h"
-#include "MFInputShifter.h"
+// #include "MFIOdevice.h"
+// #include "MFButton.h"
+// #include "MFAnalog.h"
+// #include "MFEncoder.h"
+// #include "MFInputShifter.h"
 
 // =============================================
 //  General functions
@@ -23,8 +23,17 @@ void SetInputHandlers(void)
 {
     MFButton::attachHandler(OnButtonChange);
     MFEncoder::attachHandler(OnEncoderChange);
+    #ifdef MF_ANALOG_SUPPORT
     MFAnalog::attachHandler(OnAnalogChange);
+    #endif
+    #ifdef MF_INPUT_SHIFTER_SUPPORT
     MFInputShifter::attachHandler(OnInputShiftRegChange);
+    #endif
+    //TODO maybe move to some semantically more appropriate function
+#if MF_DIGIN_MUX_SUPPORT == 1
+    MFDigInMux::setMux(&MUX);
+#endif
+
 }
 
 // ---------------------------------------------------

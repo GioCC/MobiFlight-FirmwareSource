@@ -24,10 +24,10 @@ public:
     MFServo(uint8_t pin, bool enable = true);		
     void    attach(uint8_t pin = 1, bool enable = true);
     
-    void    onReset(void);
-    void    update();
+    void    onReset(uint8_t action);
+    void    update(void);
     void    powerSave(uint8_t state);
-    void    detach();
+    void    detach(void);
 
     void    setval(int absolute);
 

@@ -6,12 +6,11 @@
 
 MFOutputShifter::MFOutputShifter()
 {
-    _initialized = false;
+    _moduleCount = 0;
 }
 
 void MFOutputShifter::attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount)
 {
-    _initialized = true;
     _latchPin = latchPin;
     _clockPin = clockPin;
     _dataPin = dataPin;
@@ -21,13 +20,13 @@ void MFOutputShifter::attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin
     pinMode(_clockPin, OUTPUT);
     pinMode(_dataPin, OUTPUT);
 
-    onReset();
+    //onReset();
 }
 
-void MFOutputShifter::onReset(void)
+void MFOutputShifter::onReset(uint8_t action)
 {
-    if (!_initialized)
-        return;
+    if (action != ONRESET_DEFAULT) return;
+    if (0 == _moduleCount) return;
     for (uint8_t i = _moduleCount; i > 0; i--) {
         _outputBuffer[i] = 0;
     }
@@ -45,19 +44,18 @@ void MFOutputShifter::update()
 
 void MFOutputShifter::powerSave(uint8_t state)
 {
-    onReset();
+    //onReset();
 }
 
 void MFOutputShifter::detach()
 {
-    onReset();
-    _initialized = false;
+    //onReset();
+    _moduleCount = 0;
 }
 
 void MFOutputShifter::setPin(uint8_t pin, uint8_t value, uint8_t refresh)
 {
-    if (!_initialized)
-        return;
+    if (0 == _moduleCount) return;
 
     uint8_t idx = (pin & 0xF8) >> 3;
     uint8_t msk = (0x01 << (pin & 0x07));
@@ -73,8 +71,7 @@ void MFOutputShifter::setPin(uint8_t pin, uint8_t value, uint8_t refresh)
 
 void MFOutputShifter::setPins(char *pins, uint8_t value)
 {
-    if (!_initialized)
-        return;
+    if (0 == _moduleCount) return;
 
     char *pinTokens = strtok(pins, "|");
     while (pinTokens != 0) {

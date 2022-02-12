@@ -45,7 +45,7 @@ public:
     void attach(uint8_t pin, const char * name = "Button");
  
     void update();
-    void onReset(void);
+    void onReset(uint8_t action);
  
     void trigger(uint8_t state);    // could be private
     

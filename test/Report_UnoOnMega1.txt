@@ -1,4 +1,4 @@
-Uno sizes (compiled on Mega)
+Uno object buffer sizes (compiled on Mega)
 
 5,Size of each <Output>: 4 bytes;
 5,Size of each <Button>: 6 bytes;

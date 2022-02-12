@@ -66,7 +66,6 @@ static void loadConfig(void);
 static void readConfig(void);
 static void _storeConfig(void);
 static void _activateConfig(void);
-static void clearDeviceConfig(void);
 static void _restoreName();
 static void loadConfig();
 static void generateSerial(bool);
@@ -76,15 +75,30 @@ void eepromInit()
     MFeeprom.init();
 }
 
-void ResetBoard()
+void resetConfig(void)
+{
+    // Reset device storage (this will do all devices)
+    MFIOdevice *in;
+    Stowage.reset();
+    while ((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
+        in->detach();
+    }
+    Stowage.wipe();
+    config.length    = 0;
+    config.activated = false;
+    config.nameBuffer[0] = '\0';
+}
+
+void resetBoard()
 {
     MFeeprom.init();
-    config.nameBuffer[0] = '\0';
+    resetConfig();
     generateSerial(false);
     lastCommand = millis();
     loadConfig();
     _restoreName();
 }
+
 
 // ************************************************************
 // configBuffer handling
@@ -146,73 +160,6 @@ void OnSetConfig()
 #ifdef DEBUG
     cmdMessenger.sendCmd(kStatus, F("Setting config end"));
 #endif
-}
-
-void clearDeviceConfig(void)
-{
-    MFIOdevice *in;
-    Stowage.reset();
-    while ((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->detach();
-    }
-    Stowage.wipe();
-}
-
-void resetConfig(void)
-{
-    clearDeviceConfig(); // This will do all devices
-
-    // #if MF_ANALOG_SUPPORT == 1
-    //   Analog::Clear();
-    // #endif
-    // #if MF_INPUT_SHIFTER_SUPPORT == 1
-    //   InputShifter::Clear();
-    // #endif
-
-    //   //ClearButtons();
-    //   //ClearEncoders();
-    //   ClearOutputs();       // As in "Digital output pins"
-
-    // #if MF_SEGMENT_SUPPORT == 1
-    //   ClearLedSegments();
-    // #endif
-
-    // #if MF_SERVO_SUPPORT == 1
-    //   ClearServos();
-    // #endif
-
-    // #if MF_STEPPER_SUPPORT == 1
-    //   ClearSteppers();
-    // #endif
-
-    // #if MF_LCD_SUPPORT == 1
-    //   ClearLcdDisplays();
-    // #endif
-
-    // #if MF_ANALOG_SUPPORT == 1
-    //   ClearAnalog();
-    // #endif
-
-    // #if MF_OUTPUT_SHIFTER_SUPPORT == 1
-    //   ClearOutputShifters();
-    // #endif
-
-    // #if MF_INPUT_SHIFTER_SUPPORT == 1
-    //   ClearInputShifters();
-    // #endif
-
-    // #if MF_MUX_SUPPORT == 1
-    //   ClearMultiplexer();
-    // #endif
-
-    // #if MF_DIGIN_MUX_SUPPORT == 1
-    //   ClearDigInMux();
-    // #endif
-
-    // ClearMemory();
-
-    config.length    = 0;
-    config.activated = false;
 }
 
 void OnResetConfig()

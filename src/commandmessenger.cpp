@@ -6,30 +6,14 @@
 #include "commandmessenger.h"
 #include "mobiflight.h"
 
-// #include "output.h"
-// #if MF_SEGMENT_SUPPORT == 1
-// #include "segment.h"
-// #endif
-// #if MF_STEPPER_SUPPORT == 1
-// #include "stepper.h"
-// #endif
-// #if MF_SERVO_SUPPORT == 1
-// #include "servos.h"
-// #endif
-// #if MF_LCD_SUPPORT == 1
-// #include "lcddisplay.h"
-// #endif
-// #if MF_OUTPUT_SHIFTER_SUPPORT == 1
-// #include "outputshifter.h"
-// #endif
-
 
 CmdMessenger cmdMessenger = CmdMessenger(Serial);
 unsigned long lastCommand;
 
 // Prototypes for forward declarations
-void OnTrigger();
-void OnUnknownCommand();
+static void OnTrigger();
+static void OnUnknownCommand();
+static void OnResetBoard();
 
 
 // Callbacks define on which received commands we take action
@@ -104,5 +88,10 @@ void OnTrigger()
     // #if MF_INPUT_SHIFTER_SUPPORT == 1
     //   InputShifter::OnTrigger();
     // #endif
-    RetriggerAll();
+    ResetDevices();
+}
+
+void OnResetBoard()
+{
+    resetBoard();
 }
