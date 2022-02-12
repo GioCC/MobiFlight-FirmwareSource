@@ -9,7 +9,7 @@ MFOutputShifter::MFOutputShifter()
     _initialized = false;
 }
 
-void MFOutputShifter::setup(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount)
+void MFOutputShifter::attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount)
 {
     _initialized = true;
     _latchPin = latchPin;

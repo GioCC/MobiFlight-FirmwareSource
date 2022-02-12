@@ -7,7 +7,7 @@
 MFLCDDisplay::MFLCDDisplay()
     : _address(0xFF) {}
 
-void MFLCDDisplay::setup(byte address, byte cols, byte lines)
+void MFLCDDisplay::attach(byte address, byte cols, byte lines)
 {
     if (address == 0xFF) return;
     _address = address;

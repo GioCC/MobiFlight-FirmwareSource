@@ -48,7 +48,7 @@ void AddButton(uint8_t pin, char const *name)
     // if(MFB) new ((void *)MFB) MFButton;
 
     if(MFB) {
-        MFB->setup(pin, name);
+        MFB->attach(pin, name);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added Button"));
     } else {
@@ -76,7 +76,7 @@ void AddEncoder(uint8_t pin1, uint8_t pin2, uint8_t encoder_type, char const *na
     Stowage.AddItem(&MFE);
 
     if(MFE) {
-        MFE->setup(pin1, pin2, encoder_type, name);
+        MFE->attach(pin1, pin2, encoder_type, name);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added Encoder"));
     } else {
@@ -106,7 +106,7 @@ void AddAnalog(uint8_t pin, uint8_t sensitivity, char const *name)
     Stowage.AddItem(&MFA);
     
     if(MFA) {
-        MFA->setup(pin, sensitivity, name);
+        MFA->attach(pin, sensitivity, name);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added Analog"));
     } else {
@@ -148,7 +148,7 @@ void AddInputShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8
     Stowage.AddItem(&MFI);
 
     if(MFI) {
-        MFI->setup(latchPin, clockPin, dataPin, nModules, name);
+        MFI->attach(latchPin, clockPin, dataPin, nModules, name);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added InShiftReg"));
     } else {

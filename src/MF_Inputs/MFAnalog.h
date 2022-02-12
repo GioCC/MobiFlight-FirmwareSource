@@ -49,7 +49,7 @@ public:
     MFAnalog(void)  {};
     
     //MFAnalog(uint8_t pin = 1, const char * name = "Analog Input", uint8_t sensitivity = 2);
-    void setup(uint8_t pin, uint8_t sensitivity = 2, const char *name = "Analog Input" );
+    void attach(uint8_t pin, uint8_t sensitivity = 2, const char *name = "Analog Input" );
 
     void update();
     void updateAverage();   

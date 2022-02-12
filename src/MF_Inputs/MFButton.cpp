@@ -8,15 +8,15 @@ buttonEventHandler   MFButton::_handler = NULL;
 
 MFButton::MFButton(void)
 { 
-    setup(0xFF, "Button");
+    attach(0xFF, "Button");
 }
 
 // MFButton::MFButton(uint8_t pin, const char * name)
 // { 
-//     setup(pin, name);
+//     attach(pin, name);
 // }
 
-void MFButton::setup(uint8_t pin, const char * name)
+void MFButton::attach(uint8_t pin, const char * name)
 {   
   _pin  = pin;
   _name = name;

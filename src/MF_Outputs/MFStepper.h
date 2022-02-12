@@ -22,7 +22,7 @@ public:
     static uint8_t getSize(void) { return sizeof(MFStepper); }
     
     MFStepper();
-    void setup(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t pin3 = 3, uint8_t pin4 = 4, uint8_t btnPin1 = 0);
+    void attach(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t pin3 = 3, uint8_t pin4 = 4, uint8_t btnPin1 = 0);
     
     void onReset();
     void update();

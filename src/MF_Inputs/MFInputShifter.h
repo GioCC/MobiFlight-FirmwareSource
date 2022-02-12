@@ -49,7 +49,7 @@ public:
 
   MFInputShifter(void);
   //MFInputShifter(const char *name = "InputShifter");
-  void setup(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, 
+  void attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, 
              uint8_t moduleCount = 1, const char *name = "InShiftReg");
   void onReset();
   void detach();

@@ -19,7 +19,7 @@ public:
     static uint8_t getSize(void) { return sizeof(MFSegments); }
 
     MFSegments(void);
-    void setup(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness);
+    void attach(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness);
     
     void onReset(void);
     void powerSave(bool state);

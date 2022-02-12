@@ -30,7 +30,7 @@ class MFIOdevice
         // virtual uint8_t getSize(void)   = 0;     // [IN][OUT]
         // virtual uint8_t getType(void)   = 0;     // [IN][OUT]
 
-        // virtual void setup(...)         = 0;     // [IN][OUT] Assign connections upon creation
+        // virtual void attach(...)         = 0;     // [IN][OUT] Assign connections upon creation
         // virtual void attachHandler(...) = 0;     // [IN]      When an input event occurs, manage it
         // virtual void setval(...)        = 0;     //     [OUT] Send new values to the device
 
@@ -44,7 +44,7 @@ class MFIOdevice
     // static uint8_t getSize(void) { return sizeof(MF...); }
 
     // MF...(void);
-    // void setup(...);
+    // void attach(...);
 
     // void onReset(void);
     // void update(void);

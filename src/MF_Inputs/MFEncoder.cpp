@@ -44,7 +44,7 @@ encoderEventHandler  MFEncoder::_handler = NULL;
 
 MFEncoder::MFEncoder(): _initialized(false) {}
 
-void MFEncoder::setup(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name)
+void MFEncoder::attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name)
 {
     _pos   = 0;  
     _name  = name;

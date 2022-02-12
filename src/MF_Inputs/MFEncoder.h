@@ -87,7 +87,7 @@ public:
     static void attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
 
     MFEncoder();
-	void setup(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
+	void attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
 
     void update();
 

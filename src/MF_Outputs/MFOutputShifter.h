@@ -27,7 +27,7 @@ public:
     static uint8_t getSize(void) { return sizeof(MFOutputShifter); }
 
     MFOutputShifter(void);
-    void setup(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount);
+    void attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount);
     
     void onReset(void);
     void update(void);

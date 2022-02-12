@@ -15,7 +15,7 @@
 
 analogEventHandler   MFAnalog::_handler = NULL; 
 
-void MFAnalog::setup(uint8_t pin, uint8_t sensitivity, const char * name)
+void MFAnalog::attach(uint8_t pin, uint8_t sensitivity, const char * name)
 {   
     _sensitivity = sensitivity;  
     _pin  = pin;

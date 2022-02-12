@@ -22,7 +22,7 @@ public:
 
     MFServo();		
     MFServo(uint8_t pin, bool enable = true);		
-    void    setup(uint8_t pin = 1, bool enable = true);
+    void    attach(uint8_t pin = 1, bool enable = true);
     
     void    onReset(void);
     void    update();

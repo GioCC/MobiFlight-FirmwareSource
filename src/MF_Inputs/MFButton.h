@@ -42,7 +42,7 @@ public:
     MFButton(void);
     //MFButton(uint8_t pin, const char * name);
     
-    void setup(uint8_t pin, const char * name = "Button");
+    void attach(uint8_t pin, const char * name = "Button");
  
     void update();
     void onReset(void);

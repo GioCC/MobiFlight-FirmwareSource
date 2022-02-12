@@ -9,7 +9,7 @@ MFSegments::MFSegments()
     _moduleCount = 0;
 }
 
-void MFSegments::setup(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness)
+void MFSegments::attach(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness)
 {
     _ledControl.begin(dataPin, clkPin, csPin, moduleCount);
     _moduleCount = moduleCount;

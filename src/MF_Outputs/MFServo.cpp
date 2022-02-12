@@ -8,10 +8,10 @@ MFServo::MFServo() : _servo() {}
 
 MFServo::MFServo(uint8_t pin, bool enable) : _servo()
 {				
-	setup(pin, enable);
+	attach(pin, enable);
 }
 
-void MFServo::setup(uint8_t pin, bool enable)
+void MFServo::attach(uint8_t pin, bool enable)
 {
 	_initialized = false;
 	_targetPos = 0;

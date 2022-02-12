@@ -21,7 +21,7 @@ public:
     static uint8_t getSize(void) { return sizeof(MFLCDDisplay); }
 
     MFLCDDisplay(void);
-    void setup(byte address, byte cols, byte lines);
+    void attach(byte address, byte cols, byte lines);
 
     void onReset(void);
     void powerSave(bool state);

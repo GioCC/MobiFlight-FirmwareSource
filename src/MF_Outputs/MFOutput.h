@@ -19,7 +19,7 @@ public:
     static uint8_t getSize(void) { return sizeof(MFOutput); }
 
     MFOutput(void);
-    void setup(uint8_t pin);
+    void attach(uint8_t pin);
 
     void onReset(void);
     void powerSave(uint8_t state);

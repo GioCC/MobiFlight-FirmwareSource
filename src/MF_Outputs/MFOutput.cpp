@@ -10,7 +10,7 @@ MFOutput::MFOutput(void)
     _value = false;
 }
 
-void MFOutput::setup(uint8_t pin)
+void MFOutput::attach(uint8_t pin)
 {
     _pin = pin;
     pinMode(_pin, OUTPUT);

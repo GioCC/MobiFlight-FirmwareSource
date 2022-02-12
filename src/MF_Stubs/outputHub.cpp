@@ -32,7 +32,7 @@ void AddOutput(uint8_t pin)
     Stowage.AddItem(&MFO);
 
     if(MFO) {
-        MFO->setup(pin);
+        MFO->attach(pin);
 
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added Output"));
@@ -67,7 +67,7 @@ void AddLedSegment(int dataPin, int csPin, int clkPin, int numDevices, int brigh
     Stowage.AddItem(&MFS);
 
     if(MFS) {
-        MFS->setup(dataPin, csPin, clkPin, numDevices, brightness);
+        MFS->attach(dataPin, csPin, clkPin, numDevices, brightness);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added LEDSegment"));
     } else {
@@ -124,7 +124,7 @@ void AddOutShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t
     Stowage.AddItem(&MFS);
 
     if(MFS) {
-        MFS->setup(latchPin, clockPin, dataPin, modules);
+        MFS->attach(latchPin, clockPin, dataPin, modules);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added OutShiftReg"));
     } else {
@@ -172,7 +172,7 @@ void AddServo(int pin)
     Stowage.AddItem(&MFS);
 
     if(MFS) {
-        MFS->setup(pin, true);
+        MFS->attach(pin, true);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added Servo"));
     } else {
@@ -207,7 +207,7 @@ void AddStepper(int pin1, int pin2, int pin3, int pin4, int zeroPin)
     Stowage.AddItem(&MFS);
 
     if(MFS) {
-        MFS->setup(pin1, pin2, pin3, pin4, zeroPin);
+        MFS->attach(pin1, pin2, pin3, pin4, zeroPin);
 
         MFS->setMaxSpeed(STEPPER_SPEED);        //TODO move to constructor?
         MFS->setAcceleration(STEPPER_ACCEL);    //TODO move to constructor?
@@ -277,7 +277,7 @@ void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *nam
     // lcd_I2C[lcd_12cRegistered].attach(address, cols, lines);
     // lcd_12cRegistered++;
     if(MFL) {
-        MFL->setup(address, cols, lines);
+        MFL->attach(address, cols, lines);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added LCD display"));
     } else {

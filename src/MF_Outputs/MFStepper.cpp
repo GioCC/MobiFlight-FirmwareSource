@@ -11,7 +11,7 @@ MFStepper::MFStepper() : _stepper()
   _initialized = false;
 }
 
-void MFStepper::setup(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4, uint8_t zeroPin)
+void MFStepper::attach(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4, uint8_t zeroPin)
 {
     if (pin2 == pin4 && pin1 == pin3)           // if pin1/2 are identical to pin3/4
     {                                           // init new stepper with external driver (step and direction)
