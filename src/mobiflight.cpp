@@ -146,17 +146,23 @@ void printItemSize(void)
     delay(100); }
         
     char buf[40];
-    const char *fmt = "Size of each <%s>: %d bytes";
-    TST_WRITE("Output", MFOutput::getSize());
-    TST_WRITE("Button", MFButton::getSize());
-    TST_WRITE("Encoder", MFEncoder::getSize());
-    TST_WRITE("AnalogIn", MFAnalog::getSize());
-    TST_WRITE("InShiftReg", MFInputShifter::getSize());
-    TST_WRITE("LEDsegment", MFSegments::getSize());
-    TST_WRITE("Stepper", MFStepper::getSize());
-    TST_WRITE("Servo", MFServo::getSize());
-    TST_WRITE("OutShiftReg", MFOutputShifter::getSize());
-    TST_WRITE("LCDdisplay", MFLCDDisplay::getSize());
+    const char *fmt = "Actual size of each <%s>: %d bytes";
+    // The actual size in the buffer of each device is as follows:
+    // <n> bytes for the "bare" class attributes
+    // + 2 bytes for the vtable pointer becaure of the inheritance from MFIODevice 
+    // + 2 bytes for buffer index (device type code + increment to next element in buffer)
+    // First two components are included in the value returned by getSize() 
+    // (i.e. sizeof()), third component is added explicitly below 
+    TST_WRITE("Output", MFOutput::getSize()+2);
+    TST_WRITE("Button", MFButton::getSize()+2);
+    TST_WRITE("Encoder", MFEncoder::getSize()+2);
+    TST_WRITE("AnalogIn", MFAnalog::getSize()+2);
+    TST_WRITE("InShiftReg", MFInputShifter::getSize()+2);
+    TST_WRITE("LEDsegment", MFSegments::getSize()+2);
+    TST_WRITE("Stepper", MFStepper::getSize()+2);
+    TST_WRITE("Servo", MFServo::getSize()+2);
+    TST_WRITE("OutShiftReg", MFOutputShifter::getSize()+2);
+    TST_WRITE("LCDdisplay", MFLCDDisplay::getSize()+2);
 #endif
 }
 
