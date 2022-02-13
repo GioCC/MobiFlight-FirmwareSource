@@ -10,7 +10,7 @@
 #define MFButton_h
 
 #include <Arduino.h>
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 
 extern "C"
 {
@@ -25,7 +25,7 @@ enum
 };
 
 
-class MFButton: public MFIOdevice
+class MFButton  //: public MFIOdevice
 {
 private:
     static buttonEventHandler   _handler;    
@@ -35,19 +35,21 @@ private:
     bool          _state;
  
 public:
-    static uint8_t getType(void) { return kTypeButton; }
-    static uint8_t getSize(void) { return sizeof(MFButton); }
     static void attachHandler(buttonEventHandler newHandler) { _handler = newHandler; }   
 
     MFButton(void);
     //MFButton(uint8_t pin, const char * name);
     
-    void attach(uint8_t pin, const char * name = "Button");
+    static uint8_t getType(void) { return kTypeButton; }
+    //static uint8_t getSize(void) { return sizeof(MFButton); }
+    
+    void    attach(uint8_t pin, const char * name = "Button");
+    void    detach(void) {};  // Stub required for emulated polymorphism
  
-    void update();
-    void onReset(uint8_t action);
+    void    update();
+    void    onReset(uint8_t action);
  
-    void trigger(uint8_t state);    // could be private
+    void    trigger(uint8_t state);    // could be private
     
 };
 #endif 

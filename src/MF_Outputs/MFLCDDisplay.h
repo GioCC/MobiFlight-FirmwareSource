@@ -11,25 +11,28 @@
 
 #include <Arduino.h>
 #include <LiquidCrystal_I2C.h>
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 //#include "config.h"
 
-class MFLCDDisplay: MFIOdevice
+class MFLCDDisplay  //: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeLcdDisplayI2C; }
-    static uint8_t getSize(void) { return sizeof(MFLCDDisplay); }
 
     MFLCDDisplay(void);
-    void attach(byte address, byte cols, byte lines);
-
-    void onReset(uint8_t action);
-    void powerSave(bool state);
-    void detach(void);
-
-    void setval(const char *string);
     
-    void test();
+    static uint8_t getType(void) { return kTypeLcdDisplayI2C; }
+    //static uint8_t getSize(void) { return sizeof(MFLCDDisplay); }
+
+    void    attach(byte address, byte cols, byte lines);
+
+    void    onReset(uint8_t action);
+    void    powerSave(bool state);
+    void    detach(void);
+
+    void    setval(const char *string);
+    void    test();
+
+    void    update(void) {};  // Stub Required for emulated polymorphism
 
 private:
     

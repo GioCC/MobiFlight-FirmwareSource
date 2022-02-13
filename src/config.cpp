@@ -1,30 +1,14 @@
+#include "mobiflight.h"
 #include "config.h"
 #include "MFBoards.h"
 #include "MFEEPROM.h"
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 #include <Arduino.h>
-//#include "allocateMem.h"
 #include "StowManager.h"
 #include "commandmessenger.h"
 #include "inputHub.h"
 #include "outputHub.h"
 
-// #include "output.h"
-// #if MF_SEGMENT_SUPPORT == 1
-// #include "segment.h"
-// #endif
-// #if MF_STEPPER_SUPPORT == 1
-// #include "stepper.h"
-// #endif
-// #if MF_SERVO_SUPPORT == 1
-// #include "servos.h"
-// #endif
-// #if MF_LCD_SUPPORT == 1
-// #include "lcddisplay.h"
-// #endif
-// #if MF_OUTPUT_SHIFTER_SUPPORT == 1
-// #include "outputshifter.h"
-// #endif
 
 // The build version comes from an environment variable
 #define STRINGIZER(arg) #arg
@@ -42,7 +26,8 @@ const uint8_t   MEM_LEN_NAME      = 48;
 const uint8_t   EEP_OFFSET_SERIAL = EEP_OFFSET_NAME + MEM_LEN_NAME;
 const uint8_t   MEM_LEN_SERIAL    = 11;
 const uint8_t   EEP_OFFSET_CONFIG = EEP_OFFSET_NAME + MEM_LEN_NAME + MEM_LEN_SERIAL;
-const uint16_t  EEP_LEN_CONFIG = EEPROM_SIZE - EEP_OFFSET_CONFIG;
+const uint16_t  EEP_LEN_CONFIG    = MEMLEN_CONFIG_MAX; //EEPROM_SIZE - EEP_OFFSET_CONFIG;
+
 
 struct {
     boolean     activated;
@@ -59,15 +44,13 @@ struct {
     MOBIFLIGHT_SERIAL,
     ""};
 
-
-
 static bool readConfigLength(void);
 static void loadConfig(void);
 static void readConfig(void);
 static void _storeConfig(void);
 static void _activateConfig(void);
-static void _restoreName();
-static void loadConfig();
+static void _restoreName(void);
+static void loadConfig(void);
 static void generateSerial(bool);
 
 void eepromInit()
@@ -77,13 +60,7 @@ void eepromInit()
 
 void resetConfig(void)
 {
-    // Reset device storage (this will do all devices)
-    MFIOdevice *in;
-    Stowage.reset();
-    while ((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->detach();
-    }
-    Stowage.wipe();
+    WipeDevices();
     config.length    = 0;
     config.activated = false;
     config.nameBuffer[0] = '\0';

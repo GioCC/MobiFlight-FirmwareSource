@@ -54,7 +54,8 @@
 #define FLASH_SIZE              32768   // For reference only, not used    
 #define RAM_SIZE                2560    // For reference only, not used    
 #define EEPROM_SIZE             1024    // EEPROMSizeMicro
-#define MEMLEN_OBJ_BUFFER       440     // size of device object buffer (RAM)
+#define MEMLEN_CONFIG_MAX       440     // max. size for config which wil be stored in EEPROM (?)
+#define MEMLEN_OBJ_BUFFER       400     // size of device object buffer (RAM)
 #define MEMLEN_NAME_BUFFER      350     // size of nameBuffer (RAM) - contains only device names
 
 #define RANDOM_SEED_INPUT A0

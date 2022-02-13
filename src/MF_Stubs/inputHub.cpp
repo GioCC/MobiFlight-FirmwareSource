@@ -14,6 +14,8 @@
 // #include "MFAnalog.h"
 // #include "MFEncoder.h"
 // #include "MFInputShifter.h"
+// #include "MFDigInMux.h"
+
 
 // =============================================
 //  General functions
@@ -52,8 +54,8 @@ void AddButton(uint8_t pin, char const *name)
 {
     MFButton *MFB;
     Stowage.AddItem(&MFB);
-    // Non-templated alternative would be more memory-consuming (both RAM and flash!):
-    // MFB = (MFButton *)Stowage.add(MFButton::getSize(), MFButton::getType());
+    // Non-templated alternative would be:
+    // MFB = (MFButton *)Stowage.add(sizeof(MFButton));
     // if(MFB) new ((void *)MFB) MFButton;
 
     if(MFB) {
@@ -126,10 +128,11 @@ void AddAnalog(uint8_t pin, uint8_t sensitivity, char const *name)
 
 void UpdateAnalogAvg(void)
 {
-    MFIOdevice *in;
+    MFAnalog *ain;
+
     Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext(kTypeAnalogInput))) != NULL) {
-        ((MFAnalog *)in)->updateAverage();
+    while((ain = (MFAnalog *)Stowage.getNext(kTypeAnalogInput)) != NULL) {
+        ain->updateAverage();
     }
 }
 

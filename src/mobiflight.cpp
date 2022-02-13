@@ -5,7 +5,7 @@
 
 //#define DEBUG 1
 
-#define TESTING
+//#define TESTING
 
 #include <Arduino.h>
 //#include "allocateMem.h"
@@ -38,6 +38,7 @@
 #define MF_ENCODER_DEBOUNCE_MS        1     // time between updating encoders
 #define MF_INSHIFT_DELAY_MS           10    // time between updating input shift registers
 
+
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
 
@@ -58,38 +59,72 @@ uint32_t lastInputShifterUpdate = 0;
 //  General I/O handling functions
 // ************************************************************
 
+// INVOKE(detach, p, kTypeButton);
+#define INVOKE(function, devtype) \
+{ \
+    void *dev; \
+    uint8_t type; \
+    Stowage.reset(); \
+    do { \
+        if(devtype == StowManager::TypeALL) type = Stowage.getTypeOfNext(); \
+        dev  = Stowage.getNext(devtype); \
+        if(dev) { \
+            switch (type) { \
+            case kTypeButton: \
+                static_cast<MFButton *>(dev)->function; break;\
+            case kTypeAnalogInput: \
+                static_cast<MFAnalog *>(dev)->function; break;\
+            case kTypeEncoder: \
+            case kTypeEncoderSingleDetent: \
+                static_cast<MFEncoder *>(dev)->function; break;\
+            case kTypeInShiftReg: \
+                static_cast<MFInputShifter *>(dev)->function; break;\
+            case kTypeDigInMux: \
+                static_cast<MFDigInMux *>(dev)->function; break;\
+            case kTypeOutput: \
+                static_cast<MFOutput *>(dev)->function; break;\
+            case kTypeOutShiftReg: \
+                static_cast<MFOutputShifter *>(dev)->function; break;\
+            case kTypeLedSegment: \
+                static_cast<MFSegments *>(dev)->function; break;\
+            case kTypeServo: \
+                static_cast<MFServo *>(dev)->function; break;\
+            case kTypeStepper: \
+            case kTypeStepperDeprecated: \
+                static_cast<MFStepper *>(dev)->function; break;\
+            case kTypeLcdDisplayI2C: \
+                static_cast<MFLCDDisplay *>(dev)->function; break;\
+            default: \
+                break; \
+            } \
+        } \
+    } \
+    while(dev); \
+}
+
+void WipeDevices(void)
+{
+    // Reset device storage (this will do all devices)
+    INVOKE(detach(), StowManager::TypeALL);
+    Stowage.wipe();
+}
+
 void ResetDevices(void)
 {
-    MFIOdevice *in;
     // Trigger all release events first for inputs, does nothing for outputs
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->onReset(MFIOdevice::ONRESET_RELEASE);
-    }
+    INVOKE(onReset(ONRESET_RELEASE), StowManager::TypeALL);
     // ...then trigger all the press events for inputs, and clear outputs
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->onReset(MFIOdevice::ONRESET_PRESS);
-    }
-    Stowage.reset();
+    INVOKE(onReset(ONRESET_PRESS), StowManager::TypeALL);
 }
 
 void UpdateDevices(void)
 {
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->update();
-    }
+    INVOKE(update(), StowManager::TypeALL);
 }
 
 void UpdateDevices(uint8_t type)
 {
-    MFIOdevice *in;
-    Stowage.reset();
-    while((in = (MFIOdevice *)(Stowage.getNext(type))) != NULL) {
-        in->update();
-    }
+    INVOKE(update(), type);
 }
 
 void SetPowerSave(uint8_t mode)
@@ -149,20 +184,20 @@ void printItemSize(void)
     const char *fmt = "Actual size of each <%s>: %d bytes";
     // The actual size in the buffer of each device is as follows:
     // <n> bytes for the "bare" class attributes
-    // + 2 bytes for the vtable pointer becaure of the inheritance from MFIODevice 
-    // + 2 bytes for buffer index (device type code + increment to next element in buffer)
-    // First two components are included in the value returned by getSize() 
-    // (i.e. sizeof()), third component is added explicitly below 
-    TST_WRITE("Output", MFOutput::getSize()+2);
-    TST_WRITE("Button", MFButton::getSize()+2);
-    TST_WRITE("Encoder", MFEncoder::getSize()+2);
-    TST_WRITE("AnalogIn", MFAnalog::getSize()+2);
-    TST_WRITE("InShiftReg", MFInputShifter::getSize()+2);
-    TST_WRITE("LEDsegment", MFSegments::getSize()+2);
-    TST_WRITE("Stepper", MFStepper::getSize()+2);
-    TST_WRITE("Servo", MFServo::getSize()+2);
-    TST_WRITE("OutShiftReg", MFOutputShifter::getSize()+2);
-    TST_WRITE("LCDdisplay", MFLCDDisplay::getSize()+2);
+    // + 1 bytes for buffer link pointer (increment to next element in buffer)
+    // + 1 byte  for type code (allowing to cast the object to the correct type)
+    // First component is included in the value returned by sizeof(),
+    // other 2 component are added explicitly below 
+    TST_WRITE("Output", sizeof(MFOutput) + 2);
+    TST_WRITE("Button", sizeof(MFButton) + 2);
+    TST_WRITE("Encoder", sizeof(MFEncoder) + 2);
+    TST_WRITE("AnalogIn", sizeof(MFAnalog) + 2);
+    TST_WRITE("InShiftReg", sizeof(MFInputShifter) + 2);
+    TST_WRITE("LEDsegment", sizeof(MFSegments) + 2);
+    TST_WRITE("Stepper", sizeof(MFStepper) + 2);
+    TST_WRITE("Servo", sizeof(MFServo) + 2);
+    TST_WRITE("OutShiftReg", sizeof(MFOutputShifter) + 2);
+    TST_WRITE("LCDdisplay", sizeof(MFLCDDisplay) + 2);
 #endif
 }
 
@@ -183,8 +218,8 @@ void printReport(uint8_t nItems, const char *itemName)
 
 void setupData(void)
 {
-uint8_t i;
 #ifdef TESTING
+uint8_t i;
 delay(1000);
 
 printItemSize();

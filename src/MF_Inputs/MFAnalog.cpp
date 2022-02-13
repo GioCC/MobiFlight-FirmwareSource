@@ -5,7 +5,7 @@
 #include "MFBoards.h"
 #include "commandmessenger.h"
 #include "MFAnalog.h"
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 
 #if MF_ANALOG_SUPPORT == 1
 

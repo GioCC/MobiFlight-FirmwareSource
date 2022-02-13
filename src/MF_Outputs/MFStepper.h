@@ -13,27 +13,29 @@
 #include <Arduino.h>
 #include <AccelStepper.h>
 #include "MFButton.h"
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 
-class MFStepper: MFIOdevice
+class MFStepper  //: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeStepper; }
-    static uint8_t getSize(void) { return sizeof(MFStepper); }
     
     MFStepper();
-    void attach(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t pin3 = 3, uint8_t pin4 = 4, uint8_t btnPin1 = 0);
-    
-    void onReset(uint8_t action);
-    void update(void);
-    void powerSave(uint8_t state);
-    void detach(void);
 
-    void setval(long absolute);
+    static uint8_t getType(void) { return kTypeStepper; }
+    //static uint8_t getSize(void) { return sizeof(MFStepper); }
+
+    void    attach(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t pin3 = 3, uint8_t pin4 = 4, uint8_t btnPin1 = 0);
     
-    void setMaxSpeed(float speed);
-    void setAcceleration(float acceleration);
-    void setZero();
+    void    onReset(uint8_t action);
+    void    update(void);
+    void    powerSave(uint8_t state);
+    void    detach(void);
+
+    void    setval(long absolute);
+    
+    void    setMaxSpeed(float speed);
+    void    setAcceleration(float acceleration);
+    void    setZero();
     uint8_t getZeroPin();
 
 private:

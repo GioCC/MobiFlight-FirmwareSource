@@ -12,6 +12,7 @@
 #include "StowManager.h"
 #include "commandmessenger.h"
 #include "config.h"
+#include "MFIOdevice.h"
 
 #include "MFOutput.h"
 #include "MFSegments.h"

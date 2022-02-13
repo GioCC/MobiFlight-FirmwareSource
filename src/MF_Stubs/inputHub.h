@@ -12,7 +12,7 @@
 #include "commandmessenger.h"
 #include "config.h"
 
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 #include "MFButton.h"
 #include "MFAnalog.h"
 #include "MFEncoder.h"

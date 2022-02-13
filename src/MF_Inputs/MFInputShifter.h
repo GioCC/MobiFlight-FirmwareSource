@@ -3,7 +3,7 @@
 #ifndef MFInputShifter_h
 #define MFInputShifter_h
 
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 #include <Arduino.h>
 
 // Maximum number of shifters allowed on an individual chain. While this is currently set to 4
@@ -20,7 +20,7 @@ enum {
     inputShifterOnRelease,
 };
 
-class MFInputShifter : public MFIOdevice
+class MFInputShifter  //: public MFIOdevice
 {
 private:
     static inputShifterEventHandler _handler;
@@ -38,17 +38,19 @@ private:
     void        clearLastState();
 
 public:
-    static uint8_t getType(void) { return kTypeInShiftReg; }
-    static uint8_t getSize(void) { return sizeof(MFInputShifter); }
     static void    attachHandler(inputShifterEventHandler newHandler) { _handler = newHandler; }
 
     MFInputShifter(void);
     // MFInputShifter(const char *name = "InputShifter");
-    void attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin,
-                uint8_t moduleCount = 1, const char *name = "InShiftReg");
-    void onReset(uint8_t action);
-    void detach(void);
+    
+    static uint8_t getType(void) { return kTypeInShiftReg; }
+    //static uint8_t getSize(void) { return sizeof(MFInputShifter); }
+
+    void    attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin,
+                   uint8_t moduleCount = 1, const char *name = "InShiftReg");
+    void    onReset(uint8_t action);
+    void    detach(void);
     //void retrigger(void);
-    void update(void);
+    void    update(void);
 };
 #endif

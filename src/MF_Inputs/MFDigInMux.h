@@ -3,7 +3,7 @@
 #ifndef MFMUXDigitalIn_h
 #define MFMUXDigitalIn_h
 
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 #include "MFMuxDriver.h"
 #include <Arduino.h>
 
@@ -16,7 +16,7 @@ enum {
     MuxDigInOnRelease,
 };
 
-class MFDigInMux : MFIOdevice
+class MFDigInMux  //: public MFIOdevice
 {
 private:
     enum { 
@@ -43,21 +43,23 @@ public:
         MUX_MODE_LAZY = 1,
     };
 
-    static uint8_t getType(void) { return kTypeDigInMux; }
-    static uint8_t getSize(void) { return sizeof(MFDigInMux); }
     static void    attachHandler(MuxDigInEvent newHandler) { _handler = newHandler; }
     
     static void    setMux(MFMuxDriver *MUX);
 
     MFDigInMux(void);
     //MFDigInMux(MFMuxDriver *MUX, const char *name);
-    void       attach(uint8_t dataPin, bool halfSize, char const *name);
- 
-    void       onReset(uint8_t action);
-    void       update(void);
-    void       detach(void);
     
-    void       setLazyMode(bool mode);
-    uint16_t   getValues(void) { return _lastState; }
+    uint8_t     getType(void) { return kTypeDigInMux; }
+    //uint8_t     getSize(void) { return sizeof(MFDigInMux); }
+    
+    void        attach(uint8_t dataPin, bool halfSize, char const *name);
+ 
+    void        onReset(uint8_t action);
+    void        update(void);
+    void        detach(void);
+    
+    void        setLazyMode(bool mode);
+    uint16_t    getValues(void) { return _lastState; }
 };
 #endif

@@ -50,7 +50,7 @@ void MFEncoder::attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const ch
     _name  = name;
     _pin1  = pin1;
     _pin2  = pin2;
-    _encoderType = EncoderTypes[TypeEncoder];
+    _encoderType = TypeEncoder;
 
     pinMode(_pin1, INPUT_PULLUP);
     pinMode(_pin2, INPUT_PULLUP);
@@ -114,8 +114,8 @@ void MFEncoder::tick(void)
 	bool sig2 = !digitalRead(_pin2);        // to keep backwards compatibility for encoder type digitalRead must be negated
 	int _speed = 0;
 
-    uint32_t currentMs = millis();
-	int8_t thisState = sig1 | (sig2 << 1);
+  uint32_t currentMs = millis();
+	uint8_t thisState = sig1 | (sig2 << 1);
   
     if (currentMs - _lastFastDec > 100 && _detentCounter > 1) {
         _lastFastDec = currentMs;
@@ -131,11 +131,11 @@ void MFEncoder::tick(void)
         // at minimum 6 detents have to be detected before fast step can be detected
         _speed = ((_detentCounter > 6) ? 51 : 1);
 		
-		_position += ((KnobDir[thisState | (_oldState<<2)] * _speed)) << _encoderType.resolutionShift;
-		if (_encoderType.detents[thisState]) {
+		_position += ((KnobDir[thisState | (_oldState<<2)] * _speed)) << EncoderTypes[_encoderType].resolutionShift;
+		if (EncoderTypes[_encoderType].detents[thisState]) {
             _positionTimePrev = _positionTime;
             _positionTime = currentMs;
-			_positionExt = _position >> _encoderType.resolutionShift;
+			_positionExt = _position >> EncoderTypes[_encoderType].resolutionShift;
             _detentCounter = min(_detentCounter+1, 12);
 		}
 		_oldState = thisState;
@@ -144,7 +144,7 @@ void MFEncoder::tick(void)
 
 void MFEncoder::setPosition(int16_t newPosition) {
   // only adjust the external part of the position.
-  _position = ((newPosition >> _encoderType.resolutionShift) | (_position & 0x03));
+  _position = ((newPosition >> EncoderTypes[_encoderType].resolutionShift) | (_position & 0x03));
   _positionExt = newPosition;
 }
 

@@ -28,6 +28,7 @@ class StowManager
         uint8_t* _next(uint8_t **ptr);
 
     public:
+        static const uint8_t   TypeALL = 0xFF;
 
         StowManager(uint8_t *buffer, uint16_t maxSize)
         : buf(buffer), bufTop(buffer+maxSize), tail(buffer), curr(buffer), i_count(0)
@@ -43,11 +44,10 @@ class StowManager
         
         t_index  getCount(void) { return i_count; }
 
-        uint8_t* getNext(void);             // returns the next item
-        uint8_t* getNext(uint8_t type);     // returns the next item with typecode <type> (AFFECTS current item pointer)
+        uint8_t  getTypeOfNext(void);               // returns the type code of next item, or 0xFF if none (does NOT affect current item pointer)
+        uint8_t* getNext(uint8_t type = TypeALL);   // returns the next item, with typecode <type> if specified (advances current item pointer)
         
-        // uint8_t* getNth(t_index nth);    // returns the n-th item (base 0) from the start (does not affect current item pointer)
-        uint8_t* getNth(t_index nth, uint8_t type = 0xFF);    // returns the n-th item (base 0) with typecode <type> from the start (does not affect current item pointer)
+        uint8_t* getNth(t_index nth, uint8_t type = TypeALL);    // returns the n-th item (base 0) with typecode <type> from the start (does NOT affect current item pointer)
 
 
         // THIS METHOD IS STRICTLY APPLICATION-SPECIFIC
@@ -66,10 +66,10 @@ template <typename T> T* StowManager::AddItem(T** itemPtr)
     // Since itemPtr argument is required to set signature anyway, 
     // we take advantage of it to carry the return value 
     uint8_t *in;
-    in = add(T::getSize(), T::getType()); 
+    in = add(sizeof(T), T::getType()); // add(T::getSize(), T::getType()); 
     if(in != NULL) {
         new ((void *)in) T;
-        // param init done outside by specialized functions
+        // param init done later outside, by specialized functions
     }
     if(*itemPtr != NULL) *itemPtr = (T*)in;
     return (T*)in;

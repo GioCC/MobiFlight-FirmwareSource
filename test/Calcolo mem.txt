@@ -1,0 +1,58 @@
+Current version:
+"simple" objects (Output, Button, Analog, Encoder, InShifter, OutShifter)
+-> Ptr in "directory" arrays + MF object bulk allocated in storage
+
+MF object bulk (incl. ptr) (bytes):
+Output      4
+Button      6
+Analog      31
+Encoder     33 (29)
+InShifter   13
+OutShifter  11
+DigInMux    8
+
+
+"composite" objects (LCD, LEDcontrol, Servo, Stepper)
+-> (MF object bulk + Ptr) in "directory" arrays + "Worker" object bulk allocated in storage
+
+MF object bulk (incl. ptr) / "Worker" object  (bytes):
+LEDcontrol  3  / 24
+Servo       22 / 3
+Stepper     10 / 66  
+LCD         6  / 12
+
+//====================================================
+  New version:
+
+  All objects have bulk allocated in storage* 
+  No more pointers but 2 overhead bytes -> same space
+  (* some are slightly smaller because optimized)
+  Advantages:
+  - for "simple" objects: 
+    no difference for actually allocated objects, 
+    -2 bytes for non used objects (spare dir entries)
+  - for "composite" objects: 
+    no difference for actually allocated objects, 
+    -3...-22 bytes for non used objects (spare dir entries)
+//====================================================
+
+
+"simple" objects
+MF object bulk (incl. overhead) (bytes):
+Output      4
+Button      6
+Analog      31
+Encoder     29
+InShifter   12
+OutShifter  10
+DigInMux    8
+
+
+"composite" objects
+MF object bulk (incl. overhead and "Worker" objects)  (bytes):
+LEDsegment  27
+Servo       25
+Stepper     76  
+LCD         18
+
+

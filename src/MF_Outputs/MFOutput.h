@@ -10,22 +10,26 @@
 #define MFOutput_h
 
 #include <Arduino.h>
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 
-class MFOutput: MFIOdevice
+class MFOutput  //: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeOutput; }
-    static uint8_t getSize(void) { return sizeof(MFOutput); }
 
     MFOutput(void);
-    void attach(uint8_t pin);
-
-    void onReset(uint8_t action);
-    void powerSave(uint8_t state);
-    void detach(void);
     
-    void setval(uint8_t value);
+    static uint8_t getType(void) { return kTypeOutput; }
+    //static uint8_t getSize(void) { return sizeof(MFOutput); }
+
+    void    attach(uint8_t pin);
+
+    void    onReset(uint8_t action);
+    void    powerSave(uint8_t state);
+    void    detach(void);
+    
+    void    setval(uint8_t value);
+
+    void    update(void) {};  // Stub Required for emulated polymorphism
 
 private:
     uint8_t       _pin;

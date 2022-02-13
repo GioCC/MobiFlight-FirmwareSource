@@ -6,10 +6,10 @@
 
 MFServo::MFServo() : _servo() {}
 
-MFServo::MFServo(uint8_t pin, bool enable) : _servo()
-{				
-	attach(pin, enable);
-}
+// MFServo::MFServo(uint8_t pin, bool enable) : _servo()
+// {				
+// 	attach(pin, enable);
+// }
 
 void MFServo::attach(uint8_t pin, bool enable)
 {

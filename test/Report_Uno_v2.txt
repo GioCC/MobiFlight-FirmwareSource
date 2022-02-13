@@ -1,0 +1,34 @@
+Uno object buffer sizes (compiled on Mega)
+
+5,Actual size of each <Output>: 5 bytes;
+5,Actual size of each <Button>: 7 bytes;
+5,Actual size of each <Encoder>: 34 bytes;
+5,Actual size of each <AnalogIn>: 32 bytes;
+5,Actual size of each <InShiftReg>: 13 bytes;
+5,Actual size of each <LEDsegment>: 28 bytes;
+5,Actual size of each <Stepper>: 77 bytes;
+5,Actual size of each <Servo>: 26 bytes;
+5,Actual size of each <OutShiftReg>: 11 bytes;
+5,Actual size of each <LCDdisplay>: 20 bytes;
+5,Added 0 -none-;
+5, used 0 bytes, remaining 3350;
+5,Added 8 Outputs;
+5, used 40 bytes, remaining 3310;
+5,Added 8 Buttons;
+5, used 96 bytes, remaining 3254;
+5,Added 3 Encoders;
+5, used 198 bytes, remaining 3152;
+5,Added 3 AnalogIns;
+5, used 294 bytes, remaining 3056;
+5,Added 2 InputShiftRegs;
+5, used 320 bytes, remaining 3030;
+5,Added 1 LEDSegments;
+5, used 348 bytes, remaining 3002;
+5,Added 2 Steppers;
+5, used 502 bytes, remaining 2848;
+5,Added 2 Servos;
+5, used 554 bytes, remaining 2796;
+5,Added 2 OutShiftRegs;
+5, used 576 bytes, remaining 2774;
+5,Added 2 LCD displays;
+5, used 616 bytes, remaining 2734;

@@ -22,7 +22,7 @@
 #define MFEncoder_h
 
 #include <Arduino.h>
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 
 extern "C"
 {
@@ -38,7 +38,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////
 /// \class MFEncoder MFEncoder.h <MFEncoder.h>
 
-class MFEncoder: public MFIOdevice
+class MFEncoder  //: public MFIOdevice
 {
 private:
 
@@ -72,8 +72,8 @@ private:
     int16_t                   _pos;
     uint8_t                   _TypeEncoder;
     uint8_t                   _detentCounter;
-    encoderType               _encoderType;
-    int8_t                    _oldState;
+    uint8_t                   _encoderType;
+    uint8_t                   _oldState;
     int16_t                   _position;            // Internal position (4 times _positionExt)
     int16_t                   _positionExt;         // External position
     uint32_t                  _positionTime;        // time last position change was detected
@@ -83,13 +83,15 @@ private:
 
 public:
     static uint8_t getType(void) { return kTypeEncoder; }
-    static uint8_t getSize(void) { return sizeof(MFEncoder); }
+    //static uint8_t getSize(void) { return sizeof(MFEncoder); }
     static void attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
 
     MFEncoder();
-	void attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
+	void    attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
+    void    detach(void) {};  // Stub required for emulated polymorphism
+    void    update();
+    void    onReset(uint8_t action) { (void)action; };
 
-    void update();
 
     void    tick(void);     // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
     int16_t getPosition()   { return _positionExt; }    // retrieve the current position

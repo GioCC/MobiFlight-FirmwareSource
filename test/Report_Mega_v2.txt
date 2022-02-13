@@ -1,0 +1,34 @@
+Mega object buffer sizes
+
+5,Actual size of each <Output>: 5 bytes;
+5,Actual size of each <Button>: 7 bytes;
+5,Actual size of each <Encoder>: 34 bytes;
+5,Actual size of each <AnalogIn>: 32 bytes;
+5,Actual size of each <InShiftReg>: 13 bytes;
+5,Actual size of each <LEDsegment>: 28 bytes;
+5,Actual size of each <Stepper>: 77 bytes;
+5,Actual size of each <Servo>: 26 bytes;
+5,Actual size of each <OutShiftReg>: 11 bytes;
+5,Actual size of each <LCDdisplay>: 20 bytes;
+5,Added 0 -none-;
+5, used 0 bytes, remaining 3350;
+5,Added 40 Outputs;
+5, used 200 bytes, remaining 3150;
+5,Added 68 Buttons;
+5, used 676 bytes, remaining 2674;
+5,Added 20 Encoders;
+5, used 1356 bytes, remaining 1994;
+5,Added 16 AnalogIns;
+5, used 1868 bytes, remaining 1482;
+5,Added 4 InputShiftRegs;
+5, used 1920 bytes, remaining 1430;
+5,Added 4 LEDSegments;
+5, used 2032 bytes, remaining 1318;
+5,Added 10 Steppers;
+5, used 2802 bytes, remaining 548;
+5,Added 10 Servos;
+5, used 3062 bytes, remaining 288;
+5,Added 4 OutShiftRegs;
+5, used 3106 bytes, remaining 244;
+5,Added 2 LCD displays;
+5, used 3146 bytes, remaining 204;

@@ -11,17 +11,19 @@
 
 #include <Arduino.h>
 #include <Servo.h>
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 
 
-class MFServo: MFIOdevice
+class MFServo  //: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeServo; }
-    static uint8_t getSize(void) { return sizeof(MFServo); }
 
     MFServo();		
-    MFServo(uint8_t pin, bool enable = true);		
+    //MFServo(uint8_t pin, bool enable = true);		
+
+    static uint8_t getType(void) { return kTypeServo; }
+    //static uint8_t getSize(void) { return sizeof(MFServo); }
+
     void    attach(uint8_t pin = 1, bool enable = true);
     
     void    onReset(uint8_t action);

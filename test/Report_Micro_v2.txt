@@ -1,0 +1,35 @@
+ProMicro object buffer sizes (compiled on Mega)
+
+5,Actual size of each <Output>: 5 bytes;
+5,Actual size of each <Button>: 7 bytes;
+5,Actual size of each <Encoder>: 34 bytes;
+5,Actual size of each <AnalogIn>: 32 bytes;
+5,Actual size of each <InShiftReg>: 13 bytes;
+5,Actual size of each <LEDsegment>: 28 bytes;
+5,Actual size of each <Stepper>: 77 bytes;
+5,Actual size of each <Servo>: 26 bytes;
+5,Actual size of each <OutShiftReg>: 11 bytes;
+5,Actual size of each <LCDdisplay>: 20 bytes;
+5,Added 0 -none-;
+5, used 0 bytes, remaining 3350;
+5,Added 18 Outputs;
+5, used 90 bytes, remaining 3260;
+5,Added 18 Buttons;
+5, used 216 bytes, remaining 3134;
+5,Added 5 Encoders;
+5, used 386 bytes, remaining 2964;
+5,Added 5 AnalogIns;
+5, used 546 bytes, remaining 2804;
+5,Added 2 InputShiftRegs;
+5, used 572 bytes, remaining 2778;
+5,Added 1 LEDSegments;
+5, used 600 bytes, remaining 2750;
+5,Added 3 Steppers;
+5, used 831 bytes, remaining 2519;
+5,Added 3 Servos;
+5, used 909 bytes, remaining 2441;
+5,Added 2 OutShiftRegs;
+5, used 931 bytes, remaining 2419;
+5,Added 2 LCD displays;
+5, used 971 bytes, remaining 2379;
+

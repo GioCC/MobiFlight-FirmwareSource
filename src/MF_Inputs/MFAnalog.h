@@ -9,7 +9,7 @@
 #ifndef MFAnalog_h
 #define MFAnalog_h
 
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!   
 
 #define ADC_MAX_AVERAGE                 8           // must be 2^n
 #define ADC_MAX_AVERAGE_LOG2            3           // please calculate LOG2(ADC_MAX_AVERAGE)
@@ -24,7 +24,7 @@ extern "C"
 /////////////////////////////////////////////////////////////////////
 /// \class MFAnalog MFAnalog.h <MFAnalog.h>
 
-class MFAnalog: public MFIOdevice
+class MFAnalog //: public MFIOdevice
 {
 private:
     static analogEventHandler   _handler; 
@@ -42,17 +42,20 @@ private:
     uint32_t    _lastReadBuffer;
 
 public:
-    static uint8_t getType(void) { return kTypeAnalogInput; }
-    static uint8_t getSize(void) { return sizeof(MFAnalog); }
     static void attachHandler(analogEventHandler newHandler)  { _handler = newHandler; }   
 
     MFAnalog(void)  {};
-    
     //MFAnalog(uint8_t pin = 1, const char * name = "Analog Input", uint8_t sensitivity = 2);
-    void attach(uint8_t pin, uint8_t sensitivity = 2, const char *name = "Analog Input" );
+    
+    static uint8_t getType(void) { return kTypeAnalogInput; }
+    //static uint8_t getSize(void) { return sizeof(MFAnalog); }
 
-    void update();
-    void updateAverage();   
+    void    attach(uint8_t pin, uint8_t sensitivity = 2, const char *name = "Analog Input" );
+    void    detach(void) {};  // Stub required for emulated polymorphism
+
+    void    onReset(uint8_t action) { (void)action; };
+    void    update();
+    void    updateAverage();   
     
 };
 

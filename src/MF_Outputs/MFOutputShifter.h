@@ -11,7 +11,7 @@
 #define MFOutputShifter_h
 
 #include <Arduino.h>
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 
 
 // Maximum number of shifters allowed on an individual chain. While this is currently set to 4
@@ -20,24 +20,26 @@
 #define MAX_CHAINED_OUTPUT_SHIFTERS 4
 
 
-class MFOutputShifter: MFIOdevice
+class MFOutputShifter  //: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeOutShiftReg; }
-    static uint8_t getSize(void) { return sizeof(MFOutputShifter); }
 
     MFOutputShifter(void);
-    void attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount);
-    
-    void onReset(uint8_t action);
-    void update(void);
-    void powerSave(uint8_t state);
-    void detach(void);
 
-    void setPin(uint8_t pin, uint8_t value, uint8_t refresh = 1);
-    void setPins(char* pins, uint8_t value);
-    void clear(void);
-    void test(void);
+    static uint8_t getType(void) { return kTypeOutShiftReg; }
+    //static uint8_t getSize(void) { return sizeof(MFOutputShifter); }
+
+    void    attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount);
+    
+    void    onReset(uint8_t action);
+    void    update(void);
+    void    powerSave(uint8_t state);
+    void    detach(void);
+
+    void    setPin(uint8_t pin, uint8_t value, uint8_t refresh = 1);
+    void    setPins(char* pins, uint8_t value);
+    void    clear(void);
+    void    test(void);
     
 private:
     uint8_t _latchPin;	    // Latch pin

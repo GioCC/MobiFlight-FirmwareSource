@@ -2,7 +2,7 @@
 //
 // Copyright (C) 2021
 #include "MFInputShifter.h"
-#include "MFIOdevice.h"
+#include "MFIOdevice.h"   // For constants and documentation only!
 
 inputShifterEventHandler MFInputShifter::_handler = NULL;
 
