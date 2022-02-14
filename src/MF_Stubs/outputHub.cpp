@@ -78,7 +78,7 @@ void AddLedSegment(int dataPin, int csPin, int clkPin, int numDevices, int brigh
 
 void OnInitSegments(void)
 {
-    OnSetModuleBrightness();
+    OnSetModuleBrightness(); // Same function
 }
 
 void OnSetSegments(void)

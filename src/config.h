@@ -1,23 +1,22 @@
 #ifndef _config_h
 #define _config_h
 
-enum
-{
-  kTypeNotSet,              // 0
-  kTypeButton,              // 1
-  kTypeEncoderSingleDetent, // 2 (retained for backwards compatibility, use kTypeEncoder for new configs)
-  kTypeOutput,              // 3
-  kTypeLedSegment,          // 4
-  kTypeStepperDeprecated,   // 5 (keep for backwards compatibility, doesn't support autohome)
-  kTypeServo,               // 6
-  kTypeLcdDisplayI2C,       // 7
-  kTypeEncoder,             // 8
-  kTypeStepper,             // 9 (new stepper type with auto zero support if btnPin is > 0)
-  kTypeOutShiftReg,         // 10 Shift register support (example: 74HC595, TLC592X)
-  kTypeAnalogInput,         // 11 Analog Device with 1 pin
-  kTypeInShiftReg,          // 12 Input shift register support (example: 74HC165)
-  kTypeMuxDriver,           // 13 Multiplexer selector support (generates select outputs)
-  kTypeDigInMux,            // 14 Digital input multiplexer support (example: 74HCT4067, 74HCT4051)
+enum {
+    kTypeNotSet,              // 0
+    kTypeButton,              // 1
+    kTypeEncoderSingleDetent, // 2 (retained for backwards compatibility, use kTypeEncoder for new configs)
+    kTypeOutput,              // 3
+    kTypeLedSegment,          // 4
+    kTypeStepperDeprecated,   // 5 (keep for backwards compatibility, doesn't support autohome)
+    kTypeServo,               // 6
+    kTypeLcdDisplayI2C,       // 7
+    kTypeEncoder,             // 8
+    kTypeStepper,             // 9 (new stepper type with auto zero support if btnPin is > 0)
+    kTypeOutShiftReg,         // 10 Shift register support (example: 74HC595, TLC592X)
+    kTypeAnalogInput,         // 11 Analog Device with 1 pin
+    kTypeInShiftReg,          // 12 Input shift register support (example: 74HC165)
+    kTypeMuxDriver,           // 13 Multiplexer selector support (generates select outputs)
+    kTypeDigInMux,            // 14 Digital input multiplexer support (example: 74HCT4067, 74HCT4051)
 };
 
 void resetBoard(void);

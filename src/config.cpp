@@ -334,7 +334,7 @@ void readConfig()
             break;
 #endif
 
-#if 0 // MF_MUX_SUPPORT == 1
+#if MF_MUX_SUPPORT == 1
     // No longer a separate config command for the mux driver
     // case kTypeMuxDriver:
     //   // Repeated commands do not define more objects, but change the only existing one
@@ -346,7 +346,7 @@ void readConfig()
     //   break;
 #endif
 
-#if 0 // MF_DIGIN_MUX_SUPPORT == 1
+#if MF_DIGIN_MUX_SUPPORT == 1
     case kTypeDigInMux:
       params[0] = readUintFromEEPROM(&addreeprom); // data pin
       // Mux driver section

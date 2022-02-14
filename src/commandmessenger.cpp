@@ -21,22 +21,6 @@ void attachCommandCallbacks()
 {
   cmdMessenger.attach(OnUnknownCommand);    // Attach all callback methods
 
-#if MF_SEGMENT_SUPPORT == 1
-  cmdMessenger.attach(kInitModule, OnInitSegments);
-  cmdMessenger.attach(kSetModule, OnSetSegments);
-  cmdMessenger.attach(kSetModuleBrightness, OnSetModuleBrightness);
-#endif
-
-  cmdMessenger.attach(kSetPin, OnSetPin);
-
-#if MF_STEPPER_SUPPORT == 1
-  cmdMessenger.attach(kSetStepper, OnSetStepper);
-#endif
-
-#if MF_SERVO_SUPPORT == 1
-  cmdMessenger.attach(kSetServo, OnSetServo);
-#endif
-
   cmdMessenger.attach(kGetInfo, OnGetInfo);
   cmdMessenger.attach(kGetConfig, OnGetConfig);
   cmdMessenger.attach(kSetConfig, OnSetConfig);
@@ -45,21 +29,33 @@ void attachCommandCallbacks()
   cmdMessenger.attach(kActivateConfig, OnActivateConfig);
   cmdMessenger.attach(kSetName, OnSetName);
   cmdMessenger.attach(kGenNewSerial, OnGenNewSerial);
+  cmdMessenger.attach(kTrigger, OnTrigger);
+  cmdMessenger.attach(kResetBoard, OnResetBoard);
+
+  cmdMessenger.attach(kSetPin, OnSetPin);
+
+#if MF_SEGMENT_SUPPORT == 1
+  cmdMessenger.attach(kInitModule, OnInitSegments);
+  cmdMessenger.attach(kSetModule, OnSetSegments);
+  cmdMessenger.attach(kSetModuleBrightness, OnSetModuleBrightness);
+#endif
+
+#if MF_OUTPUT_SHIFTER_SUPPORT == 1
+  cmdMessenger.attach(kSetShiftRegisterPins, OnSetShiftRegisterPins);
+#endif
+
+#if MF_SERVO_SUPPORT == 1
+  cmdMessenger.attach(kSetServo, OnSetServo);
+#endif
 
 #if MF_STEPPER_SUPPORT == 1
+  cmdMessenger.attach(kSetStepper, OnSetStepper);
   cmdMessenger.attach(kResetStepper, OnResetStepper);
   cmdMessenger.attach(kSetZeroStepper, OnSetZeroStepper);
 #endif
 
-  cmdMessenger.attach(kTrigger, OnTrigger);
-  cmdMessenger.attach(kResetBoard, OnResetBoard);
-
 #if MF_LCD_SUPPORT == 1
   cmdMessenger.attach(kSetLcdDisplayI2C, OnSetLcdDisplayI2C);
-#endif
-
-#if MF_SHIFTER_SUPPORT == 1
-  cmdMessenger.attach(kSetShiftRegisterPins, OnSetShiftRegisterPins);
 #endif
 
 #ifdef DEBUG
