@@ -44,6 +44,9 @@ void OnAnalogChange(int value, uint8_t pin, const char *name);
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 void OnInputShiftRegChange(uint8_t eventId, uint8_t pin, const char *name);
 #endif
+#if MF_DIGIN_MUX_SUPPORT == 1
+void OnDigInMuxChange(uint8_t eventId, uint8_t pin, const char *name);
+#endif
 
 // Device add functions
 
