@@ -60,7 +60,7 @@ void OnSetZeroStepper(void);
 
 // LCDs
 #if MF_LCD_SUPPORT == 1
-void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *name = "LCD");
+void AddLcdDisplay(uint8_t I2Caddress, uint8_t cols, uint8_t lines, char const *name = "LCD");
 void OnSetLcdDisplayI2C(void);
 #endif
 

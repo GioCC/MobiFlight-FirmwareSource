@@ -1,4 +1,4 @@
-// MFSegments.cpp
+// MFLCDDisplay.cpp
 //
 // Copyright (C) 2013-2014
 
@@ -7,13 +7,13 @@
 MFLCDDisplay::MFLCDDisplay()
     : _address(0xFF) {}
 
-void MFLCDDisplay::attach(byte address, byte cols, byte lines)
+void MFLCDDisplay::attach(byte I2Caddress, byte cols, byte lines)
 {
-    if (address == 0xFF) return;
-    _address = address;
+    if (I2Caddress == 0xFF) return;
+    _address = I2Caddress;
     _cols    = cols;
     _lines   = lines;
-    _lcdDisplay.init((uint8_t)address, (uint8_t)cols, (uint8_t)lines);
+    _lcdDisplay.init((uint8_t)I2Caddress, (uint8_t)cols, (uint8_t)lines);
     _lcdDisplay.backlight();
     Wire.setClock(400000);
     test();

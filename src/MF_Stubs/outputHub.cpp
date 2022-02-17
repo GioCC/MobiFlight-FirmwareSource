@@ -277,7 +277,7 @@ void OnSetZeroStepper(void)
 // ---------------------------------------------------
 
 #if MF_LCD_SUPPORT == 1
-void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *name)
+void AddLcdDisplay(uint8_t I2Caddress, uint8_t cols, uint8_t lines, char const *name)
 {
     MFLCDDisplay *MFL;
     Stowage.AddItem(&MFL);
@@ -285,7 +285,7 @@ void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *nam
     // lcd_I2C[lcd_12cRegistered].attach(address, cols, lines);
     // lcd_12cRegistered++;
     if(MFL) {
-        MFL->attach(address, cols, lines);
+        MFL->attach(I2Caddress, cols, lines);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added LCD display"));
     } else {
@@ -298,10 +298,9 @@ void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines, char const *nam
 void OnSetLcdDisplayI2C(void) 
 {
     MFLCDDisplay *MFL;
-    //TODO check: address must be 0,1,2...n!
-    int address = cmdMessenger.readInt16Arg();
+    int nLCD = cmdMessenger.readInt16Arg();
     //MFS = static_cast<MFSegments *>(Stowage.getNth(module, kTypeLedSegment));
-    MFL = (MFLCDDisplay *)(Stowage.getNth((uint8_t)address, kTypeLcdDisplayI2C));
+    MFL = (MFLCDDisplay *)(Stowage.getNth((uint8_t)nLCD, kTypeLcdDisplayI2C));
     if(MFL) {
         char *output    = cmdMessenger.readStringArg();
         MFL->setval(output);
