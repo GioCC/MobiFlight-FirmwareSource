@@ -21,7 +21,7 @@
 //  General functions
 // =============================================
 
-void SetInputHandlers(void)
+void attachEventCallbacks(void)
 {
     MFButton::attachHandler(OnButtonChange);
     MFEncoder::attachHandler(OnEncoderChange);
@@ -31,11 +31,10 @@ void SetInputHandlers(void)
     #ifdef MF_INPUT_SHIFTER_SUPPORT
     MFInputShifter::attachHandler(OnInputShiftRegChange);
     #endif
-    //TODO maybe move to some semantically more appropriate function
-#if MF_DIGIN_MUX_SUPPORT == 1
+    #if MF_DIGIN_MUX_SUPPORT == 1
     MFDigInMux::setMux(&MUX);
-#endif
-
+    MFDigInMux::attachHandler(OnDigInMuxChange);
+    #endif
 }
 
 // ---------------------------------------------------
@@ -171,4 +170,48 @@ void AddInputShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8
 
 #endif
 
+// ---------------------------------------------------
+//  Digital Input Mux
+// ---------------------------------------------------
+
+#if MF_DIGIN_MUX_SUPPORT == 1
+
+void OnDigInMuxChange(uint8_t eventId, uint8_t pin, const char *name)
+{
+    cmdMessenger.sendCmdStart(kDigInMuxChange);
+    cmdMessenger.sendCmdArg(name);
+    cmdMessenger.sendCmdArg(pin);
+    cmdMessenger.sendCmdArg(eventId);
+    cmdMessenger.sendCmdEnd();
+};
+
+
+void AddDigInMux(uint8_t dataPin, uint8_t nRegs, char const *name, bool mode)
+{
+    MFDigInMux *MFI;
+
+    Stowage.AddItem(&MFI);
+
+    if(MFI) {
+        MFI->attach(dataPin, (nRegs==1), name);
+        MFI->setLazyMode(mode==MFDigInMux::MUX_MODE_LAZY);
+        #ifdef DEBUG
+        cmdMessenger.sendCmd(kStatus, F("Added DigInMux"));
+    } else {
+        cmdMessenger.sendCmd(kStatus, F("DigInMux: Memory full"));
+        #endif
+    }
+}
+
+#endif
+
+#if MF_MUX_SUPPORT == 1
+void AddMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin)
+{
+    MUX.attach(Sel0Pin, Sel1Pin, Sel2Pin, Sel3Pin);
+    #ifdef DEBUG
+    cmdMessenger.sendCmd(kStatus, F("Added multiplexer"));
+    #endif
+}
+#endif
 // inputHub.cpp

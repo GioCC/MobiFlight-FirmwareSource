@@ -278,7 +278,7 @@ void setup()
 {
   Serial.begin(115200);
   attachCommandCallbacks();
-  SetInputHandlers();
+  attachEventCallbacks();
 
   cmdMessenger.printLfCr();
   resetBoard();

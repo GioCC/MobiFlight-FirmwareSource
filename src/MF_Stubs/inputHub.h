@@ -29,7 +29,7 @@ extern CmdMessenger cmdMessenger;
 void SetPowerSave(uint8_t mode);
 
 
-void SetInputHandlers(void);
+void attachEventCallbacks(void);
 #if MF_ANALOG_SUPPORT == 1
 void UpdateAnalogAvg(void);
 #endif
@@ -44,6 +44,9 @@ void OnAnalogChange(int value, uint8_t pin, const char *name);
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 void OnInputShiftRegChange(uint8_t eventId, uint8_t pin, const char *name);
 #endif
+#if MF_DIGIN_MUX_SUPPORT == 1
+void OnDigInMuxChange(uint8_t eventId, uint8_t pin, const char *name);
+#endif
 
 // Device add functions
 
@@ -54,6 +57,12 @@ void AddAnalog(uint8_t pin, uint8_t sensitivity = 3, char const *name = "AnalogI
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 void AddInputShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t nModules, char const *name = "InShiftReg");
+#endif
+#if MF_INPUT_SHIFTER_SUPPORT == 1
+void AddDigInMux(uint8_t dataPin, uint8_t nRegs, char const *name = "MUXDigIn", bool mode = MFDigInMux::MUX_MODE_FAST);
+#endif
+#if MF_MUX_SUPPORT == 1
+void AddMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin);
 #endif
 
 #endif // _INPUTHUB_H

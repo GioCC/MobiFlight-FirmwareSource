@@ -50,7 +50,7 @@ public:
     MFDigInMux(void);
     //MFDigInMux(MFMuxDriver *MUX, const char *name);
     
-    uint8_t     getType(void) { return kTypeDigInMux; }
+    static uint8_t     getType(void) { return kTypeDigInMux; }
     //uint8_t     getSize(void) { return sizeof(MFDigInMux); }
     
     void        attach(uint8_t dataPin, bool halfSize, char const *name);
