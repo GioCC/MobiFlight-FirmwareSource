@@ -46,7 +46,11 @@ void OnSetPin()
 {
     MFOutput *MFO;
     int nOutput = cmdMessenger.readInt16Arg();
-    MFO = (MFOutput *)(Stowage.getNth((uint8_t)nOutput, kTypeLedSegment));
+
+    // CURRENTLY INCORRECT:
+    // Here, "Pin" is the actual output pin, NOT the object index!!!
+
+    MFO = (MFOutput *)(Stowage.getNth((uint8_t)nOutput, kTypeOutput));
 
     if(MFO) {
         int state = cmdMessenger.readInt16Arg();      // interpret string as boolean
