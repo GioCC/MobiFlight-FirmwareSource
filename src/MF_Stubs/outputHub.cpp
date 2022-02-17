@@ -44,19 +44,23 @@ void AddOutput(uint8_t pin)
 
 void OnSetPin()
 {
-    MFOutput *MFO;
+    // MFOutput *MFO;
     int nOutput = cmdMessenger.readInt16Arg();
 
+    // MFO = (MFOutput *)(Stowage.getNth((uint8_t)nOutput, kTypeOutput));
+   
     // CURRENTLY INCORRECT:
     // Here, "Pin" is the actual output pin, NOT the object index!!!
+    // Patch:
+    MFOutput MFOut;
+    MFOut.attach(nOutput);
 
-    MFO = (MFOutput *)(Stowage.getNth((uint8_t)nOutput, kTypeOutput));
-
-    if(MFO) {
+    // if(MFO) {
         int state = cmdMessenger.readInt16Arg();      // interpret string as boolean
-        MFO->setval(state);       //analogWrite(pin, state);
+        // MFO->setval(state);       //analogWrite(pin, state);
+        MFOut.setval(state);
         setLastCommandMillis(millis());
-    }
+    // }
 }
 
 // ---------------------------------------------------
