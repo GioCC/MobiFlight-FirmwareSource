@@ -23,7 +23,7 @@ public:
 
     void    attach(uint8_t pin);
 
-    void    onReset(uint8_t action);
+    void    reset(uint8_t action);
     void    powerSave(uint8_t state);
     void    detach(void);
     

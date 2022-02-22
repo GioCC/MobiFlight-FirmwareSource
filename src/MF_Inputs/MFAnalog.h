@@ -53,7 +53,7 @@ public:
     void    attach(uint8_t pin, uint8_t sensitivity = 2, const char *name = "Analog Input" );
     void    detach(void) {};  // Stub required for emulated polymorphism
 
-    void    onReset(uint8_t action) { (void)action; };
+    void    reset(uint8_t action) { (void)action; };
     void    update();
     void    updateAverage();   
     

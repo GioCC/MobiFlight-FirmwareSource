@@ -102,7 +102,7 @@ void MFInputShifter::detach(void)
 
 // Clears the internal state of the shifter, including all received bits
 // and the timestamp for the last time the data was read.
-void MFInputShifter::onReset(uint8_t action)
+void MFInputShifter::reset(uint8_t action)
 {
     // Handle retrigger logic according to:
     // https://github.com/MobiFlight/MobiFlight-Connector/issues/497

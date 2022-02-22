@@ -20,10 +20,10 @@ void MFOutputShifter::attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin
     pinMode(_clockPin, OUTPUT);
     pinMode(_dataPin, OUTPUT);
 
-    //onReset();
+    //reset();
 }
 
-void MFOutputShifter::onReset(uint8_t action)
+void MFOutputShifter::reset(uint8_t action)
 {
     if (action != ONRESET_DEFAULT) return;
     if (0 == _moduleCount) return;
@@ -44,12 +44,12 @@ void MFOutputShifter::update()
 
 void MFOutputShifter::powerSave(uint8_t state)
 {
-    //onReset();
+    //reset();
 }
 
 void MFOutputShifter::detach()
 {
-    //onReset();
+    //reset();
     _moduleCount = 0;
 }
 

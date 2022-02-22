@@ -47,7 +47,7 @@ public:
     void    detach(void) {};  // Stub required for emulated polymorphism
  
     void    update();
-    void    onReset(uint8_t action);
+    void    reset(uint8_t action);
  
     void    trigger(uint8_t state);    // could be private
     

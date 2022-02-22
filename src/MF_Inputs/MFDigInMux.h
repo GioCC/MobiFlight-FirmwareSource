@@ -55,7 +55,7 @@ public:
     
     void        attach(uint8_t dataPin, bool halfSize, char const *name);
  
-    void        onReset(uint8_t action);
+    void        reset(uint8_t action);
     void        update(void);
     void        detach(void);
     

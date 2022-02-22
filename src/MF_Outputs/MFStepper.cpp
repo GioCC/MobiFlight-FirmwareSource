@@ -30,7 +30,7 @@ void MFStepper::attach(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4, u
     _resetting = false;
 }
 
-void MFStepper::onReset(uint8_t action)
+void MFStepper::reset(uint8_t action)
 {
   if(action != ONRESET_DEFAULT) return;
 

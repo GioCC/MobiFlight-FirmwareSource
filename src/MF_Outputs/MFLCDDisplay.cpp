@@ -35,7 +35,7 @@ void MFLCDDisplay::detach()
     _address = 0xFF;
 }
 
-void MFLCDDisplay::onReset(uint8_t action)
+void MFLCDDisplay::reset(uint8_t action)
 {
     if(action == ONRESET_DEFAULT) {
         test();

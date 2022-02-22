@@ -48,7 +48,7 @@ public:
 
     void    attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin,
                    uint8_t moduleCount = 1, const char *name = "InShiftReg");
-    void    onReset(uint8_t action);
+    void    reset(uint8_t action);
     void    detach(void);
     //void retrigger(void);
     void    update(void);

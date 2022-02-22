@@ -90,7 +90,7 @@ public:
 	void    attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
     void    detach(void) {};  // Stub required for emulated polymorphism
     void    update();
-    void    onReset(uint8_t action) { (void)action; };
+    void    reset(uint8_t action) { (void)action; };
 
 
     void    tick(void);     // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.

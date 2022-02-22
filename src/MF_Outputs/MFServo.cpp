@@ -21,7 +21,7 @@ void MFServo::attach(uint8_t pin, bool enable)
 	_pin = pin;	
 }
 
-void MFServo::onReset(uint8_t action)
+void MFServo::reset(uint8_t action)
 {
     if(action == ONRESET_DEFAULT) {
         //TODO:?
