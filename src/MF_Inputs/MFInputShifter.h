@@ -22,6 +22,17 @@ enum {
 
 class MFInputShifter  //: public MFIOdevice
 {
+public:
+    static void    attachHandler(inputShifterEventHandler newHandler) { _handler = newHandler; }
+    static uint8_t getType(void) { return kTypeInShiftReg; }
+
+    MFInputShifter(void);
+    void    attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin,
+                   uint8_t moduleCount = 1, const char *name = "InShiftReg");
+    void    detach(void);
+    void    reset(uint8_t action);
+    void    update(void);
+
 private:
     static inputShifterEventHandler _handler;
 
@@ -32,25 +43,10 @@ private:
     uint8_t     _moduleCount; // Number of 8 bit modules in series.
     uint8_t     _lastState[MAX_CHAINED_INPUT_SHIFTERS];
 
-    void        update(uint8_t doTrigger);
     void        detectChanges(uint8_t lastState, uint8_t currentState, uint8_t module);
     void        trigger(uint8_t pin, bool state);
     void        clearLastState();
+    void        update(uint8_t doTrigger);
 
-public:
-    static void    attachHandler(inputShifterEventHandler newHandler) { _handler = newHandler; }
-
-    MFInputShifter(void);
-    // MFInputShifter(const char *name = "InputShifter");
-    
-    static uint8_t getType(void) { return kTypeInShiftReg; }
-    //static uint8_t getSize(void) { return sizeof(MFInputShifter); }
-
-    void    attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin,
-                   uint8_t moduleCount = 1, const char *name = "InShiftReg");
-    void    reset(uint8_t action);
-    void    detach(void);
-    //void retrigger(void);
-    void    update(void);
 };
 #endif

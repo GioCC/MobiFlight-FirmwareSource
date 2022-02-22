@@ -40,26 +40,39 @@ extern "C"
 
 class MFEncoder  //: public MFIOdevice
 {
-private:
-
+public:
     enum {
-        ENC_LEFT,
-        ENC_LEFT_FAST,
-        ENC_RIGHT,
-        ENC_RIGHT_FAST,
+        encLeft,
+        encLeftFast,
+        encRight,
+        encRightFast,
     };
 
-public:
     typedef struct {
         // Detent positions in the quadrature (by value, not position)
         bool    detents[4];     
+
         // Bit shift to apply given the detent resolution of this encoder.
+	      //
         // Example: An encoder with 1 detent per quadrature cycle has a useful resolution of
         // 1/4 of the number of pulses so we can apply a simple bit shift of 2 to 
         // determine the effective position of the encoder.
         uint8_t resolutionShift;
     } encoderType;
 
+    static uint8_t getType(void) { return kTypeEncoder; }
+    static void attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
+
+    MFEncoder();
+    void    attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
+    void    detach(void) {};  // Stub required for emulated polymorphism
+    void    reset(uint8_t action) { (void)action; };
+    void    update();
+
+    void    tick(void);     // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
+    int16_t getPosition();                      // retrieve the current position
+    void    setPosition(int16_t newPosition);   // adjust the current position
+    
 private:
     static encoderEventHandler  _handler;
     static const int8_t         KnobDir[];
@@ -80,22 +93,5 @@ private:
     uint32_t                  _positionTimePrev;    // time previous position change was detected
     uint32_t                  _lastFastDec;
 
-
-public:
-    static uint8_t getType(void) { return kTypeEncoder; }
-    //static uint8_t getSize(void) { return sizeof(MFEncoder); }
-    static void attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
-
-    MFEncoder();
-	void    attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");
-    void    detach(void) {};  // Stub required for emulated polymorphism
-    void    update();
-    void    reset(uint8_t action) { (void)action; };
-
-
-    void    tick(void);     // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
-    int16_t getPosition()   { return _positionExt; }    // retrieve the current position
-    void    setPosition(int16_t newPosition);           // adjust the current position
-    
 };
 #endif 

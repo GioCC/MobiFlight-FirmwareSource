@@ -13,32 +13,6 @@ MFInputShifter::MFInputShifter(void)
     //_name = name;
 }
 
-// Reads the values from the attached modules, compares them to the previously
-// read values, and (if doTrigger == true) calls the registered event handler 
-// for any inputs that changed from the previously read state.
-void MFInputShifter::update(uint8_t doTrigger)
-{
-    if(0 == _moduleCount) return;
-    digitalWrite(_clockPin, HIGH); // Preset clock to retrieve first bit
-    digitalWrite(_latchPin, HIGH); // Disable input latching and enable shifting
-
-    // Multiple chained modules are handled one at a time. As shiftIn() keeps getting
-    // called it will pull in the data from each chained module.
-    for (int i = 0; i < _moduleCount; i++) {
-        uint8_t currentState;
-
-        currentState = shiftIn(_dataPin, _clockPin, MSBFIRST);
-
-        // If an input changed on the current module from the last time it was read
-        // then hand it off to figure out which bits specifically changed.
-        if (doTrigger && currentState != _lastState[i]) {
-            detectChanges(_lastState[i], currentState, i);
-        }
-        _lastState[i] = currentState;
-    }
-
-    digitalWrite(_latchPin, LOW); // disable shifting and enable input latching
-}
 // Registers a new input shifter and configures the clock, data and latch pins as well
 // as the number of modules to read from.
 void MFInputShifter::attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount, const char *name)
@@ -62,6 +36,33 @@ void MFInputShifter::update()
     update(true);
 }
 
+// Reads the values from the attached modules, compares them to the previously
+// read values, and (if doTrigger == true) calls the registered event handler 
+// for any inputs that changed from the previously read state.
+void MFInputShifter::update(uint8_t doTrigger)
+{
+    if(0 == _moduleCount) return;
+    digitalWrite(_clockPin, HIGH); // Preset clock to retrieve first bit
+    digitalWrite(_latchPin, HIGH); // Disable input latching and enable shifting
+
+    // Multiple chained modules are handled one at a time. As shiftIn() keeps getting
+    // called it will pull in the data from each chained module.
+    for (int i = 0; i < _moduleCount; i++) {
+        uint8_t currentState;
+
+        currentState = shiftIn(_dataPin, _clockPin, MSBFIRST);
+
+        // If an input changed on the current module from the last time it was read
+        // then hand it off to figure out which bits specifically changed.
+        if (doTrigger && currentState != _lastState[i]) {
+            detectChanges(_lastState[i], currentState, i);
+        _lastState[i] = currentState;
+        }
+    }
+
+    digitalWrite(_latchPin, LOW); // disable shifting and enable input latching
+}
+
 // Detects changes between the current state and the previously saved state
 // of a byte's worth of input.
 void MFInputShifter::detectChanges(uint8_t lastState, uint8_t currentState, uint8_t module)
@@ -82,26 +83,6 @@ void MFInputShifter::detectChanges(uint8_t lastState, uint8_t currentState, uint
     }
 }
 
-// Triggers the event handler for the associated input shift register pin,
-// if a handler is registered.
-void MFInputShifter::trigger(uint8_t pin, bool state)
-{
-    if (_handler != NULL) {
-        if (state == LOW) {
-            (*_handler)(inputShifterOnPress, pin, _name);
-        } else {
-            (*_handler)(inputShifterOnRelease, pin, _name);
-        }
-    }
-}
-
-void MFInputShifter::detach(void)
-{
-    _moduleCount = 0;
-}
-
-// Clears the internal state of the shifter, including all received bits
-// and the timestamp for the last time the data was read.
 void MFInputShifter::reset(uint8_t action)
 {
     // Handle retrigger logic according to:
@@ -132,6 +113,26 @@ void MFInputShifter::reset(uint8_t action)
     }
 }
 
+// Triggers the event handler for the associated input shift register pin,
+// if a handler is registered.
+void MFInputShifter::trigger(uint8_t pin, bool state)
+{
+    if (_handler != NULL) {
+        if (state == LOW) {
+            (*_handler)(inputShifterOnPress, pin, _name);
+        } else {
+            (*_handler)(inputShifterOnRelease, pin, _name);
+        }
+    }
+}
+
+void MFInputShifter::detach(void)
+{
+    _moduleCount = 0;
+}
+
+// Clears the internal state of the shifter, including all received bits
+// and the timestamp for the last time the data was read.
 // Sets the last recorded state of every bit on every shifter to 0.
 void MFInputShifter::clearLastState()
 {
