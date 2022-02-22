@@ -44,7 +44,7 @@ void MFButton::trigger(uint8_t state)
     }
 }
 
-void MFButton::onReset(uint8_t action)
+void MFButton::reset(uint8_t action)
 {
     // Handle retrigger logic according to:
     // https://github.com/MobiFlight/MobiFlight-Connector/issues/497

@@ -26,7 +26,7 @@ public:
 
     void    attach(uint8_t pin = 1, bool enable = true);
     
-    void    onReset(uint8_t action);
+    void    reset(uint8_t action);
     void    update(void);
     void    powerSave(uint8_t state);
     void    detach(void);

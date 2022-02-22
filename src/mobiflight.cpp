@@ -112,9 +112,9 @@ void WipeDevices(void)
 void ResetDevices(void)
 {
     // Trigger all release events first for inputs, does nothing for outputs
-    INVOKE(onReset(ONRESET_RELEASE), StowManager::TypeALL);
+    INVOKE(reset(ONRESET_RELEASE), StowManager::TypeALL);
     // ...then trigger all the press events for inputs, and clear outputs
-    INVOKE(onReset(ONRESET_PRESS), StowManager::TypeALL);
+    INVOKE(reset(ONRESET_PRESS), StowManager::TypeALL);
 }
 
 void UpdateDevices(void)

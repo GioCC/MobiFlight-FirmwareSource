@@ -10,7 +10,7 @@
 #include <stdint.h>
 #include "config.h"
 
-// Arguments of onReset
+// Arguments of reset
 // (These should belong to the class - see also comment below)
 enum {
     ONRESET_PRESS, 
@@ -41,11 +41,11 @@ class MFIOdevice
         virtual void update(void)       {};         // [IN][OUT] Fetch values (I)/ Update internal state (O)
         virtual void powerSave(uint8_t mode){};     // [IN][OUT] Set power saving state
         virtual void detach(void)       {};         // [IN][OUT] Cleanup resources when stood down
-        virtual void onReset(uint8_t action = ONRESET_DEFAULT)
+        virtual void reset(uint8_t action = ONRESET_DEFAULT)
                                         {};         // [IN][OUT] Clear the module state. For inputs: does NOT read current actual state!
 
         // Note
-        // The onReset function has slightly different meanings for input and output devices:
+        // The reset function has slightly different meanings for input and output devices:
         // - for INPUTS, it has to first update the current state, and then generate a retrigger sequence
         //   according to the logic described in 
         //   https://github.com/MobiFlight/MobiFlight-Connector/issues/497 and 
@@ -91,7 +91,7 @@ class MFIOdevice
     // MF...(void);
     // void attach(...);
 
-    // void onReset(void);
+    // void reset(void);
     // void update(void);
     // void powerSave(uint8_t state);
     // void detach(void);

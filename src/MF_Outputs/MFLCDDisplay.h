@@ -25,7 +25,7 @@ public:
 
     void    attach(byte address, byte cols, byte lines);
 
-    void    onReset(uint8_t action);
+    void    reset(uint8_t action);
     void    powerSave(bool state);
     void    detach(void);
 

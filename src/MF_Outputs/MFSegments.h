@@ -23,7 +23,7 @@ public:
 
     void    attach(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness);
     
-    void    onReset(uint8_t action);
+    void    reset(uint8_t action);
     void    powerSave(bool state);
     void    detach(void);
     

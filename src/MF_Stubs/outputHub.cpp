@@ -221,7 +221,7 @@ void AddStepper(int pin1, int pin2, int pin3, int pin4, int zeroPin)
         MFS->setAcceleration(STEPPER_ACCEL);    //TODO move to constructor?
         if (zeroPin > 0)                        //TODO move to constructor?
         {
-            MFS->onReset(ONRESET_DEFAULT);
+            MFS->reset(ONRESET_DEFAULT);
         }
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added Stepper"));
@@ -243,7 +243,7 @@ void _OnStepperEvent(uint8_t evt)
             MFS->setval(value);
         } else
         if(2 == evt) {
-            MFS->onReset(ONRESET_DEFAULT);
+            MFS->reset(ONRESET_DEFAULT);
         } else
         if(3 == evt) {
             MFS->setZero();

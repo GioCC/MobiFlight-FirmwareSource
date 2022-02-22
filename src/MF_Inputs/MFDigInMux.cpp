@@ -171,7 +171,7 @@ void MFDigInMux::trigger(uint8_t channel, bool state)
 }
 
 // Clears the internal state
-void MFDigInMux::onReset(uint8_t action)
+void MFDigInMux::reset(uint8_t action)
 {
     // Handle retrigger logic according to:
     // https://github.com/MobiFlight/MobiFlight-Connector/issues/497
