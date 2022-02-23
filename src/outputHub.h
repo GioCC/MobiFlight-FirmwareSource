@@ -19,10 +19,11 @@
 #include "MFLCDDisplay.h"
 
 // Exported variables
-extern uint32_t lastServoUpdate;
 extern CmdMessenger cmdMessenger;
 
 // General functions
+
+void initOutputTimings(uint32_t time);
 
 void SetPowerSavingMode(bool state);
 

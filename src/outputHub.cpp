@@ -49,9 +49,16 @@ uint8_t outputShifterRegistered = 0;
 //  General functions
 // =============================================
 
+void initOutputTimings(uint32_t time)
+{
+#if MF_SERVO_SUPPORT == 1
+  lastServoUpdate   = time;
+#endif
+
+}
+
 void SetPowerSavingMode(bool state)
 {
-
 #if MF_SEGMENT_SUPPORT == 1
   PowerSaveLedSegment(state);
 #endif

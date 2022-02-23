@@ -22,17 +22,6 @@
 extern uint32_t lastButtonUpdate;
 extern uint32_t lastEncoderUpdate;
 
-#if MF_ANALOG_SUPPORT == 1
-extern uint32_t lastAnalogAverage;
-extern uint32_t lastAnalogRead;
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-extern uint32_t lastInputShifterUpdate;
-#endif
-#if MF_DIGIN_MUX_SUPPORT == 1
-extern uint32_t lastDigInMuxUpdate;
-#endif
-
 extern CmdMessenger cmdMessenger;
 #if MF_MUX_SUPPORT == 1
 extern MFMuxDriver MUX;
@@ -41,6 +30,7 @@ extern MFMuxDriver MUX;
 // General Management functions
 
 void attachEventCallbacks(void);
+void initInputTimings(uint32_t time);
 void OnTrigger(void);
 
 #if MF_ANALOG_SUPPORT == 1
