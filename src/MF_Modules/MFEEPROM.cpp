@@ -5,7 +5,7 @@
 /// \version 1.0 Initial release
 // Copyright (C) 2021
 
-//TODO: Code is for Atmel AVR, check whether compiling for correct platform
+//TODO: This code is for Atmel AVR. Add a check to be sure we're compiling for the correct platform.
 
 #include <Arduino.h>
 #include "MFBoards.h"

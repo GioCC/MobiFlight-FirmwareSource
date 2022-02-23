@@ -92,7 +92,7 @@ void MFInputShifter::reset(uint8_t action)
     // uint8_t pin;
     uint8_t state;
 
-    if (_handler == NULL)   return;
+    if (NULL == _handler)   return;
     if (_moduleCount == 0)  return;
 
     if(action == ONRESET_RELEASE) {
@@ -117,12 +117,8 @@ void MFInputShifter::reset(uint8_t action)
 // if a handler is registered.
 void MFInputShifter::trigger(uint8_t pin, bool state)
 {
-    if (_handler != NULL) {
-        if (state == LOW) {
-            (*_handler)(inputShifterOnPress, pin, _name);
-        } else {
-            (*_handler)(inputShifterOnRelease, pin, _name);
-        }
+    if (_handler) {
+        (*_handler)((state ? inputShifterOnPress : inputShifterOnRelease), pin, _name);
     }
 }
 

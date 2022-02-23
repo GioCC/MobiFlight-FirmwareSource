@@ -11,13 +11,33 @@ extern "C" {
 typedef void (*MuxDigInEvent)(byte, uint8_t, const char *);
 };
 
-enum {
-    MuxDigInOnPress,
-    MuxDigInOnRelease,
-};
-
 class MFDigInMux  //: public MFIOdevice
 {
+public:
+
+    enum {
+        MuxDigInOnPress,
+        MuxDigInOnRelease,
+    };
+
+    enum { 
+        MuxModeFast = 0,
+        MuxModeLazy = 1,
+    };
+
+    static uint8_t  getType(void) { return kTypeDigInMux; }
+    static void     attachHandler(MuxDigInEvent newHandler) { _handler = newHandler; }
+    static void     setMux(MFMuxDriver *MUX);
+
+    MFDigInMux(void);
+    
+    void        attach(uint8_t dataPin, bool halfSize, char const *name);
+    void        detach(void);
+    void        reset(uint8_t action);
+    void        update(void);
+    
+    void        setLazyMode(bool mode);
+    uint16_t    getValues(void) { return _lastState; }
 private:
     enum { 
         MUX_INITED   = 0,
@@ -37,29 +57,5 @@ private:
     void    detectChanges(uint16_t lastState, uint16_t currentState);
     void    trigger(uint8_t channel, bool state);
 
-public:
-    enum { 
-        MUX_MODE_FAST = 0,
-        MUX_MODE_LAZY = 1,
-    };
-
-    static void    attachHandler(MuxDigInEvent newHandler) { _handler = newHandler; }
-    
-    static void    setMux(MFMuxDriver *MUX);
-
-    MFDigInMux(void);
-    //MFDigInMux(MFMuxDriver *MUX, const char *name);
-    
-    static uint8_t     getType(void) { return kTypeDigInMux; }
-    //uint8_t     getSize(void) { return sizeof(MFDigInMux); }
-    
-    void        attach(uint8_t dataPin, bool halfSize, char const *name);
- 
-    void        reset(uint8_t action);
-    void        update(void);
-    void        detach(void);
-    
-    void        setLazyMode(bool mode);
-    uint16_t    getValues(void) { return _lastState; }
 };
 #endif

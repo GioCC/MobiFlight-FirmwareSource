@@ -27,6 +27,20 @@ enum
 
 class MFButton  //: public MFIOdevice
 {
+public:
+    static uint8_t  getType(void) { return kTypeButton; }
+    static void     attachHandler(buttonEventHandler newHandler) { _handler = newHandler; };   
+
+    MFButton(void);
+    
+    
+    void    attach(uint8_t pin, const char * name = "Button");
+    void    detach(void) {};            // Stub required for emulated polymorphism
+    void    reset(uint8_t action);
+    void    update();
+ 
+    void    trigger(uint8_t state);     // could be private
+    
 private:
     static buttonEventHandler   _handler;    
     
@@ -34,22 +48,5 @@ private:
     uint8_t       _pin;
     bool          _state;
  
-public:
-    static void attachHandler(buttonEventHandler newHandler) { _handler = newHandler; }   
-
-    MFButton(void);
-    //MFButton(uint8_t pin, const char * name);
-    
-    static uint8_t getType(void) { return kTypeButton; }
-    //static uint8_t getSize(void) { return sizeof(MFButton); }
-    
-    void    attach(uint8_t pin, const char * name = "Button");
-    void    detach(void) {};  // Stub required for emulated polymorphism
- 
-    void    update();
-    void    reset(uint8_t action);
- 
-    void    trigger(uint8_t state);    // could be private
-    
 };
 #endif 

@@ -9,10 +9,6 @@
 
 #if MF_ANALOG_SUPPORT == 1
 
-/* **********************************************************************************
-  class MFAnalog
-********************************************************************************** */
-
 analogEventHandler   MFAnalog::_handler = NULL; 
 
 void MFAnalog::attach(uint8_t pin, uint8_t sensitivity, const char * name)
@@ -30,13 +26,13 @@ void MFAnalog::update()
     int16_t newValue = ADC_Average_Total>>ADC_MAX_AVERAGE_LOG2;
     if (abs(newValue - _lastValue) >= _sensitivity) {
         _lastValue = newValue;
-         if (_handler!= NULL) {
+        if (_handler) {
             (*_handler)(_lastValue, _pin, _name);
         }      
     }
 }
 
-void MFAnalog::updateAverage(){                                    // read ADC and calculate floating average, call it every ~10ms
+void MFAnalog::updateAverage(){                                 // read ADC and calculate floating average, call it every ~10ms
     ADC_Average_Total -= ADC_Buffer[(ADC_Average_Pointer)];     // subtract oldest value to save the newest value
     ADC_Buffer[ADC_Average_Pointer] = analogRead(_pin);         // store read in, must be subtracted in next loop
     ADC_Average_Total += ADC_Buffer[ADC_Average_Pointer];       // add read in for floating average

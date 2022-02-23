@@ -23,8 +23,8 @@ enum {
 class MFInputShifter  //: public MFIOdevice
 {
 public:
-    static void    attachHandler(inputShifterEventHandler newHandler) { _handler = newHandler; }
     static uint8_t getType(void) { return kTypeInShiftReg; }
+    static void    attachHandler(inputShifterEventHandler newHandler) { _handler = newHandler; }
 
     MFInputShifter(void);
     void    attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin,

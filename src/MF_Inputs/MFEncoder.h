@@ -35,9 +35,6 @@ extern "C"
 // this defines the delta value limit for triggering onFast
 #define MF_ENC_FAST_LIMIT 50 // 50
 
-/////////////////////////////////////////////////////////////////////
-/// \class MFEncoder MFEncoder.h <MFEncoder.h>
-
 class MFEncoder  //: public MFIOdevice
 {
 public:
@@ -60,8 +57,8 @@ public:
         uint8_t resolutionShift;
     } encoderType;
 
-    static uint8_t getType(void) { return kTypeEncoder; }
-    static void attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
+    static uint8_t  getType(void) { return kTypeEncoder; }
+    static void     attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
 
     MFEncoder();
     void    attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name = "Encoder");

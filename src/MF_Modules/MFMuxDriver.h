@@ -5,13 +5,8 @@
 
 #include <Arduino.h>
 
-class MFMuxDriver; // forward decl
+class   MFMuxDriver; // forward decl
 extern  MFMuxDriver MUX;
-
-// extern "C"
-// {
-//     typedef void (*MuxDigInEvent)(byte, uint8_t, const char *);
-// };
 
 ///
 /// \class MFMuxDriver MFMuxDriver.h <MFMuxDriver.h>

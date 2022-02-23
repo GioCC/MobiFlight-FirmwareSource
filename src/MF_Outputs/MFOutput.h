@@ -15,21 +15,16 @@
 class MFOutput  //: public MFIOdevice
 {
 public:
+    static uint8_t getType(void) { return kTypeOutput; }
 
     MFOutput(void);
     
-    static uint8_t getType(void) { return kTypeOutput; }
-    //static uint8_t getSize(void) { return sizeof(MFOutput); }
-
     void    attach(uint8_t pin);
-
-    void    reset(uint8_t action);
-    void    powerSave(uint8_t state);
     void    detach(void);
-    
+    void    reset(uint8_t action);
     void    setval(uint8_t value);
-
     void    update(void) {};  // Stub Required for emulated polymorphism
+    void    powerSave(uint8_t state);
 
 private:
     uint8_t       _pin;

@@ -18,21 +18,17 @@
 class MFStepper  //: public MFIOdevice
 {
 public:
+    static uint8_t getType(void) { return kTypeStepper; }
     
     MFStepper();
 
-    static uint8_t getType(void) { return kTypeStepper; }
-    //static uint8_t getSize(void) { return sizeof(MFStepper); }
-
     void    attach(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t pin3 = 3, uint8_t pin4 = 4, uint8_t btnPin1 = 0);
-    
+    void    detach(void);
     void    reset(uint8_t action);
+    void    setval(long absolute);
     void    update(void);
     void    powerSave(uint8_t state);
-    void    detach(void);
-
-    void    setval(long absolute);
-    
+   
     void    setMaxSpeed(float speed);
     void    setAcceleration(float acceleration);
     void    setZero();
@@ -40,13 +36,13 @@ public:
 
 private:
     AccelStepper _stepper;
-    uint8_t     _zeroPin;
-    long        _targetPos;
     struct {
         uint8_t _initialized    :1;
         uint8_t _resetting      :1;
         uint8_t _zeroPinState   :1;
     };
+    uint8_t     _zeroPin;
+    long        _targetPos;
 
     void checkZeroPin(void);
     void setZeroInReset(void);

@@ -17,22 +17,17 @@
 class MFLCDDisplay  //: public MFIOdevice
 {
 public:
+    static uint8_t getType(void) { return kTypeLcdDisplayI2C; }
 
     MFLCDDisplay(void);
     
-    static uint8_t getType(void) { return kTypeLcdDisplayI2C; }
-    //static uint8_t getSize(void) { return sizeof(MFLCDDisplay); }
-
     void    attach(byte address, byte cols, byte lines);
-
-    void    reset(uint8_t action);
-    void    powerSave(bool state);
     void    detach(void);
-
+    void    reset(uint8_t action);
     void    setval(const char *string);
-    void    test();
-
     void    update(void) {};  // Stub Required for emulated polymorphism
+    void    powerSave(bool state);
+    void    test();
 
 private:
     

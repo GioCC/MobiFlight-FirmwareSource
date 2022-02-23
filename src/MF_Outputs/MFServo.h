@@ -17,23 +17,18 @@
 class MFServo  //: public MFIOdevice
 {
 public:
+    static uint8_t getType(void) { return kTypeServo; }
 
     MFServo();		
-    //MFServo(uint8_t pin, bool enable = true);		
-
-    static uint8_t getType(void) { return kTypeServo; }
-    //static uint8_t getSize(void) { return sizeof(MFServo); }
 
     void    attach(uint8_t pin = 1, bool enable = true);
-    
+    void    detach(void);
     void    reset(uint8_t action);
+    void    setval(int absolute);
     void    update(void);
     void    powerSave(uint8_t state);
-    void    detach(void);
 
-    void    setval(int absolute);
-
-    void	setExternalRange(int min, int max);
+    void    setExternalRange(int min, int max);
     void    setInternalRange(int min, int max);
 
 private:

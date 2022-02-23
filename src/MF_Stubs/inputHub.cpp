@@ -194,7 +194,7 @@ void AddDigInMux(uint8_t dataPin, uint8_t nRegs, char const *name, bool mode)
 
     if(MFI) {
         MFI->attach(dataPin, (nRegs==1), name);
-        MFI->setLazyMode(mode==MFDigInMux::MUX_MODE_LAZY);
+        MFI->setLazyMode(mode==MFDigInMux::MuxModeLazy);
         #ifdef DEBUG
         cmdMessenger.sendCmd(kStatus, F("Added DigInMux"));
     } else {

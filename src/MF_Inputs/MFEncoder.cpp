@@ -18,38 +18,38 @@
 // a 1 for the entries where the position was incremented
 // and 0 in all the other (no change or not valid) cases.
 const int8_t MFEncoder::KnobDir[] = {
-   0, -1,  1,  0,
-   1,  0,  0, -1,
-  -1,  0,  0,  1,
-   0,  1, -1,  0};
+    0, -1, 1, 0,
+    1, 0, 0, -1,
+    -1, 0, 0, 1,
+    0, 1, -1, 0};
 
 // Configuration for different types of rotary encoders.
 // For more information, refer to http://svglobe.com/arduino/in_encoder.html
 //
-// The detents in the encoder type settings below are indexed 
-// by value, not by the order in the quadrature cycle. For example, a rotary 
-// encoder with detents at 00 and 11 (positions 0 and 2 in the 
+// The detents in the encoder type settings below are indexed
+// by value, not by the order in the quadrature cycle. For example, a rotary
+// encoder with detents at 00 and 11 (positions 0 and 2 in the
 // quadrature) but are indexed based on their decimal values (0 and 3).
 // This allows simple lookup of detent positions by value.
-const MFEncoder::encoderType 
-MFEncoder::EncoderTypes[] = {
-	{ { false, false, false, true }, 2 },   // 1 detent  per cycle:  00 ,  10 , [11],  01 
-	{ { true, false, false, false }, 2 },   // 1 detent  per cycle: [00],  10 ,  11 ,  01 
-	{ { true, false, false, true }, 1 },    // 2 detents per cycle: [00],  10 , [11],  01 
-	{ { false, true, true, false }, 1 },    // 2 detents per cycle:  00 , [10],  11,  [01]
-	{ { true, true, true, true }, 0 },  	  // 4 detents per cycle: [00], [10], [11], [01]
+const MFEncoder::encoderType
+    MFEncoder::EncoderTypes[] = {
+        {{false, false, false, true}, 2}, // 1 detent  per cycle:  00 ,  10 , [11],  01
+        {{true, false, false, false}, 2}, // 1 detent  per cycle: [00],  10 ,  11 ,  01
+        {{true, false, false, true}, 1},  // 2 detents per cycle: [00],  10 , [11],  01
+        {{false, true, true, false}, 1},  // 2 detents per cycle:  00 , [10],  11,  [01]
+        {{true, true, true, true}, 0},    // 4 detents per cycle: [00], [10], [11], [01]
 };
 
-encoderEventHandler  MFEncoder::_handler = NULL;
+encoderEventHandler MFEncoder::_handler = NULL;
 
-MFEncoder::MFEncoder(): _initialized(false) {}
+MFEncoder::MFEncoder() : _initialized(false) {}
 
-void MFEncoder::attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char * name)
+void MFEncoder::attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char *name)
 {
-    _pos   = 0;  
-    _name  = name;
-    _pin1  = pin1;
-    _pin2  = pin2;
+    _pos = 0;
+    _name = name;
+    _pin1 = pin1;
+    _pin2 = pin2;
     _encoderType = TypeEncoder;
 
     pinMode(_pin1, INPUT_PULLUP);
@@ -59,96 +59,88 @@ void MFEncoder::attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const ch
     _position = 0;
     _positionExt = 0;
     _detentCounter = 0;
-    _positionTimePrev = 0;              // for first startup avoid calculation of a high speed, _positionTimePrev
-    _positionTime = 500;                // and _positionTime must be initialized to avoid that they have the same value
+    _positionTimePrev = 0; // for first startup avoid calculation of a high speed, _positionTimePrev
+    _positionTime = 500;   // and _positionTime must be initialized to avoid that they have the same value
     _initialized = true;
 }
 
 void MFEncoder::update()
 {
-  if (!_initialized) return;
+    if (!_initialized)
+        return;
 
-  tick();
-  
-  int16_t pos = getPosition();
-  if (pos == _pos) {
-    // nothing happened 
-    return;
-  }
+    tick();
 
-  int16_t delta = pos - _pos;
-  bool dir = true;
-
-  if (delta<0) dir = false;
-
-  if(_handler) {
-    if (abs(delta) < (MF_ENC_FAST_LIMIT)) {
-      // slow turn detected
-      if (dir) {
-          (*_handler)(encLeft, _pin1, _name);
-      } else {
-          (*_handler)(encRight, _pin2, _name);
-      }
-    } else {
-      // fast turn detected
-      if (dir) {
-          (*_handler)(encLeftFast,  _pin1, _name);
-      } else {
-          (*_handler)(encRightFast, _pin2, _name);
-      }
+    int16_t pos = getPosition();
+    if (pos == _pos) {
+        // nothing happened
+        return;
     }
-  }
 
-  // protect from overflow
-  if ( (dir  && (pos + delta*2) > MF_ENC_MAX) || (!dir && (pos - delta*2) < -MF_ENC_MAX))
-  { 
-    setPosition(0); 
-    pos = 0; 
-  }
-  _pos = pos;
-} 
+    int16_t delta = pos - _pos;
+    bool dir = true;
+
+    if (delta < 0)
+        dir = false;
+
+    if (_handler) {
+        if (abs(delta) < (MF_ENC_FAST_LIMIT)) {
+            // slow turn detected
+            (*_handler)( (dir ? encLeft : encRight), _pin1, _name);
+        } else {
+            // fast turn detected
+            (*_handler)( (dir ? encLeftFast : encRightFast), _pin1, _name);
+        }
+    }
+
+    // protect from overflow
+    if ((dir && (pos + delta * 2) > MF_ENC_MAX) || (!dir && (pos - delta * 2) < -MF_ENC_MAX)) {
+        setPosition(0);
+        pos = 0;
+    }
+    _pos = pos;
+}
 
 void MFEncoder::tick(void)
 {
-    bool sig1 = !digitalRead(_pin1);        // to keep backwards compatibility for encoder type digitalRead must be negated
-    bool sig2 = !digitalRead(_pin2);        // to keep backwards compatibility for encoder type digitalRead must be negated
+    bool sig1 = !digitalRead(_pin1); // to keep backwards compatibility for encoder type digitalRead must be negated
+    bool sig2 = !digitalRead(_pin2); // to keep backwards compatibility for encoder type digitalRead must be negated
     int _speed = 0;
     uint32_t currentMs = millis();
     uint8_t thisState = sig1 | (sig2 << 1);
-  
+
     if (currentMs - _lastFastDec > 100 && _detentCounter > 1) {
         _lastFastDec = currentMs;
         _detentCounter--;
-    } else 
-    if (currentMs - _positionTimePrev > 500) {    // if more than 80ms no step detected, set fast acceleration to 0
+    } else if (currentMs - _positionTimePrev > 500) { // if more than 80ms no step detected, set fast acceleration to 0
         _lastFastDec = currentMs;
         _detentCounter = 0;
     }
 
     if (_oldState != thisState) {
-      
+
         // at minimum 6 detents have to be detected before fast step can be detected
         _speed = ((_detentCounter > 6) ? 51 : 1);
-		
-        _position += ((KnobDir[thisState | (_oldState<<2)] * _speed)) << EncoderTypes[_encoderType].resolutionShift;
+
+        _position += ((KnobDir[thisState | (_oldState << 2)] * _speed)) << EncoderTypes[_encoderType].resolutionShift;
         if (EncoderTypes[_encoderType].detents[thisState]) {
             _positionTimePrev = _positionTime;
             _positionTime = currentMs;
             _positionExt = _position >> EncoderTypes[_encoderType].resolutionShift;
-            _detentCounter = min(_detentCounter+1, 12);
-		    }
-		    _oldState = thisState;
+            _detentCounter = min(_detentCounter + 1, 12);
+        }
+        _oldState = thisState;
     }
 }
 
-inline
-int16_t  MFEncoder::getPosition() 
+inline int16_t MFEncoder::getPosition()
 {
-  return _positionExt;
+    return _positionExt;
 }
 
-void MFEncoder::setPosition(int16_t newPosition) {
-  // only adjust the external part of the position.
-  _position = ((newPosition >> EncoderTypes[_encoderType].resolutionShift) | (_position & 0x03));
-  _positionExt = newPosition;
+void MFEncoder::setPosition(int16_t newPosition)
+{
+    // only adjust the external part of the position.
+    _position = ((newPosition >> EncoderTypes[_encoderType].resolutionShift) | (_position & 0x03));
+    _positionExt = newPosition;
 }

@@ -59,7 +59,7 @@ void AddAnalog(uint8_t pin, uint8_t sensitivity = 3, char const *name = "AnalogI
 void AddInputShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t nModules, char const *name = "InShiftReg");
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
-void AddDigInMux(uint8_t dataPin, uint8_t nRegs, char const *name = "MUXDigIn", bool mode = MFDigInMux::MUX_MODE_FAST);
+void AddDigInMux(uint8_t dataPin, uint8_t nRegs, char const *name = "MUXDigIn", bool mode = MFDigInMux::MuxModeFast);
 #endif
 #if MF_MUX_SUPPORT == 1
 void AddMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin);

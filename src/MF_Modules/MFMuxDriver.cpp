@@ -5,8 +5,9 @@
 #include "MFMuxDriver.h"
 #include "mobiflight.h"
 
+// Global instance: should normally be implemented as a Singleton,
+// but we do it Arduino-style
 MFMuxDriver MUX;
-
 
 MFMuxDriver::MFMuxDriver(void)
 {

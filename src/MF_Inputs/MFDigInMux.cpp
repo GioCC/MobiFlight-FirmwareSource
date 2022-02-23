@@ -16,17 +16,8 @@ MFDigInMux::MFDigInMux(void)
     _MUX = NULL;
     _name = "MUXDigIn";
     _flags = 0x00;
-    setLazyMode(MUX_MODE_FAST);
+    setLazyMode(MuxModeFast);
 }
-
-// MFDigInMux::MFDigInMux(MFMuxDriver *MUX, const char *name)
-// : _name(name)
-// {
-//     if(MUX) _MUX = MUX;
-//     _flags = 0x00;
-//     setLazyMode(MUX_MODE_FAST);
-//     clear();
-// }
 
 void MFDigInMux::setMux(MFMuxDriver *MUX)
 {
@@ -162,14 +153,6 @@ void MFDigInMux::detectChanges(uint16_t lastState, uint16_t currentState)
     }
 }
 
-
-// Triggers the event handler for the associated input channel
-void MFDigInMux::trigger(uint8_t channel, bool state)
-{
-    if(_handler == NULL) return;
-    (*_handler)((state ? MuxDigInOnRelease : MuxDigInOnPress), channel, _name);
-}
-
 // Clears the internal state
 void MFDigInMux::reset(uint8_t action)
 {
@@ -195,6 +178,15 @@ void MFDigInMux::reset(uint8_t action)
         detectChanges(0xFFFF, _lastState);  
     }
 }
+
+// Triggers the event handler for the associated input channel
+void MFDigInMux::trigger(uint8_t channel, bool state)
+{
+    if(_handler) {
+        (*_handler)((state ? MuxDigInOnRelease : MuxDigInOnPress), channel, _name);
+    }
+}
+
 
 void MFDigInMux::setLazyMode(bool mode)
 {

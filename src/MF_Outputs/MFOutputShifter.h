@@ -23,18 +23,15 @@
 class MFOutputShifter  //: public MFIOdevice
 {
 public:
+    static uint8_t getType(void) { return kTypeOutShiftReg; }
 
     MFOutputShifter(void);
 
-    static uint8_t getType(void) { return kTypeOutShiftReg; }
-    //static uint8_t getSize(void) { return sizeof(MFOutputShifter); }
-
     void    attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount);
-    
+    void    detach(void);
     void    reset(uint8_t action);
     void    update(void);
     void    powerSave(uint8_t state);
-    void    detach(void);
 
     void    setPin(uint8_t pin, uint8_t value, uint8_t refresh = 1);
     void    setPins(char* pins, uint8_t value);

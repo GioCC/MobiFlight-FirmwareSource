@@ -17,19 +17,16 @@ void MFOutput::attach(uint8_t pin)
     setval(false);
 }
 
-void MFOutput::reset(uint8_t action)
+void MFOutput::detach(void)
 {
-    if(action == ONRESET_DEFAULT) {
-        setval(0);
-    }
+    pinMode(_pin, INPUT);
+    _pin = 0xFF;
 }
 
-void MFOutput::powerSave(uint8_t state)
+void MFOutput::reset(uint8_t action)
 {
-    if (state) {
-        analogWrite(_pin, 0);
-    } else {
-        setval(_value);
+    if(ONRESET_DEFAULT == action) {
+        setval(0);
     }
 }
 
@@ -39,10 +36,13 @@ void MFOutput::setval(uint8_t value)
     analogWrite(_pin, _value);
 }
 
-void MFOutput::detach(void)
+void MFOutput::powerSave(uint8_t state)
 {
-    pinMode(_pin, INPUT);
-    _pin = 0xFF;
+    if (state) {
+        analogWrite(_pin, 0);
+    } else {
+        setval(_value);
+    }
 }
 
 // MFoutput.cpp
