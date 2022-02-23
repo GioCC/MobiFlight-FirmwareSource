@@ -27,10 +27,12 @@ public:
     MFServo(uint8_t pin, bool enable = true);		
 		void    attach(uint8_t pin = 1, bool enable = true);
     void    detach();
+    void    update();
+
+    void    moveTo(int absolute);
+
 		void		setExternalRange(int min, int max);
 		void    setInternalRange(int min, int max);
-    void    moveTo(int absolute);
-    void    update();
 
 private:
 		uint8_t _pin;

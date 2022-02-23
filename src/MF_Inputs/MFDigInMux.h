@@ -22,8 +22,6 @@ enum
     MuxDigInOnRelease,
 };
 
-/////////////////////////////////////////////////////////////////////
-/// \class MFDigInMux MFDigInMux.h <MFDigInMux.h>
 class MFDigInMux
 {
 public:

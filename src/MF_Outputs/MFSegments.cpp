@@ -11,6 +11,32 @@ MFSegments::MFSegments()
   _moduleCount = 0;
 }
 
+void MFSegments::attach(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness)
+{
+  if (!FitInMemory(sizeof(LedControl)))
+	{
+		// Error Message to Connector
+    cmdMessenger.sendCmdStart(kDebug);
+    cmdMessenger.sendCmdArg(F("7Segment does not fit in Memory"));
+    cmdMessenger.sendCmdEnd();
+		return;
+	}
+  _ledControl = new (allocateMemory(sizeof(LedControl))) LedControl;
+  _ledControl->begin(dataPin, clkPin, csPin, moduleCount);
+  _moduleCount = moduleCount;
+  for (int i = 0; i != _moduleCount; ++i)
+  {
+    setBrightness(i, brightness);
+    _ledControl->shutdown(i, false);
+    _ledControl->clearDisplay(i);
+  }
+}
+
+void MFSegments::detach()
+{
+  _moduleCount = 0;
+}
+
 void MFSegments::display(byte module, char *string, byte points, byte mask, bool convertPoints)
 {
   if (_moduleCount == 0)
@@ -41,32 +67,6 @@ void MFSegments::setBrightness(byte module, byte value)
       _ledControl->shutdown(module, true);
     }
   }
-}
-
-void MFSegments::attach(int dataPin, int csPin, int clkPin, byte moduleCount, byte brightness)
-{
-  if (!FitInMemory(sizeof(LedControl)))
-	{
-		// Error Message to Connector
-    cmdMessenger.sendCmdStart(kDebug);
-    cmdMessenger.sendCmdArg(F("7Segment does not fit in Memory"));
-    cmdMessenger.sendCmdEnd();
-		return;
-	}
-  _ledControl = new (allocateMemory(sizeof(LedControl))) LedControl;
-  _ledControl->begin(dataPin, clkPin, csPin, moduleCount);
-  _moduleCount = moduleCount;
-  for (int i = 0; i != _moduleCount; ++i)
-  {
-    setBrightness(i, brightness);
-    _ledControl->shutdown(i, false);
-    _ledControl->clearDisplay(i);
-  }
-}
-
-void MFSegments::detach()
-{
-  _moduleCount = 0;
 }
 
 void MFSegments::powerSavingMode(bool state)

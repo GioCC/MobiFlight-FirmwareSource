@@ -9,6 +9,37 @@ MFOutputShifter::MFOutputShifter()
   _initialized = false;
 }
 
+void MFOutputShifter::attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount)
+{
+  _initialized = true;
+  _latchPin = latchPin;
+  _clockPin = clockPin;
+  _dataPin = dataPin;
+  _moduleCount = moduleCount;
+
+  pinMode(_latchPin, OUTPUT);
+  pinMode(_clockPin, OUTPUT);  
+  pinMode(_dataPin, OUTPUT);
+
+  clear();
+}
+
+void MFOutputShifter::detach()
+{
+  if (!_initialized) return;
+  _initialized = false;
+}
+
+
+void MFOutputShifter::updateShiftRegister()
+{
+   digitalWrite(_latchPin, LOW);
+   for (uint8_t i = _moduleCount; i>0 ; i--) {
+      shiftOut(_dataPin, _clockPin, MSBFIRST, _outputBuffer[i-1]); //LSBFIRST, MSBFIRST,
+   }    
+   digitalWrite(_latchPin, HIGH);
+}
+
 void MFOutputShifter::setPin(uint8_t pin, uint8_t value, uint8_t refresh)
 {
   if (!_initialized) return;
@@ -37,27 +68,6 @@ void MFOutputShifter::setPins(char* pins, uint8_t value)
   updateShiftRegister();
 }
 
-void MFOutputShifter::attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t moduleCount)
-{
-  _initialized = true;
-  _latchPin = latchPin;
-  _clockPin = clockPin;
-  _dataPin = dataPin;
-  _moduleCount = moduleCount;
-
-  pinMode(_latchPin, OUTPUT);
-  pinMode(_clockPin, OUTPUT);  
-  pinMode(_dataPin, OUTPUT);
-
-  clear();
-}
-
-void MFOutputShifter::detach()
-{
-  if (!_initialized) return;
-  _initialized = false;
-}
-
 void MFOutputShifter::clear() 
 {
   // Set everything to 0
@@ -83,12 +93,3 @@ void MFOutputShifter::test()
   }
 }
 
-
-void MFOutputShifter::updateShiftRegister()
-{
-   digitalWrite(_latchPin, LOW);
-   for (uint8_t i = _moduleCount; i>0 ; i--) {
-      shiftOut(_dataPin, _clockPin, MSBFIRST, _outputBuffer[i]); //LSBFIRST, MSBFIRST,
-   }    
-   digitalWrite(_latchPin, HIGH);
-}

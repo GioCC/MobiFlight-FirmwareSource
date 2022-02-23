@@ -11,17 +11,6 @@ MFLCDDisplay::MFLCDDisplay()
   _initialized = false;
 }
 
-void MFLCDDisplay::display(const char *string)
-{
-  if (!_initialized)
-    return;
-  for (uint8_t line = 0; line != _lines; line++)
-  {
-    _lcdDisplay->setCursor(0, line);
-    _lcdDisplay->writeString(&string[line*_cols], _cols);
-  }
-}
-
 void MFLCDDisplay::attach(byte address, byte cols, byte lines)
 {
   _address = address;
@@ -48,6 +37,17 @@ void MFLCDDisplay::detach()
   if (!_initialized)
     return;
   _initialized = false;
+}
+
+void MFLCDDisplay::display(const char *string)
+{
+  if (!_initialized)
+    return;
+  for (uint8_t line = 0; line != _lines; line++)
+  {
+    _lcdDisplay->setCursor(0, line);
+    _lcdDisplay->writeString(&string[line*_cols], _cols);
+  }
 }
 
 void MFLCDDisplay::powerSavingMode(bool state)

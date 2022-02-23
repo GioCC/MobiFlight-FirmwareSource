@@ -6,38 +6,11 @@
 #include "allocateMem.h"
 #include "mobiflight.h"
 
-void MFServo::moveTo(int absolute)
-{
-	int newValue = map(absolute, _mapRange[0], _mapRange[1], _mapRange[2], _mapRange[3]);
-    if (_targetPos != newValue)
-    {
-			_targetPos = newValue;
-			if (!_initialized) {
-			  _servo->attach(_pin);
-				_initialized = true;
-			}
-    }
-}
+MFServo::MFServo() : _servo() {}
 
-void MFServo::update() {
-	// after reaching final position
-	// detach the servo to prevent continuous noise
-    if (_currentPos == _targetPos) { 
-		// detach(); 
-		return; 
-	}
-    
-    if (_currentPos > _targetPos) _currentPos--;
-    else _currentPos++;
-        
-    _servo->write(_currentPos);
-}
-
-void MFServo::detach() { 
-  if (_initialized) {
-    _servo->detach(); 
-    _initialized = false; 
-  }
+MFServo::MFServo(uint8_t pin, bool enable) : _servo()
+{				
+	attach(pin, enable);
 }
 
 void MFServo::attach(uint8_t pin, bool enable)
@@ -59,11 +32,39 @@ void MFServo::attach(uint8_t pin, bool enable)
 	_pin = pin;	
 }
 
-MFServo::MFServo() : _servo() {}
+void MFServo::detach() { 
+  if (_initialized) {
+    _servo->detach(); 
+    _initialized = false; 
+  }
+}
 
-MFServo::MFServo(uint8_t pin, bool enable) : _servo()
-{				
-	attach(pin, enable);
+void MFServo::update() {
+	// after reaching final position
+	// detach the servo to prevent continuous noise
+    if (_currentPos == _targetPos) { 
+		// detach(); 
+		return; 
+	}
+    
+    if (_currentPos > _targetPos) _currentPos--;
+    else _currentPos++;
+        
+    _servo->write(_currentPos);
+}
+
+
+void MFServo::moveTo(int absolute)
+{
+	int newValue = map(absolute, _mapRange[0], _mapRange[1], _mapRange[2], _mapRange[3]);
+    if (_targetPos != newValue)
+    {
+			_targetPos = newValue;
+			if (!_initialized) {
+			  _servo->attach(_pin);
+				_initialized = true;
+			}
+    }
 }
 
 void MFServo::setExternalRange(int min, int max)

@@ -24,9 +24,6 @@ extern "C"
   typedef void (*analogEvent) (int, uint8_t, const char *);
 };
 
-
-/////////////////////////////////////////////////////////////////////
-/// \class MFAnalog MFAnalog.h <MFAnalog.h>
 class MFAnalog
 {
 public:
@@ -39,7 +36,7 @@ public:
     
 private:
     static analogEvent   _handler; 
-    int          _lastValue;
+    int           _lastValue;
     uint8_t       _sensitivity;
 
     uint16_t ADC_Buffer[ADC_MAX_AVERAGE] = {0};     // Buffer for all values from each channel  

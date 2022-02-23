@@ -20,8 +20,6 @@
 #include <wiring.h>
 #endif
 
-/////////////////////////////////////////////////////////////////////
-/// \class MFStepper MFStepper.h <MFServo.h>
 class MFStepper
 {
 public:
