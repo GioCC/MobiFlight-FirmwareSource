@@ -7,13 +7,13 @@
 
 #ifndef MFEEPROM_H
 #define MFEEPROM_H
+#include <stdint.h>
 
 class MFEEPROM
 {
 	  
   public:
     MFEEPROM();
-    void init(void);
     uint16_t get_length(void);
     void read_block(uint16_t addr, char data[], uint16_t len);
     void write_block (uint16_t addr, char data[], uint16_t len);

@@ -11,7 +11,10 @@
 #include "MFEEPROM.h"
 #include <EEPROM.h>
 
-MFEEPROM::MFEEPROM() {}
+MFEEPROM::MFEEPROM() 
+{
+    eepromLength = EEPROM.length();
+}
 
 uint16_t MFEEPROM::get_length(void) {
     return eepromLength;
@@ -21,10 +24,6 @@ void MFEEPROM::read_block(uint16_t adr, char data[], uint16_t len) {
     for (uint16_t i = 0; i<len; i++) {
         data[i] = read_char(adr + i);
     }
-}
-
-void MFEEPROM::init() {
-    eepromLength = EEPROM.length();
 }
 
 void MFEEPROM::write_block (uint16_t adr, char data[], uint16_t len) {
