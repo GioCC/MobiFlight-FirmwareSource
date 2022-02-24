@@ -5,29 +5,9 @@
 #include "inputHub.h"
 #include <Arduino.h>
 
-#define MF_BUTTON_DEBOUNCE_MS 10     // time between updating the buttons
-#define MF_ANALOGAVERAGE_DELAY_MS 10 // time between updating the analog average calculation
-#define MF_ANALOGREAD_DELAY_MS 50    // time between sending analog values
-
 // =============================================
 //  Variables
 // =============================================
-
-uint32_t lastButtonUpdate = 0;
-uint32_t lastEncoderUpdate = 0;
-
-#if MF_ANALOG_SUPPORT == 1
-uint32_t lastAnalogAverage = 0;
-uint32_t lastAnalogRead = 0;
-#endif
-
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-uint32_t lastInputShifterUpdate = 0;
-#endif
-
-#if MF_DIGIN_MUX_SUPPORT == 1
-uint32_t lastDigInMuxUpdate = 0;
-#endif
 
 MFButton *buttons[MAX_BUTTONS];
 uint8_t buttonsRegistered = 0;
@@ -125,23 +105,6 @@ void handlerDigInMuxOnChange(uint8_t eventId, uint8_t channel, const char *name)
 };
 #endif
 
-void initInputTimings(uint32_t time)
-{
-    // Init Time Gap between Inputs, do not read at the same loop
-#if MF_DIGIN_MUX_SUPPORT == 1
-    lastDigInMuxUpdate = time + 8;
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-    lastInputShifterUpdate = time + 6;
-#endif
-#if MF_ANALOG_SUPPORT == 1
-    lastAnalogAverage = time + 4;
-    lastAnalogRead    = time + 4;
-#endif
-    lastButtonUpdate  = time;
-    lastEncoderUpdate = time + 2;
-}
-
 void OnTrigger()
 {
     // Trigger all button release events first...
@@ -199,9 +162,6 @@ void ClearButtons()
 
 void readButtons()
 {
-    if (millis() - lastButtonUpdate < MF_BUTTON_DEBOUNCE_MS)
-        return;
-    lastButtonUpdate = millis();
     for (int i = 0; i != buttonsRegistered; i++) {
         buttons[i]->update();
     }
@@ -238,9 +198,6 @@ void ClearEncoders()
 
 void readEncoder()
 {
-    if (millis() - lastEncoderUpdate < 1)
-        return;
-    lastEncoderUpdate = millis();
     for (int i = 0; i != encodersRegistered; i++) {
         encoders[i]->update();
     }
@@ -276,17 +233,15 @@ void ClearAnalog()
 
 void readAnalog()
 {
-    if (millis() - lastAnalogAverage > MF_ANALOGAVERAGE_DELAY_MS - 1) {
-        for (int i = 0; i != analogRegistered; i++) {
-            analog[i]->readBuffer();
-        }
-        lastAnalogAverage = millis();
-    }
-    if (millis() - lastAnalogRead < MF_ANALOGREAD_DELAY_MS)
-        return;
-    lastAnalogRead = millis();
     for (int i = 0; i != analogRegistered; i++) {
         analog[i]->update();
+    }
+}
+
+void readAnalogAvg()
+{
+    for (int i = 0; i != analogRegistered; i++) {
+        analog[i]->readBuffer();
     }
 }
 #endif
@@ -326,10 +281,6 @@ void ClearInputShifters()
 
 void readInputShifters()
 {
-    if (millis() - lastInputShifterUpdate <= MF_BUTTON_DEBOUNCE_MS)
-        return;
-    lastInputShifterUpdate = millis();
-
     for (int i = 0; i != inputShiftersRegistered; i++) {
         inputShifters[i]->update();
     }
@@ -369,10 +320,6 @@ void ClearDigInMux()
 
 void readDigInMux()
 {
-    if (millis() - lastDigInMuxUpdate <= MF_BUTTON_DEBOUNCE_MS)
-        return;
-    lastDigInMuxUpdate = millis();
-
     for (int i = 0; i != digInMuxRegistered; i++) {
         digInMux[i].update();
     }

@@ -23,8 +23,6 @@ extern CmdMessenger cmdMessenger;
 
 // General functions
 
-void initOutputTimings(uint32_t time);
-
 void SetPowerSavingMode(bool state);
 
 // Device management functions

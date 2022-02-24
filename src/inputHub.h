@@ -30,7 +30,6 @@ extern MFMuxDriver MUX;
 // General Management functions
 
 void attachEventCallbacks(void);
-void initInputTimings(uint32_t time);
 void OnTrigger(void);
 
 #if MF_ANALOG_SUPPORT == 1
@@ -65,6 +64,7 @@ void readEncoder();
 void AddAnalog(uint8_t pin, char const *name = "AnalogInput", uint8_t sensitivity = 3);
 void ClearAnalog();
 void readAnalog();
+void readAnalogAvg();
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 void AddInputShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name = "Shifter");
