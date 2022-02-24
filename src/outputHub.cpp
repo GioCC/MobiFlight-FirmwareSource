@@ -48,7 +48,7 @@ void SetPowerSavingMode(bool state)
     PowerSaveLedSegment(state);
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     if (state)
         cmdMessenger.sendCmd(kStatus, F("On"));
     else
@@ -71,7 +71,7 @@ void AddOutput(uint8_t pin)
     }
     outputs[outputsRegistered] = new (allocateMemory(sizeof(MFOutput))) MFOutput(pin);
     outputsRegistered++;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added output"));
 #endif
 }
@@ -79,7 +79,7 @@ void AddOutput(uint8_t pin)
 void ClearOutputs()
 {
     outputsRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared outputs"));
 #endif
 }
@@ -114,7 +114,7 @@ void AddOutputShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8
     outputShifters[outputShifterRegistered]->clear();
     outputShifterRegistered++;
 
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added Output Shifter"));
 #endif
 }
@@ -126,7 +126,7 @@ void ClearOutputShifters()
     }
 
     outputShifterRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared Output Shifter"));
 #endif
 }
@@ -160,7 +160,7 @@ void AddLedSegment(int dataPin, int csPin, int clkPin, int numDevices, int brigh
 
     ledSegments[ledSegmentsRegistered].attach(dataPin, csPin, clkPin, numDevices, brightness); // lc is our object
     ledSegmentsRegistered++;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added Led Segment"));
 #endif
 }
@@ -171,7 +171,7 @@ void ClearLedSegments()
         ledSegments[i].detach();
     }
     ledSegmentsRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared segments"));
 #endif
 }
@@ -236,7 +236,7 @@ void ClearServos()
         servos[i].detach();
     }
     servosRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared servos"));
 #endif
 }
@@ -280,7 +280,7 @@ void AddStepper(int pin1, int pin2, int pin3, int pin4, int btnPin1)
     // all set
     steppersRegistered++;
 
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added stepper"));
 #endif
 }
@@ -291,7 +291,7 @@ void ClearSteppers()
         steppers[i].detach();
     }
     steppersRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared steppers"));
 #endif
 }
@@ -346,7 +346,7 @@ void AddLcdDisplay(uint8_t address, uint8_t cols, uint8_t lines)
         return;
     lcd_I2C[lcd_12cRegistered].attach(address, cols, lines);
     lcd_12cRegistered++;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added lcdDisplay"));
 #endif
 }
@@ -357,7 +357,7 @@ void ClearLcdDisplays()
         lcd_I2C[i].detach();
     }
     lcd_12cRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared lcdDisplays"));
 #endif
 }

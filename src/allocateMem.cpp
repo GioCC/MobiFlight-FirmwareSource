@@ -12,14 +12,14 @@ char * allocateMemory(uint8_t size)
     nextPointer = actualPointer + size;
     if (nextPointer >= MF_MAX_DEVICEMEM)
     {
-#ifdef DEBUG
+#ifdef DEBUG2MSG
         cmdMessenger.sendCmdStart(kStatus);
         cmdMessenger.sendCmdArg(F("BufferOverflow!"));
         cmdMessenger.sendCmdEnd();
 #endif
         return nullptr;
     }
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmdStart(kStatus);
     cmdMessenger.sendCmdArg(F("BufferUsage"));
     cmdMessenger.sendCmdArg(nextPointer);

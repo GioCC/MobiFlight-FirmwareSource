@@ -147,7 +147,7 @@ void AddButton(uint8_t pin = 1, char const *name)
     }
     buttons[buttonsRegistered] = new (allocateMemory(sizeof(MFButton))) MFButton(pin, name);
     buttonsRegistered++;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added button ") /* + name */);
 #endif
 }
@@ -155,7 +155,7 @@ void AddButton(uint8_t pin = 1, char const *name)
 void ClearButtons()
 {
     buttonsRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared buttons"));
 #endif
 }
@@ -183,7 +183,7 @@ void AddEncoder(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t encoder_type = 0, ch
     encoders[encodersRegistered] = new (allocateMemory(sizeof(MFEncoder))) MFEncoder;
     encoders[encodersRegistered]->attach(pin1, pin2, encoder_type, name);
     encodersRegistered++;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added encoder"));
 #endif
 }
@@ -191,7 +191,7 @@ void AddEncoder(uint8_t pin1 = 1, uint8_t pin2 = 2, uint8_t encoder_type = 0, ch
 void ClearEncoders()
 {
     encodersRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared encoders"));
 #endif
 }
@@ -218,7 +218,7 @@ void AddAnalog(uint8_t pin = 1, char const *name, uint8_t sensitivity)
     }
     analog[analogRegistered] = new (allocateMemory(sizeof(MFAnalog))) MFAnalog(pin, name, sensitivity);
     analogRegistered++;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added analog device "));
 #endif
 }
@@ -226,7 +226,7 @@ void AddAnalog(uint8_t pin = 1, char const *name, uint8_t sensitivity)
 void ClearAnalog()
 {
     analogRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared analog devices"));
 #endif
 }
@@ -263,7 +263,7 @@ void AddInputShifter(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_
     inputShifters[inputShiftersRegistered]->attach(latchPin, clockPin, dataPin, modules, name);
     inputShifters[inputShiftersRegistered]->clear();
     inputShiftersRegistered++;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added input shifter"));
 #endif
 }
@@ -274,7 +274,7 @@ void ClearInputShifters()
         inputShifters[i]->detach();
     }
     inputShiftersRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared input shifter"));
 #endif
 }
@@ -302,7 +302,7 @@ void AddDigInMux(uint8_t dataPin, uint8_t nRegs, char const *name, bool mode)
     DIMUX->attachHandler(handlerDigInMuxOnChange);
     digInMuxRegistered++;
 
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added digital input MUX"));
 #endif
 }
@@ -313,7 +313,7 @@ void ClearDigInMux()
         digInMux[digInMuxRegistered].detach();
     }
     digInMuxRegistered = 0;
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared digital input MUX"));
 #endif
 }
@@ -330,7 +330,7 @@ void readDigInMux()
 void AddMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin)
 {
     MUX.attach(Sel0Pin, Sel1Pin, Sel2Pin, Sel3Pin);
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added multiplexer"));
 #endif
 }
@@ -338,7 +338,7 @@ void AddMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t S
 void ClearMultiplexer()
 {
     MUX.detach();
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Cleared Multiplexer selector"));
 #endif
 }

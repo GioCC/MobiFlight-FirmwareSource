@@ -19,7 +19,7 @@ char foo;
 #define STR_VALUE(arg) STRINGIZER(arg)
 #define VERSION STR_VALUE(BUILD_VERSION)
 
-//#define DEBUG 1
+//#define DEBUG2MSG 1
 
 #include "MFEEPROM.h"
 

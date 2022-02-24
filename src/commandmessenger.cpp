@@ -56,7 +56,7 @@ void attachCommandCallbacks()
     cmdMessenger.attach(kSetShiftRegisterPins, OnSetOutputShifterPins);
 #endif
 
-#ifdef DEBUG
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Attached callbacks"));
 #endif
 }
