@@ -3,12 +3,7 @@
 #ifndef MFInputShifter_h
 #define MFInputShifter_h
 
-#if ARDUINO >= 100
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#include <wiring.h>
-#endif
 
 // Maximum number of shifters allowed on an individual chain. While this is currently set to 4
 // there is no technical limit in the code for how many can be chained. It is constrained only

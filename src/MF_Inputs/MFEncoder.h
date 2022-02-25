@@ -22,12 +22,7 @@
 #define MFEncoder_h
 
 #include <stdlib.h>
-#if ARDUINO >= 100
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#include <wiring.h>
-#endif
 
 extern "C" {
 typedef void (*encoderEvent)(uint8_t, uint8_t, const char *);

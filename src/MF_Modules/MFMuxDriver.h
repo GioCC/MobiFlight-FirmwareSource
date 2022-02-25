@@ -3,12 +3,7 @@
 #ifndef MFMultiplex_h
 #define MFMultiplex_h
 
-#if ARDUINO >= 100
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#include <wiring.h>
-#endif
 
 extern "C"
 {

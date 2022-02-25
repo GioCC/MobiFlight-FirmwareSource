@@ -3,12 +3,7 @@
 #ifndef MFMUXDigitalIn_h
 #define MFMUXDigitalIn_h
 
-#if ARDUINO >= 100
 #include <Arduino.h>
-#else
-#include <WProgram.h>
-#include <wiring.h>
-#endif
 #include "MFMuxDriver.h"
 
 extern "C"

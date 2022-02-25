@@ -10,15 +10,10 @@
 #define MFStepper_h
 
 #include <stdlib.h>
+#include <Arduino.h>
 #include <AccelStepper.h>
 #include "MFButton.h"
 
-#if ARDUINO >= 100
-#include <Arduino.h>
-#else
-#include <WProgram.h>
-#include <wiring.h>
-#endif
 
 class MFStepper
 {

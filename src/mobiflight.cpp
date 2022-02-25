@@ -2,17 +2,12 @@
  * Includes Core Arduino functionality
  **/
 char foo;
-#if ARDUINO < 100
-#include <WProgram.h>
-#else
 #include <Arduino.h>
-#endif
-
+#include <MFBoards.h>
 #include "allocateMem.h"
 #include "commandmessenger.h"
 #include "config.h"
 #include "mobiflight.h"
-#include <MFBoards.h>
 
 // The build version comes from an environment variable
 #define STRINGIZER(arg) #arg
