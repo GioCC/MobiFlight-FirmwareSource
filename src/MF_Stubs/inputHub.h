@@ -26,7 +26,7 @@ extern CmdMessenger cmdMessenger;
 // General Management functions
 
 // Inputs + outputs:    
-void SetPowerSave(uint8_t mode);
+void setPowerSave(uint8_t mode);
 
 
 void attachEventCallbacks(void);

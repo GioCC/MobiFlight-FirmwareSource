@@ -84,7 +84,7 @@ void OnTrigger()
     // #if MF_INPUT_SHIFTER_SUPPORT == 1
     //   InputShifter::OnTrigger();
     // #endif
-    ResetDevices();
+    resetDevices();
 }
 
 void OnResetBoard()

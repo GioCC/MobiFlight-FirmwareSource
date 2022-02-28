@@ -1,6 +1,6 @@
 #ifndef _mobiflight_h
 #define _mobiflight_h
 
-void WipeDevices(void);
-void ResetDevices(void);
+void wipeDevices(void);
+void resetDevices(void);
 #endif

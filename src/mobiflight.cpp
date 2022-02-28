@@ -41,6 +41,31 @@ uint32_t lastAnalogRead = 0;
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 uint32_t lastInputShifterUpdate = 0;
 #endif
+#if MF_DIGIN_MUX_SUPPORT == 1
+uint32_t lastDigInMuxUpdate = 0;
+#endif
+
+void initPollIntervals(uint32_t time)
+{
+    // Init Time Gap between Inputs, do not read at the same loop
+#if MF_DIGIN_MUX_SUPPORT == 1
+    lastDigInMuxUpdate = time + 8;
+#endif
+#if MF_INPUT_SHIFTER_SUPPORT == 1
+    lastInputShifterUpdate = time + 6;
+#endif
+#if MF_ANALOG_SUPPORT == 1
+    lastAnalogAverage = time + 4;
+    lastAnalogRead = time + 4;
+#endif
+    
+    lastButtonUpdate = time;
+    lastEncoderUpdate = time + 2;
+
+#if MF_SERVO_SUPPORT == 1
+    lastServoUpdate = time;
+#endif
+}
 
 // ************************************************************
 //  General I/O handling functions
@@ -100,14 +125,14 @@ uint32_t lastInputShifterUpdate = 0;
         } while (dev);                                             \
     }
 
-void WipeDevices(void)
+void wipeDevices(void)
 {
     // Reset device storage (this will do all devices)
     INVOKE(detach(), StowManager::TypeALL);
     Stowage.wipe();
 }
 
-void ResetDevices(void)
+void resetDevices(void)
 {
     // Trigger all release events first for inputs, does nothing for outputs
     INVOKE(reset(ONRESET_RELEASE), StowManager::TypeALL);
@@ -115,17 +140,12 @@ void ResetDevices(void)
     INVOKE(reset(ONRESET_PRESS), StowManager::TypeALL);
 }
 
-void UpdateDevices(void)
-{
-    INVOKE(update(), StowManager::TypeALL);
-}
-
-void UpdateDevices(uint8_t type)
+void updateDevices(uint8_t type = StowManager::TypeALL)
 {
     INVOKE(update(), type);
 }
 
-void SetPowerSave(uint8_t mode)
+void setPowerSave(uint8_t mode)
 {
     MFIOdevice *in;
     Stowage.reset();
@@ -137,12 +157,12 @@ void SetPowerSave(uint8_t mode)
 // ************************************************************
 // Power save management
 // ************************************************************
-void SetPowerSavingMode(bool state)
+void setPowerSavingMode(bool state)
 {
     // disable the lights ;)
     powerSavingMode = state;
 
-    SetPowerSave(state);
+    setPowerSave(state);
 
 #ifdef DEBUG
     if (state)
@@ -155,9 +175,9 @@ void SetPowerSavingMode(bool state)
 void updatePowerSaving()
 {
     if (!powerSavingMode && ((millis() - getLastCommandMillis()) > (POWER_SAVING_TIME * 1000))) {
-        SetPowerSavingMode(true); // enable power saving
+        setPowerSavingMode(true); // enable power saving
     } else if (powerSavingMode && ((millis() - getLastCommandMillis()) < (POWER_SAVING_TIME * 1000))) {
-        SetPowerSavingMode(false); // disable power saving
+        setPowerSavingMode(false); // disable power saving
     }
 }
 
@@ -289,29 +309,8 @@ void setup()
 
     cmdMessenger.printLfCr();
     resetBoard();
-
-    // Time Gap between Inputs, do not read at the same loop
-#if MF_SERVO_SUPPORT == 1
-    lastServoUpdate = millis();
-#endif
-
-    lastButtonUpdate = millis();
-    lastEncoderUpdate = millis(); // encoders will be updated every 1ms
-
-#if MF_ANALOG_SUPPORT == 1
-    lastAnalogAverage = millis() + 4;
-    lastAnalogRead = millis() + 4;
-#endif
-
-#if MF_INPUTSHIFTER_SUPPORT == 1
-    lastInputShifterUpdate = millis() + 6;
-#endif
-#if MF_SERVO_SUPPORT == 1
-    lastServoUpdate = millis() + 8;
-
-#endif
-
-    ResetDevices();
+    initPollIntervals(millis());
+    resetDevices();
 
 #ifdef TESTING
     while (1) {
@@ -325,7 +324,7 @@ void checkUpdate(uint8_t typ, uint32_t *tim, uint32_t intv)
 {
     if (millis() - (*tim) >= (intv)) { 
         *tim = millis();              
-        UpdateDevices(typ);           
+        updateDevices(typ);           
     }                                 
 }
 
@@ -360,7 +359,7 @@ void loop()
         }
 #endif
 #if MF_STEPPER_SUPPORT == 1
-        UpdateDevices(kTypeStepper);
+        updateDevices(kTypeStepper);
 #endif
         // lcds, outputs, segments do not need update
     }
