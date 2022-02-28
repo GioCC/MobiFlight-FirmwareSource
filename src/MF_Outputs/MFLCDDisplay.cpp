@@ -73,12 +73,19 @@ void MFLCDDisplay::test()
 
 void MFLCDDisplay::_printCentered(const char *str, uint8_t line)
 {
-    _lcdDisplay.setCursor(0, line);
-    for (byte c = 0; c != ((_cols - strlen(str)) / 2); c++) {
-        _lcdDisplay.print(F(" "));
-    }
-    _lcdDisplay.print(str);
-    for (byte c = 0; c != ((_cols - strlen(str)) / 2); c++) {
-        _lcdDisplay.print(F(" "));
-    }
+  uint8_t startCol = 0;
+  uint8_t printChar = _cols;
+  
+  if (_cols > strlen(str))
+  {
+    startCol = (_cols - strlen(str)) / 2;
+    printChar = strlen(str);
+  }
+
+  _lcdDisplay.setCursor(startCol, line);
+  
+  for (uint8_t i = 0; i < printChar; i++)
+  {
+    _lcdDisplay.write(str[i]);
+  }
 }
