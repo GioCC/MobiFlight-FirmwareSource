@@ -321,14 +321,13 @@ void setup()
 #endif
 }
 
-// TODO compare mem size of macro & function version:
-#define checkUpdate(typ, tim, int)        \
-    do {                                  \
-        if (millis() - (*tim) >= (int)) { \
-            *tim = millis();              \
-            UpdateDevices(typ);           \
-        }                                 \
-    } while (0);
+void checkUpdate(uint8_t typ, uint32_t *tim, uint32_t intv)
+{
+    if (millis() - (*tim) >= (intv)) { 
+        *tim = millis();              
+        UpdateDevices(typ);           
+    }                                 
+}
 
 // ************************************************************
 // Loop function
