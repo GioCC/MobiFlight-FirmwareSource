@@ -60,7 +60,7 @@ void eepromInit()
 
 void resetConfig(void)
 {
-    WipeDevices();
+    wipeDevices();
     config.length    = 0;
     config.activated = false;
     config.nameBuffer[0] = '\0';
