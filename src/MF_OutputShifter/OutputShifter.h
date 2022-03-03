@@ -1,4 +1,6 @@
 #pragma once
+#include <stdint.h>
+#include "MFOutputShifter.h"
 
 namespace OutputShifter
 {

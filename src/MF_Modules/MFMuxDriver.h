@@ -34,4 +34,5 @@ private:
     uint8_t       _channel;
     uint8_t       _savedChannel;
 };
+
 // MFMuxDriver.h

@@ -1,8 +1,10 @@
 #pragma once
+#include <stdint.h>
+#include "MFServo.h"
 
 namespace Servos
 {
-void Add(int pin);
+void Add(uint8_t pin);
 void Clear();
 void OnSet();
 void update();
