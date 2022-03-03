@@ -18,8 +18,7 @@
 // 18.01.2014 created by Matthias Hertel
 // -----
 
-#ifndef MFEncoder_h
-#define MFEncoder_h
+#pragma once
 
 #include <Arduino.h>
 #include "MFIOdevice.h"   // For constants and documentation only!
@@ -50,7 +49,6 @@ public:
         bool    detents[4];     
 
         // Bit shift to apply given the detent resolution of this encoder.
-	      //
         // Example: An encoder with 1 detent per quadrature cycle has a useful resolution of
         // 1/4 of the number of pulses so we can apply a simple bit shift of 2 to 
         // determine the effective position of the encoder.
@@ -91,4 +89,4 @@ private:
     uint32_t                  _lastFastDec;
 
 };
-#endif 
+// MFEncoder.h

@@ -42,7 +42,8 @@ const MFEncoder::encoderType
 
 encoderEventHandler MFEncoder::_handler = NULL;
 
-MFEncoder::MFEncoder() : _initialized(false) {}
+MFEncoder::MFEncoder() : _initialized(false) 
+{}
 
 void MFEncoder::attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char *name)
 {
@@ -133,7 +134,8 @@ void MFEncoder::tick(void)
     }
 }
 
-inline int16_t MFEncoder::getPosition()
+inline 
+int16_t MFEncoder::getPosition()
 {
     return _positionExt;
 }
@@ -144,3 +146,5 @@ void MFEncoder::setPosition(int16_t newPosition)
     _position = ((newPosition >> EncoderTypes[_encoderType].resolutionShift) | (_position & 0x03));
     _positionExt = newPosition;
 }
+
+// MFEncoder.cpp

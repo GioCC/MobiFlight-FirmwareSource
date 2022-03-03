@@ -5,11 +5,11 @@
 /// \version 1.0 Initial release
 /// \author  Manfred Berry (manfred@nystedberry.info) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
 // Copyright (C) 2021 Manfred Berry
+/// \version 1.1 Floating Average added
 
-#ifndef MFAnalog_h
-#define MFAnalog_h
+#pragma once
 
-#include "MFIOdevice.h"   // For constants and documentation only!   
+#include <Arduino.h>
 
 #define ADC_MAX_AVERAGE                 8           // must be 2^n
 #define ADC_MAX_AVERAGE_LOG2            3           // please calculate LOG2(ADC_MAX_AVERAGE)
@@ -20,7 +20,8 @@ extern "C"
   typedef void (*analogEventHandler) (int, uint8_t, const char *);
 };
 
-class MFAnalog //: public MFIOdevice
+class MFAnalog 
+//: public MFIOdevice
 {
 public:
     static uint8_t  getType(void) { return kTypeAnalogInput; }
@@ -49,5 +50,3 @@ private:
     uint32_t    _lastReadBuffer;
 
 };
-
-#endif 

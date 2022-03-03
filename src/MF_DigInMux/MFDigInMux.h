@@ -1,7 +1,8 @@
 // MFDigInMux.h
+//
+// Copyright (C) Mobiflight 2022
 
-#ifndef MFMUXDigitalIn_h
-#define MFMUXDigitalIn_h
+#pragma once
 
 #include "MFIOdevice.h"   // For constants and documentation only!
 #include "MFMuxDriver.h"
@@ -11,7 +12,8 @@ extern "C" {
 typedef void (*MuxDigInEvent)(byte, uint8_t, const char *);
 };
 
-class MFDigInMux  //: public MFIOdevice
+class MFDigInMux  
+//: public MFIOdevice
 {
 public:
 
@@ -58,4 +60,4 @@ private:
     void    trigger(uint8_t channel, bool state);
 
 };
-#endif
+// MFDigInMux.h

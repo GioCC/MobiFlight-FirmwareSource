@@ -1,13 +1,10 @@
-// MFSegments.cpp
+// MFAnalog.cpp
 //
-// Copyright (C) 2021
+// Copyright (C) Mobiflight 2022
+
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "commandmessenger.h"
 #include "MFAnalog.h"
 #include "MFIOdevice.h"   // For constants and documentation only!
-
-#if MF_ANALOG_SUPPORT == 1
 
 analogEventHandler   MFAnalog::_handler = NULL; 
 
@@ -41,4 +38,4 @@ void MFAnalog::updateAverage(){                                 // read ADC and 
 }
 
 
-#endif
+// MFAnalog.cpp

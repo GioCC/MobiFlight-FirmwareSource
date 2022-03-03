@@ -1,6 +1,6 @@
 // MFDigInMux.cpp
 //
-// Copyright (C) 2021
+// Copyright (C) 2022
 
 #include "MFDigInMux.h"
 #include "MFMuxDriver.h"

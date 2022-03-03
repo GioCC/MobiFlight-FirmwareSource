@@ -10,7 +10,6 @@ MFInputShifter::MFInputShifter(void)
 {
     _moduleCount = 0;
     clearLastState();
-    //_name = name;
 }
 
 // Registers a new input shifter and configures the clock, data and latch pins as well

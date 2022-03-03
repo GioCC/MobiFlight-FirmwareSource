@@ -1,10 +1,11 @@
 // MFInputShifter.h
+//
+// Copyright (C) Mobiflight 2022
 
-#ifndef MFInputShifter_h
-#define MFInputShifter_h
+#pragma once
 
-#include "MFIOdevice.h"   // For constants and documentation only!
 #include <Arduino.h>
+#include "MFIOdevice.h"   // For constants and documentation only!
 
 // Maximum number of shifters allowed on an individual chain. While this is currently set to 4
 // there is no technical limit in the code for how many can be chained. It is constrained only
@@ -20,7 +21,8 @@ enum {
     inputShifterOnRelease,
 };
 
-class MFInputShifter  //: public MFIOdevice
+class MFInputShifter
+//: public MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeInShiftReg; }
@@ -50,3 +52,5 @@ private:
 
 };
 #endif
+
+// MFInputShifter.h

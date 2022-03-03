@@ -1,6 +1,6 @@
 // MFButton.cpp
 //
-// Copyright (C) 2013-2014
+// Copyright (C) Mobiflight 2022
 
 #include "MFButton.h"
 
@@ -51,4 +51,4 @@ void MFButton::reset(uint8_t action)
     }
 }
 
-// end
+// MFButton.cpp
