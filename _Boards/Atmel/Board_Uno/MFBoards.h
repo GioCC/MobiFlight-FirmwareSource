@@ -1,5 +1,8 @@
-#ifndef MFBoardUno_h
-#define MFBoardUno_h
+// 
+// MFBoards.h (Uno)
+// 
+
+#pragma once
 
 #ifndef MF_SEGMENT_SUPPORT
 #define MF_SEGMENT_SUPPORT 1
@@ -60,4 +63,5 @@
 #define MEMLEN_NAME_BUFFER      220     // size of nameBuffer (RAM) - contains only device names
 #define RANDOM_SEED_INPUT A0
 
-#endif
+// MFBoards.h (Uno)
+

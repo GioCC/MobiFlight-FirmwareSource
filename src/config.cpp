@@ -42,10 +42,9 @@ struct {
     ""};
 
 static bool readConfigLength(void);
-static void loadConfig(void);
 static void readConfig(void);
-static void _activateConfig(void);
-static void _restoreName(void);
+static void activateConfig(void);
+static void restoreName(void);
 static void generateSerial(bool);
 
 void resetConfig(void)
@@ -60,7 +59,7 @@ void resetConfig(void)
 // configBuffer handling
 // ************************************************************
 // reads the EEPROM until NULL termination and returns the number of characters incl. NULL termination, starting from given address
-bool readConfigLength()
+bool readConfigLength(void)
 {
     char     temp       = 0;
     uint16_t addreeprom = EEP_OFFSET_CONFIG;
@@ -79,19 +78,19 @@ bool readConfigLength()
     return true;
 }
 
-void loadConfig()
+void loadConfig(void)
 {
 #ifdef DEBUG2CMDMESSENGER
     cmdMessenger.sendCmd(kStatus, F("Load config"));
 #endif
     if (readConfigLength()) {
         readConfig();
-        _activateConfig();
+        activateConfig();
     }
-    _restoreName();
+    restoreName();
 }
 
-void OnSetConfig()
+void OnSetConfig(void)
 {
 #ifdef DEBUG2CMDMESSENGER
     cmdMessenger.sendCmd(kStatus, F("Setting config start"));
@@ -111,25 +110,25 @@ void OnSetConfig()
 #endif
 }
 
-void OnResetConfig()
+void OnResetConfig(void)
 {
     resetConfig();
     cmdMessenger.sendCmd(kStatus, F("OK"));
 }
 
-void OnSaveConfig()
+void OnSaveConfig(void)
 {
-    _storeConfig();
+    //_storeConfig();
     cmdMessenger.sendCmd(kConfigSaved, F("OK"));
 }
 
-void OnActivateConfig()
+void OnActivateConfig(void)
 {
     readConfig();
-    _activateConfig();
+    activateConfig();
 }
 
-void _activateConfig()
+void activateConfig(void)
 {
     config.activated = true;
     cmdMessenger.sendCmd(kConfigActivated, F("OK"));
@@ -175,6 +174,16 @@ bool readEndCommandFromEEPROM(uint16_t *addreeprom)
     } while (temp != ':'); // reads until limiter ':'
     return true;
 }
+
+#if MF_MUX_SUPPORT == 1
+void SetMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin)
+{
+    MUX.attach(Sel0Pin, Sel1Pin, Sel2Pin, Sel3Pin);
+    #ifdef DEBUG
+    cmdMessenger.sendCmd(kStatus, F("Added multiplexer"));
+    #endif
+}
+#endif
 
 void readConfig()
 {
@@ -331,10 +340,7 @@ void readConfig()
       params[2] = readUintFromEEPROM(&addreeprom); // Sel1 pin
       params[3] = readUintFromEEPROM(&addreeprom); // Sel2 pin
       params[4] = readUintFromEEPROM(&addreeprom); // Sel3 pin
-      MUX.attach(params[1], params[2], params[3], params[4]);
-      //TODO remove direct reference to MUX:
-      //AddMultiplexer(params[1], params[2], params[3], params[4]);
-
+      SetMultiplexer(params[1], params[2], params[3], params[4]);
       params[5] = readUintFromEEPROM(&addreeprom); // 8-bit registers (1-2)
       DigInMux::Add(params[0], params[5], &config.nameBuffer[addrbuffer]);
       copy_success = readNameFromEEPROM(&addreeprom, config.nameBuffer, &addrbuffer);
@@ -367,16 +373,16 @@ void OnGetInfo()
 {
     setLastCommandMillis();
     cmdMessenger.sendCmdStart(kInfo);
-    cmdMessenger.sendCmdArg(type);
-    cmdMessenger.sendCmdArg(name);
-    cmdMessenger.sendCmdArg(serial);
+    cmdMessenger.sendCmdArg(config.type);
+    cmdMessenger.sendCmdArg(config.name);
+    cmdMessenger.sendCmdArg(config.serial);
     cmdMessenger.sendCmdArg(VERSION);
     cmdMessenger.sendCmdEnd();
 }
 
 bool getStatusConfig()
 {
-    return configActivated;
+    return config.activated;
 }
 
 // ************************************************************
@@ -399,7 +405,7 @@ void generateSerial(bool force)
 void OnGenNewSerial()
 {
     generateSerial(true);
-    cmdMessenger.sendCmd(kInfo, serial);
+    cmdMessenger.sendCmd(kInfo, config.serial);
 }
 
 // ************************************************************
@@ -412,7 +418,7 @@ void _storeName()
     MFeeprom.write_block(EEP_OFFSET_NAME + 1, config.name, MEM_LEN_NAME - 1);
 }
 
-void _restoreName()
+void restoreName()
 {
     char testHasName[1] = "";
     MFeeprom.read_block(EEP_OFFSET_NAME, testHasName, 1);
@@ -427,5 +433,5 @@ void OnSetName()
     char *cfg = cmdMessenger.readStringArg();
     memcpy(config.name, cfg, MEM_LEN_NAME);
     _storeName();
-    cmdMessenger.sendCmd(kStatus, name);
+    cmdMessenger.sendCmd(kStatus, config.name);
 }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "MFBoards.h"
+
 //=======================================
 // Includes for INPUT devices
 //=======================================

@@ -1,5 +1,8 @@
-#ifndef MFBoardMega_h
-#define MFBoardMega_h
+// 
+// MFBoards.h (Mega)
+// 
+
+#pragma once
 
 #ifndef MF_SEGMENT_SUPPORT
 #define MF_SEGMENT_SUPPORT 1
@@ -88,4 +91,4 @@
 
 #define RANDOM_SEED_INPUT A0
 
-#endif
+// MFBoards.h (Mega)
