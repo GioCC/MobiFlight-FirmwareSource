@@ -1,5 +1,4 @@
-#ifndef _config_h
-#define _config_h
+#pragma once
 
 enum {
     kTypeNotSet,              // 0
@@ -19,9 +18,9 @@ enum {
     kTypeDigInMux,            // 14 Digital input multiplexer support (example: 74HCT4067, 74HCT4051)
 };
 
-void resetBoard(void);
-void resetConfig(void);
+void loadConfig(void);
 bool getStatusConfig(void);
+void generateSerial(bool);
 void OnSetConfig(void);
 void OnResetConfig(void);
 void OnSaveConfig(void);
@@ -31,4 +30,4 @@ void OnGetInfo(void);
 void OnGenNewSerial(void);
 void OnSetName(void);
 
-#endif
+// config.h

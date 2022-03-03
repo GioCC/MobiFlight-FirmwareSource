@@ -1,10 +1,32 @@
 #include <Arduino.h>
 #include "MFBoards.h"
-#include "config.h"
-#include "inputHub.h"
-#include "outputHub.h"
 #include "commandmessenger.h"
+#include "config.h"
 #include "mobiflight.h"
+#include "Button.h"
+#include "Encoder.h"
+#if MF_ANALOG_SUPPORT == 1
+#include "Analog.h"
+#endif
+#if MF_INPUT_SHIFTER_SUPPORT == 1
+#include "InputShifter.h"
+#endif
+#include "Output.h"
+#if MF_SEGMENT_SUPPORT == 1
+#include "LedSegment.h"
+#endif
+#if MF_STEPPER_SUPPORT == 1
+#include "Stepper.h"
+#endif
+#if MF_SERVO_SUPPORT == 1
+#include "Servos.h"
+#endif
+#if MF_LCD_SUPPORT == 1
+#include "LCDDisplay.h"
+#endif
+#if MF_OUTPUT_SHIFTER_SUPPORT == 1
+#include "OutputShifter.h"
+#endif
 
 
 CmdMessenger cmdMessenger = CmdMessenger(Serial);
@@ -13,13 +35,30 @@ unsigned long lastCommand;
 // Prototypes for forward declarations
 static void OnTrigger();
 static void OnUnknownCommand();
-static void OnResetBoard();
-
 
 // Callbacks define on which received commands we take action
 void attachCommandCallbacks()
 {
-  cmdMessenger.attach(OnUnknownCommand);    // Attach all callback methods
+    // Attach callback methods
+    cmdMessenger.attach(OnUnknownCommand);
+
+#if MF_SEGMENT_SUPPORT == 1
+    cmdMessenger.attach(kInitModule, LedSegment::OnInitModule);
+    cmdMessenger.attach(kSetModule, LedSegment::OnSetModule);
+    cmdMessenger.attach(kSetModuleBrightness, LedSegment::OnSetModuleBrightness);
+#endif
+
+    cmdMessenger.attach(kSetPin, Output::OnSet);
+
+#if MF_STEPPER_SUPPORT == 1
+    cmdMessenger.attach(kSetStepper, Stepper::OnSet);
+    cmdMessenger.attach(kResetStepper, Stepper::OnReset);
+    cmdMessenger.attach(kSetZeroStepper, Stepper::OnSetZero);
+#endif
+
+#if MF_SERVO_SUPPORT == 1
+    cmdMessenger.attach(kSetServo, Servos::OnSet);
+#endif
 
   cmdMessenger.attach(kGetInfo, OnGetInfo);
   cmdMessenger.attach(kGetConfig, OnGetConfig);
@@ -30,41 +69,18 @@ void attachCommandCallbacks()
   cmdMessenger.attach(kSetName, OnSetName);
   cmdMessenger.attach(kGenNewSerial, OnGenNewSerial);
   cmdMessenger.attach(kTrigger, OnTrigger);
-  cmdMessenger.attach(kResetBoard, OnResetBoard);
-
-  cmdMessenger.attach(kSetPin, OnSetPin);
-
-#if MF_SEGMENT_SUPPORT == 1
-  cmdMessenger.attach(kInitModule, OnInitSegments);
-  cmdMessenger.attach(kSetModule, OnSetSegments);
-  cmdMessenger.attach(kSetModuleBrightness, OnSetModuleBrightness);
-#endif
-
-#if MF_OUTPUT_SHIFTER_SUPPORT == 1
-  cmdMessenger.attach(kSetShiftRegisterPins, OnSetShiftRegisterPins);
-#endif
-
-#if MF_SERVO_SUPPORT == 1
-  cmdMessenger.attach(kSetServo, OnSetServo);
-#endif
-
-#if MF_STEPPER_SUPPORT == 1
-  cmdMessenger.attach(kSetStepper, OnSetStepper);
-  cmdMessenger.attach(kResetStepper, OnResetStepper);
-  cmdMessenger.attach(kSetZeroStepper, OnSetZeroStepper);
-#endif
 
 #if MF_LCD_SUPPORT == 1
-  cmdMessenger.attach(kSetLcdDisplayI2C, OnSetLcdDisplayI2C);
+  cmdMessenger.attach(kSetLcdDisplayI2C, LCDDisplay::OnSet);
 #endif
 
-#ifdef DEBUG
+#if MF_OUTPUT_SHIFTER_SUPPORT
+  cmdMessenger.attach(kSetShiftRegisterPins, OutputShifter::OnSet);
+#endif
+
+#ifdef DEBUG2CMDMESSENGER
     cmdMessenger.sendCmd(kStatus, F("Attached callbacks"));
 #endif
-}
-
-uint32_t getLastCommandMillis() {
-    return lastCommand;
 }
 
 void setLastCommandMillis(uint32_t time) {
@@ -78,6 +94,14 @@ void OnUnknownCommand()
     cmdMessenger.sendCmd(kStatus, F("n/a"));
 }
 
+uint32_t getLastCommandMillis() {
+  return lastCommand;
+}
+
+void setLastCommandMillis() {
+  lastCommand = millis();
+}
+
 void OnTrigger()
 {
     //   Button::OnTrigger();
@@ -85,9 +109,4 @@ void OnTrigger()
     //   InputShifter::OnTrigger();
     // #endif
     resetDevices();
-}
-
-void OnResetBoard()
-{
-    resetBoard();
 }

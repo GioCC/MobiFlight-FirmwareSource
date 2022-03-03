@@ -1,7 +1,6 @@
-// The build version comes from an environment variable
-#define STRINGIZER(arg) #arg
-#define STR_VALUE(arg) STRINGIZER(arg)
-#define VERSION STR_VALUE(BUILD_VERSION)
+//#define STRINGIZER(arg) #arg
+//#define STR_VALUE(arg) STRINGIZER(arg)
+//#define VERSION STR_VALUE(BUILD_VERSION)
 
 //#define DEBUG 1
 
@@ -12,60 +11,101 @@
 #include "MFBoards.h"
 #include "MFEEPROM.h"
 #include "commandmessenger.h"
-#ifdef MF_MUX_SUPPORT
+#include "config.h"
+#include "mobiflight.h"
+#if MF_ANALOG_SUPPORT == 1
+#include "Analog.h"
+#endif
+#if MF_INPUT_SHIFTER_SUPPORT == 1
+#include "InputShifter.h"
+#endif
+#include "Output.h"
+#if MF_SEGMENT_SUPPORT == 1
+#include "LedSegment.h"
+#endif
+#if MF_STEPPER_SUPPORT == 1
+#include "Stepper.h"
+#endif
+#if MF_SERVO_SUPPORT == 1
+#include "Servos.h"
+#endif
+#if MF_OUTPUT_SHIFTER_SUPPORT == 1
+#include "OutputShifter.h"
+#endif
+#ifdef MF_MUX_SUPPORT == 1
 #include "MFMuxDriver.h"
 #endif
-#include "config.h"
-#include "inputHub.h"
-#include "outputHub.h"
+#if MF_DIGIN_MUX_SUPPORT == 1
+#include "DigInMux.h"
+#endif
+
 
 #define MF_BUTTON_DEBOUNCE_MS 10     // time between updating the buttons
+#define MF_ENCODER_DEBOUNCE_MS 1     // time between encoder updates
+#define MF_INSHIFTER_POLL_MS 10      // time between input shift reg updates
+#define MF_INMUX_POLL_MS 10          // time between dig input mux updates
 #define MF_SERVO_DELAY_MS 5          // time between servo updates
 #define MF_ANALOGAVERAGE_DELAY_MS 10 // time between updating the analog average calculation
 #define MF_ANALOGREAD_DELAY_MS 50    // time between sending analog values
-#define MF_ENCODER_DEBOUNCE_MS 1     // time between updating encoders
-#define MF_INSHIFT_DELAY_MS 10       // time between updating input shift registers
 
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
 
 uint32_t lastButtonUpdate = 0;
 uint32_t lastEncoderUpdate = 0;
+// ==================================================
+//   Polling interval counters
+// ==================================================
+
+typedef struct {
+    uint32_t Buttons = 0;
+    uint32_t Encoders = 0;
 #if MF_SERVO_SUPPORT == 1
-uint32_t lastServoUpdate = 0;
+    uint32_t Servos = 0;
 #endif
 #if MF_ANALOG_SUPPORT == 1
-uint32_t lastAnalogAverage = 0;
-uint32_t lastAnalogRead = 0;
+    uint32_t AnalogAverage = 0;
+    uint32_t Analog = 0;
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
-uint32_t lastInputShifterUpdate = 0;
+    uint32_t InputShifters = 0;
 #endif
 #if MF_DIGIN_MUX_SUPPORT == 1
-uint32_t lastDigInMuxUpdate = 0;
+    uint32_t DigInMux = 0;
 #endif
+} lastUpdate_t;
 
-void initPollIntervals(uint32_t time)
+lastUpdate_t lastUpdate;
+
+void initPollIntervals(void)
 {
     // Init Time Gap between Inputs, do not read at the same loop
-#if MF_DIGIN_MUX_SUPPORT == 1
-    lastDigInMuxUpdate = time + 8;
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-    lastInputShifterUpdate = time + 6;
+    lastUpdate.Buttons = millis();
+    lastUpdate.Encoders = millis();
+#if MF_SERVO_SUPPORT == 1
+    lastUpdate.Servos = millis() + 2;
 #endif
 #if MF_ANALOG_SUPPORT == 1
-    lastAnalogAverage = time + 4;
-    lastAnalogRead = time + 4;
+    lastUpdate.AnalogAverage = millis() + 4;
+    lastUpdate.Analog = millis() + 4;
 #endif
-    
-    lastButtonUpdate = time;
-    lastEncoderUpdate = time + 2;
+#if MF_INPUT_SHIFTER_SUPPORT == 1
+    lastUpdate.InputShifters = millis() + 6;
+#endif
+#if MF_DIGIN_MUX_SUPPORT == 1
+    lastUpdate.DigInMux = millis() + 8;
+#endif
 
-#if MF_SERVO_SUPPORT == 1
-    lastServoUpdate = time;
-#endif
 }
+
+void timedUpdate(uint8_t typ, uint32_t *tim, uint32_t intv)
+{
+    if (millis() - (*tim) >= (intv)) { 
+        *tim = millis();              
+        updateDevices(typ);           
+    }                                 
+}
+
 
 // ************************************************************
 //  General I/O handling functions
@@ -164,7 +204,7 @@ void setPowerSavingMode(bool state)
 
     setPowerSave(state);
 
-#ifdef DEBUG
+#ifdef DEBUG2CMDMESSENGER
     if (state)
         cmdMessenger.sendCmd(kStatus, F("On"));
     else
@@ -175,9 +215,9 @@ void setPowerSavingMode(bool state)
 void updatePowerSaving()
 {
     if (!powerSavingMode && ((millis() - getLastCommandMillis()) > (POWER_SAVING_TIME * 1000))) {
-        setPowerSavingMode(true); // enable power saving
+        setPowerSavingMode(true);
     } else if (powerSavingMode && ((millis() - getLastCommandMillis()) < (POWER_SAVING_TIME * 1000))) {
-        setPowerSavingMode(false); // disable power saving
+        setPowerSavingMode(false);
     }
 }
 
@@ -295,6 +335,24 @@ void setupData(void)
 #endif
 }
 
+
+// ************************************************************
+// Reset Board
+// ************************************************************
+void resetBoard()
+{
+    // MFeeprom.init();
+    // resetConfig();
+    // generateSerial(false);
+    // lastCommand = millis();
+    // loadConfig();
+
+    generateSerial(false);
+    setLastCommandMillis();
+    loadConfig();
+}
+
+
 // ************************************************************
 // Setup
 // ************************************************************
@@ -305,11 +363,11 @@ void setup()
     MFDigInMux::setMux(&MUX);
 #endif
     attachCommandCallbacks();
-    attachEventCallbacks();
+    //attachEventCallbacks();
 
     cmdMessenger.printLfCr();
     resetBoard();
-    initPollIntervals(millis());
+    initPollIntervals();
     resetDevices();
 
 #ifdef TESTING
@@ -318,14 +376,6 @@ void setup()
         delay(60000);
     }
 #endif
-}
-
-void checkUpdate(uint8_t typ, uint32_t *tim, uint32_t intv)
-{
-    if (millis() - (*tim) >= (intv)) { 
-        *tim = millis();              
-        updateDevices(typ);           
-    }                                 
 }
 
 // ************************************************************
@@ -342,25 +392,34 @@ void loop()
     // to prevent mangling input for config (shared buffers)
     if (getStatusConfig()) {
 
-        checkUpdate(kTypeButton, &lastButtonUpdate, MF_BUTTON_DEBOUNCE_MS);
-        checkUpdate(kTypeEncoder, &lastEncoderUpdate, MF_ENCODER_DEBOUNCE_MS);
-#if MF_SERVO_SUPPORT == 1
-        checkUpdate(kTypeServo, &lastServoUpdate, MF_SERVO_DELAY_MS);
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-        checkUpdate(kTypeInShiftReg, &lastInputShifterUpdate, MF_INSHIFT_DELAY_MS);
-#endif
-#if MF_ANALOG_SUPPORT == 1
-        checkUpdate(kTypeAnalogInput, &lastAnalogRead, MF_ANALOGREAD_DELAY_MS);
-        if (millis() - lastAnalogAverage >= MF_ANALOGAVERAGE_DELAY_MS) {
-            lastAnalogAverage = millis();
-            // Analog::readAverage();
-            UpdateAnalogAvg();
-        }
-#endif
+        MUX.nextChannel();
+
+        timedUpdate(kTypeButton, &lastUpdate.Buttons, MF_BUTTON_DEBOUNCE_MS);
+
+        timedUpdate(kTypeEncoder, &lastUpdate.Encoders, MF_ENCODER_DEBOUNCE_MS);
+
 #if MF_STEPPER_SUPPORT == 1
         updateDevices(kTypeStepper);
 #endif
-        // lcds, outputs, segments do not need update
+#if MF_SERVO_SUPPORT == 1
+        timedUpdate(kTypeServo, &lastUpdate.Servos, MF_SERVO_DELAY_MS);
+#endif
+#if MF_ANALOG_SUPPORT == 1
+        timedUpdate(kTypeAnalogInput, &lastUpdate.Analog, MF_ANALOGREAD_DELAY_MS);
+        if (millis() - lastUpdate.AnalogAverage >= MF_ANALOGAVERAGE_DELAY_MS) {
+            lastUpdate.AnalogAverage = millis();
+            UpdateAnalogAvg();
+        }
+#endif
+#if MF_INPUT_SHIFTER_SUPPORT == 1
+        timedUpdate(kTypeInShiftReg, &lastUpdate.InputShifters, MF_INSHIFTER_POLL_MS);
+#endif
+
+#if MF_DIGIN_MUX_SUPPORT == 1
+        timedUpdate(kTypeDigInMux, &lastUpdate.DigInMux, MF_INMUX_POLL_MS);
+#endif
+        // lcds, outputs, outputshifters, segments do not need update
     }
 }
+
+// Mobiflight.cpp

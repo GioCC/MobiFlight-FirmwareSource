@@ -1,8 +1,6 @@
 // MFMuxDriver.h
  
-#ifndef MFMultiplex_h
-#define MFMultiplex_h
-
+#pragma once
 #include <Arduino.h>
 
 class   MFMuxDriver; // forward decl
@@ -36,4 +34,4 @@ private:
     uint8_t       _channel;
     uint8_t       _savedChannel;
 };
-#endif
+// MFMuxDriver.h

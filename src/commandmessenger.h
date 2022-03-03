@@ -45,10 +45,10 @@ enum {
 
 void        attachCommandCallbacks();
 uint32_t    getLastCommandMillis(void);
-void        setLastCommandMillis(uint32_t time);
+void        setLastCommandMillis(void);
 
 extern CmdMessenger     cmdMessenger;
-extern unsigned long    lastCommand;
+//? extern unsigned long    lastCommand;
 
 
 #endif

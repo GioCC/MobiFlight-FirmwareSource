@@ -1,6 +1,6 @@
-#ifndef _mobiflight_h
-#define _mobiflight_h
+#pragma once
 
-void wipeDevices(void);
-void resetDevices(void);
-#endif
+void wipeDevices(void);     //TODO: GCC
+void resetDevices(void);    //TODO: GCC
+
+// mobiflight.h

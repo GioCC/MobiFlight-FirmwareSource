@@ -5,8 +5,7 @@
 /// \version 1.0 Initial release
 // Copyright (C) 2021
 
-#ifndef MFEEPROM_H
-#define MFEEPROM_H
+#pragma once
 
 #include <stdint.h>
 
@@ -15,7 +14,6 @@ class MFEEPROM
 	  
   public:
     MFEEPROM();
-    void init(void);
     uint16_t get_length(void);
     void read_block(uint16_t addr, char data[], uint16_t len);
     void write_block (uint16_t addr, char data[], uint16_t len);
@@ -27,5 +25,4 @@ private:
 
 };
 
-
-#endif
+// MFEEPROM.h
