@@ -1,14 +1,15 @@
 // MFLCDDisplay.cpp
 //
-// Copyright (C) 2013-2014
+// Copyright (C) MobiFlight 2022
 
 #include "MFLCDDisplay.h"
 
-MFLCDDisplay::MFLCDDisplay() : _address(0xFF) {}
+MFLCDDisplay::MFLCDDisplay() : _address(0xFF) 
+{}
 
 void MFLCDDisplay::attach(byte I2Caddress, byte cols, byte lines)
 {
-    if (I2Caddress == 0xFF) return;
+    if (0xFF == I2Caddress ) return;
     _address = I2Caddress;
     _cols = cols;
     _lines = lines;
@@ -29,7 +30,7 @@ void MFLCDDisplay::detach()
 
 void MFLCDDisplay::setval(const char *string)
 {
-    if (_address != 0xFF) {
+    if (0xFF != _address) {
         for (uint8_t line = 0; line != _lines; line++) {
             _lcdDisplay.setCursor(0, line);
             _lcdDisplay.writeString(&string[line * _cols], _cols);
@@ -54,7 +55,7 @@ void MFLCDDisplay::powerSave(bool state)
 
 void MFLCDDisplay::test()
 {
-    if (_address != 0xFF) {
+    if (0xFF != _address) {
         uint8_t preLines = 0;
         _lcdDisplay.clear();
 
@@ -62,7 +63,7 @@ void MFLCDDisplay::test()
             preLines = (_lines / 2) - 1; // floor needs much Flash and for integer it's the same
         }
 
-        _printCentered("MF LCD Display", preLines++);
+        _printCentered("MF LCD", preLines++);
         if (_lines > 1) {
             _printCentered("Test OK", preLines++);
         }
@@ -89,3 +90,5 @@ void MFLCDDisplay::_printCentered(const char *str, uint8_t line)
     _lcdDisplay.write(str[i]);
   }
 }
+
+// MFLCDDisplay.cpp

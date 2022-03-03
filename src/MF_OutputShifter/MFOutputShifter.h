@@ -7,8 +7,7 @@
 // Copyright (C) 2021 Manfred Berry
 // Modified 2022 Giorgio Croci Candiani
 
-#ifndef MFOutputShifter_h
-#define MFOutputShifter_h
+#pragma once
 
 #include <Arduino.h>
 #include "MFIOdevice.h"   // For constants and documentation only!
@@ -45,4 +44,5 @@ private:
     uint8_t _moduleCount;   // Number of 8 bit modules in series. For a shift register with 16 bit one needs to select 2 modules a 8......
     uint8_t _outputBuffer[MAX_CHAINED_OUTPUT_SHIFTERS];
 };
-#endif
+
+// MFOutputShifter.h

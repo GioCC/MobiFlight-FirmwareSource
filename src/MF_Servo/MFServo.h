@@ -6,15 +6,15 @@
 /// \author  Sebastian Moebius (mobiflight@moebiuz.de) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
 // Copyright (C) 2013-2014 Sebastian Moebius
 
-#ifndef MFServo_h
-#define MFServo_h
+#pragma once
 
 #include <Arduino.h>
 #include <Servo.h>
 #include "MFIOdevice.h"   // For constants and documentation only!
 
 
-class MFServo  //: public MFIOdevice
+class MFServo  
+//: public MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeServo; }
@@ -40,4 +40,5 @@ private:
     long    _currentPos;    
     int     speed;
 };
-#endif 
+
+// MFServo.h

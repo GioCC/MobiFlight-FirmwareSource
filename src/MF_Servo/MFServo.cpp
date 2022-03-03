@@ -4,7 +4,8 @@
 
 #include "MFServo.h"
 
-MFServo::MFServo() : _servo() {}
+MFServo::MFServo() : _servo() 
+{}
 
 void MFServo::attach(uint8_t pin, bool enable)
 {
@@ -21,13 +22,6 @@ void MFServo::detach()
     if (_initialized) {
         _servo.detach();
         _initialized = false;
-    }
-}
-
-void MFServo::reset(uint8_t action)
-{
-    if (action == ONRESET_DEFAULT) {
-        // TODO:?
     }
 }
 
@@ -69,6 +63,13 @@ void MFServo::setInternalRange(int min, int max)
 {
     _mapRange[2] = min;
     _mapRange[3] = max;
+}
+
+void MFServo::reset(uint8_t action)
+{
+    if (action == ONRESET_DEFAULT) {
+        // TODO:?
+    }
 }
 
 void MFServo::powerSave(uint8_t state)

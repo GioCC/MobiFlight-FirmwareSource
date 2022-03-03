@@ -1,18 +1,20 @@
 // MFSegments.h
 //
-/// \mainpage MF Button module for MobiFlight Framework
+/// \mainpage MF LED display module for MobiFlight Framework
 /// \par Revision History
-/// \version 2.0 
+/// \version 1.0 Initial release
+/// \author  Sebastian Moebius (mobiflight@moebiuz.de) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
+// Copyright (C) 2013-2014 Sebastian Moebius
 
-#ifndef MFSegments_h
-#define MFSegments_h
+#pragma once
 
 #include <Arduino.h>
 #include <LedControl.h>
 #include "MFIOdevice.h"   // For constants and documentation only!
 
 
-class MFSegments  //: public MFIOdevice
+class MFSegments  
+//: public MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeLedSegment; }
@@ -33,4 +35,5 @@ private:
     LedControl  _ledControl;
     byte        _moduleCount;
 };
-#endif
+
+// MFSegments.h

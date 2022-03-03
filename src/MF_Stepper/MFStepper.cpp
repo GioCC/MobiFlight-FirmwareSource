@@ -7,7 +7,7 @@
 #include <new>
 
 MFStepper::MFStepper() 
-: _stepper()
+//: _stepper()
 {
   _initialized = false;
 }

@@ -6,8 +6,7 @@
 /// \author  Sebastian Moebius (mobiflight@moebiuz.de) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
 // Copyright (C) 2013-2014 Sebastian Moebius
 
-#ifndef MFStepper_h
-#define MFStepper_h
+#pragma once
 
 #include <stdlib.h>
 #include <Arduino.h>
@@ -15,7 +14,8 @@
 #include "MFButton.h"
 #include "MFIOdevice.h"   // For constants and documentation only!
 
-class MFStepper  //: public MFIOdevice
+class MFStepper  
+//: public MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeStepper; }
@@ -48,4 +48,5 @@ private:
     void setZeroInReset(void);
 
 };
-#endif
+
+// MFStepper.h

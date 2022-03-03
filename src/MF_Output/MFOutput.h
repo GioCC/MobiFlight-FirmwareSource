@@ -1,4 +1,4 @@
-// MFButton.h
+// MFOutput.h
 //
 /// \mainpage MF Button module for MobiFlight Framework
 /// \par Revision History
@@ -6,13 +6,13 @@
 /// \author  Sebastian Moebius (mobiflight@moebiuz.de) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
 // Copyright (C) 2013-2014 Sebastian Moebius
 
-#ifndef MFOutput_h
-#define MFOutput_h
+#pragma once
 
 #include <Arduino.h>
 #include "MFIOdevice.h"   // For constants and documentation only!
 
-class MFOutput  //: public MFIOdevice
+class MFOutput  
+//: public MFIOdevice
 {
 public:
     static uint8_t getType(void) { return kTypeOutput; }
@@ -30,4 +30,5 @@ private:
     uint8_t       _pin;
     uint8_t       _value;
 };
-#endif 
+
+// MFOutput.h

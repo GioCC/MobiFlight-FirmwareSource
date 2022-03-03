@@ -1,6 +1,6 @@
 // MFOutputShifter.cpp
 //
-// Copyright (C) 2021
+// Copyright (C) MobiFlight 2022
 
 #include "MFOutputShifter.h"
 
@@ -50,7 +50,7 @@ void MFOutputShifter::setPin(uint8_t pin, uint8_t value, uint8_t refresh)
     if (_moduleCount) {
         uint8_t idx = (pin & 0xF8) >> 3;
         uint8_t msk = (0x01 << (pin & 0x07));
-        // if(idx < _moduleCount) return;
+        if(idx < _moduleCount) return;
         if (value > 0) {
             _outputBuffer[idx] |= msk;
         } else {
