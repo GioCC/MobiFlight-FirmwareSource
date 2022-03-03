@@ -1,17 +1,22 @@
-#include "InputShifter.h"
+//
+// InputShifter.cpp
+//
+#include <Arduino.h>
 #include "MFBoards.h"
 #include "MFInputShifter.h"
-#include "allocateMem.h"
 #include "commandmessenger.h"
+#include "stowManager.h"
 #include "mobiflight.h"
-#include <Arduino.h>
+
+// #if MF_INPUT_SHIFTER_SUPPORT == 1
+
+extern CmdMessenger cmdMessenger;
+extern StowManager  Stowage;
 
 namespace InputShifter
 {
-    MFInputShifter *inputShifters[MAX_INPUT_SHIFTERS];
-    uint8_t inputShiftersRegistered = 0;
 
-    void handlerInputShifterOnChange(uint8_t eventId, uint8_t pin, const char *name)
+    void OnChange(uint8_t eventId, uint8_t pin, const char *name)
     {
         cmdMessenger.sendCmdStart(kInputShifterChange);
         cmdMessenger.sendCmdArg(name);
@@ -20,58 +25,24 @@ namespace InputShifter
         cmdMessenger.sendCmdEnd();
     };
 
-    void Add(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name)
+    void Add(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t nModules, char const *name)
     {
-        if (inputShiftersRegistered == MAX_INPUT_SHIFTERS)
-            return;
-        if (!FitInMemory(sizeof(MFInputShifter))) {
-            // Error Message to Connector
-            cmdMessenger.sendCmd(kStatus, F("InputShifter does not fit in Memory"));
-            return;
-        }
-        inputShifters[inputShiftersRegistered] = new (allocateMemory(sizeof(MFInputShifter))) MFInputShifter;
-        inputShifters[inputShiftersRegistered]->attach(latchPin, clockPin, dataPin, modules, name);
-        inputShifters[inputShiftersRegistered]->clear();
-        MFInputShifter::attachHandler(handlerInputShifterOnChange);
-        inputShiftersRegistered++;
-#ifdef DEBUG2CMDMESSENGER
-        cmdMessenger.sendCmd(kStatus, F("Added input shifter"));
-#endif
-    }
+        MFInputShifter *MFI;
 
-    void Clear()
-    {
-        for (uint8_t i = 0; i < inputShiftersRegistered; i++) {
-            inputShifters[i]->detach();
-        }
-        inputShiftersRegistered = 0;
-#ifdef DEBUG2CMDMESSENGER
-        cmdMessenger.sendCmd(kStatus, F("Cleared input shifter"));
-#endif
-    }
+        Stowage.AddItem(&MFI);
 
-    void read()
-    {
-        for (uint8_t i = 0; i < inputShiftersRegistered; i++) {
-            inputShifters[i]->update();
+        if(MFI) {
+            MFI->attach(latchPin, clockPin, dataPin, nModules, name);
+            MFInputShifter::attachHandler(OnChange);
+            #ifdef DEBUG
+            cmdMessenger.sendCmd(kStatus, F("Added InShiftReg"));
+        } else {
+            cmdMessenger.sendCmd(kStatus, F("InShiftReg: Memory full"));
+            #endif
         }
     }
+}  // namespace
 
-    void OnTrigger()
-    {
-        // Retrigger all the input shifters. This automatically sends
-        // the release events first followed by press events.
-        for (uint8_t i = 0; i < inputShiftersRegistered; i++) {
-            inputShifters[i]->retrigger();
-        }
-        setLastCommandMillis();
-    }
+// #endif  // MF_INPUT_SHIFTER_SUPPORT
 
-    void OnInit() // not used anywhere!?
-    {
-        int module = cmdMessenger.readInt16Arg();
-        inputShifters[module]->clear();
-        setLastCommandMillis();
-    }
-
-} // end of namespace InputShifter
+// InputShifter.cpp

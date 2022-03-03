@@ -1,11 +1,14 @@
-#pragma once
-#include <stdint.h>
+//
+// InputShifter.h
+//
 
+#pragma once
+
+#include <stdint.h>
+#include "MFInputShifter.h"
 namespace InputShifter
 {
-void Add(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name = "InputShifter");
-void Clear();
-//void OnInit();        // this is defined but not used!?
-void read();
-void OnTrigger();
+    void Add(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules = 1, char const *name = "InputShifter");
 }
+
+// InputShifter.h

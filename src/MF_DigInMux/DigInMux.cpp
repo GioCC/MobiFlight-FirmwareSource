@@ -1,68 +1,52 @@
+//
+// DigInMux.cpp
+//
 #include <Arduino.h>
+#include "MFBoards.h"
 #include "MFDigInMux.h"
 #include "MFMuxDriver.h"
-#include "allocateMem.h"
-#include "mobiflight.h"
 #include "commandmessenger.h"
-#include "MFBoards.h"
+#include "stowManager.h"
+#include "mobiflight.h"
 
-extern MFMuxDriver MUX;
+// #if MF_DIGIN_MUX_SUPPORT == 1
+
+
+extern CmdMessenger cmdMessenger;
+extern StowManager  Stowage;
 
 namespace DigInMux
 {
-MFDigInMux *digInMux[MAX_DIGIN_MUX];
-uint8_t digInMuxRegistered = 0;
+    void OnChange(uint8_t eventId, uint8_t pin, const char *name)
+    {
+        cmdMessenger.sendCmdStart(kDigInMuxChange);
+        cmdMessenger.sendCmdArg(name);
+        cmdMessenger.sendCmdArg(pin);
+        cmdMessenger.sendCmdArg(eventId);
+        cmdMessenger.sendCmdEnd();
+    };
 
-void handlerOnDigInMux(uint8_t eventId, uint8_t channel, const char *name)
-{
-    cmdMessenger.sendCmdStart(kDigInMuxChange);
-    cmdMessenger.sendCmdArg(name);
-    cmdMessenger.sendCmdArg(channel);
-    cmdMessenger.sendCmdArg(eventId);
-    cmdMessenger.sendCmdEnd();
-};
+    void Add(uint8_t dataPin, uint8_t nRegs, char const *name, bool mode)
+    {
+        MFDigInMux *MFI;
 
-void Add(uint8_t dataPin, uint8_t nRegs, char const *name, bool mode)
-{
-    if (digInMuxRegistered == MAX_DIGIN_MUX)
-        return;
-    MFDigInMux *dip;
-    dip = new (allocateMemory(sizeof(MFDigInMux))) MFDigInMux(&MUX, name);
-    digInMux[digInMuxRegistered] = dip;
-    dip->attach(dataPin, (nRegs == 1), name);
-    dip->clear();
-    dip->setLazyMode(mode == MFDigInMux::MUX_MODE_LAZY);
-    //MFDigInMux::setMux(&MUX);
-    MFDigInMux::attachHandler(handlerOnDigInMux);
-    digInMuxRegistered++;
+        Stowage.AddItem(&MFI);
 
-#ifdef DEBUG2MSG
-    cmdMessenger.sendCmd(kStatus, F("Added digital input MUX"));
-#endif
-}
-
-void Clear()
-{
-    for (uint8_t i = 0; i < digInMuxRegistered; i++) {
-        digInMux[digInMuxRegistered]->detach();
+        if(MFI) {
+            MFI->attach(dataPin, (nRegs==1), name);
+            MFI->setLazyMode(mode==MFDigInMux::MuxModeLazy);
+            MFDigInMux::setMux(&MUX);
+            MFDigInMux::attachHandler(OnChange);
+            #ifdef DEBUG
+            cmdMessenger.sendCmd(kStatus, F("Added DigInMux"));
+        } else {
+            cmdMessenger.sendCmd(kStatus, F("DigInMux: Memory full"));
+            #endif
+        }
     }
-    digInMuxRegistered = 0;
-    #ifdef DEBUG2CMDMESSENGER
-    cmdMessenger.sendCmd(kStatus, F("Cleared dig. input Muxes"));
-    #endif
+
 }
 
-void read()
-{
-    for (uint8_t i = 0; i < digInMuxRegistered; i++) {
-        digInMux[i]->update();
-    }
-}
+// #endif  // MF_DIGIN_MUX_SUPPORT
 
-void OnTrigger()
-{
-    for (uint8_t i = 0; i < digInMuxRegistered; i++) {
-        digInMux[i]->retrigger();
-    }
-}
-}       // end of namespace button
+// DigInMux.cpp
