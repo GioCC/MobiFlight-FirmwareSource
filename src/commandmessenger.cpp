@@ -3,30 +3,6 @@
 #include "commandmessenger.h"
 #include "config.h"
 #include "mobiflight.h"
-#include "Button.h"
-#include "Encoder.h"
-#if MF_ANALOG_SUPPORT == 1
-#include "Analog.h"
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-#include "InputShifter.h"
-#endif
-#include "Output.h"
-#if MF_SEGMENT_SUPPORT == 1
-#include "LedSegment.h"
-#endif
-#if MF_STEPPER_SUPPORT == 1
-#include "Stepper.h"
-#endif
-#if MF_SERVO_SUPPORT == 1
-#include "Servos.h"
-#endif
-#if MF_LCD_SUPPORT == 1
-#include "LCDDisplay.h"
-#endif
-#if MF_OUTPUT_SHIFTER_SUPPORT == 1
-#include "OutputShifter.h"
-#endif
 
 
 CmdMessenger cmdMessenger = CmdMessenger(Serial);

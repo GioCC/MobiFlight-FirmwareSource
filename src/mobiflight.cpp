@@ -1,7 +1,3 @@
-//#define STRINGIZER(arg) #arg
-//#define STR_VALUE(arg) STRINGIZER(arg)
-//#define VERSION STR_VALUE(BUILD_VERSION)
-
 //#define DEBUG 1
 
 //#define TESTING
@@ -11,34 +7,9 @@
 #include "MFBoards.h"
 #include "MFEEPROM.h"
 #include "commandmessenger.h"
+#include "stowManager.h"
 #include "config.h"
 #include "mobiflight.h"
-#if MF_ANALOG_SUPPORT == 1
-#include "Analog.h"
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-#include "InputShifter.h"
-#endif
-#include "Output.h"
-#if MF_SEGMENT_SUPPORT == 1
-#include "LedSegment.h"
-#endif
-#if MF_STEPPER_SUPPORT == 1
-#include "Stepper.h"
-#endif
-#if MF_SERVO_SUPPORT == 1
-#include "Servos.h"
-#endif
-#if MF_OUTPUT_SHIFTER_SUPPORT == 1
-#include "OutputShifter.h"
-#endif
-#ifdef MF_MUX_SUPPORT == 1
-#include "MFMuxDriver.h"
-#endif
-#if MF_DIGIN_MUX_SUPPORT == 1
-#include "DigInMux.h"
-#endif
-
 
 #define MF_BUTTON_DEBOUNCE_MS 10     // time between updating the buttons
 #define MF_ENCODER_DEBOUNCE_MS 1     // time between encoder updates
@@ -47,6 +18,9 @@
 #define MF_SERVO_DELAY_MS 5          // time between servo updates
 #define MF_ANALOGAVERAGE_DELAY_MS 10 // time between updating the analog average calculation
 #define MF_ANALOGREAD_DELAY_MS 50    // time between sending analog values
+
+extern CmdMessenger cmdMessenger;
+extern StowManager  Stowage;
 
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
@@ -178,6 +152,8 @@ void resetDevices(void)
     INVOKE(reset(ONRESET_RELEASE), StowManager::TypeALL);
     // ...then trigger all the press events for inputs, and clear outputs
     INVOKE(reset(ONRESET_PRESS), StowManager::TypeALL);
+    
+    setLastCommandMillis();
 }
 
 void updateDevices(uint8_t type = StowManager::TypeALL)
@@ -408,7 +384,7 @@ void loop()
         timedUpdate(kTypeAnalogInput, &lastUpdate.Analog, MF_ANALOGREAD_DELAY_MS);
         if (millis() - lastUpdate.AnalogAverage >= MF_ANALOGAVERAGE_DELAY_MS) {
             lastUpdate.AnalogAverage = millis();
-            UpdateAnalogAvg();
+            Analog::UpdateAverage();
         }
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1

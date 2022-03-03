@@ -2,42 +2,11 @@
 #include "MFBoards.h"
 #include "config.h"
 #include "MFEEPROM.h"
-#include "MFIOdevice.h"   // For constants and documentation only!
 #include "StowManager.h"
 #include "commandmessenger.h"
-#include "Button.h"
-#include "Encoder.h"
-#include "Output.h"
-#if MF_ANALOG_SUPPORT == 1
-#include "Analog.h"
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-#include "InputShifter.h"
-#endif
-#if MF_SEGMENT_SUPPORT == 1
-#include "LedSegment.h"
-#endif
-#if MF_STEPPER_SUPPORT == 1
-#include "Stepper.h"
-#endif
-#if MF_SERVO_SUPPORT == 1
-#include "Servos.h"
-#endif
-#if MF_LCD_SUPPORT == 1
-#include "LCDDisplay.h"
-#endif
-#if MF_OUTPUT_SHIFTER_SUPPORT == 1
-#include "OutputShifter.h"
-#endif
-#if MF_MUX_SUPPORT == 1
-#include "MFMuxDriver.h"
-#endif
-#if MF_DIGIN_MUX_SUPPORT == 1
-#include "DigInMux.h"
-#endif
+#include "mobiflight.h"
 
-
-// The build version comes from an environment variable
+// Macros used to extract the build version from an environment variable
 #define STRINGIZER(arg) #arg
 #define STR_VALUE(arg)  STRINGIZER(arg)
 #define VERSION         STR_VALUE(BUILD_VERSION)
