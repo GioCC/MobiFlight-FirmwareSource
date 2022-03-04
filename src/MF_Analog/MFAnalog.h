@@ -10,6 +10,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "config.h"
 
 #define ADC_MAX_AVERAGE                 8           // must be 2^n
 #define ADC_MAX_AVERAGE_LOG2            3           // please calculate LOG2(ADC_MAX_AVERAGE)

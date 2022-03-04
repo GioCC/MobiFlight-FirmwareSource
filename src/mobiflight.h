@@ -14,7 +14,7 @@
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 #include "InputShifter.h"
 #endif
-#ifdef MF_MUX_SUPPORT == 1
+#if MF_MUX_SUPPORT == 1
 #include "MFMuxDriver.h"
 #endif
 #if MF_DIGIN_MUX_SUPPORT == 1

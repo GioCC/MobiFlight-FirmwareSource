@@ -45,7 +45,6 @@ static bool readConfigLength(void);
 static void readConfig(void);
 static void activateConfig(void);
 static void restoreName(void);
-static void generateSerial(bool);
 
 void resetConfig(void)
 {
@@ -302,7 +301,8 @@ void readConfig()
             params[1] = readUintFromEEPROM(&addreeprom); // get the clock Pin
             params[2] = readUintFromEEPROM(&addreeprom); // get the data Pin
             params[3] = readUintFromEEPROM(&addreeprom); // get the number of daisy chained modules
-            OutputShifter::Add(params[0], params[1], params[2], params[3], &config.nameBuffer[addrbuffer]);
+            // TODO check: OutputShifter::Add(params[0], params[1], params[2], params[3], &config.nameBuffer[addrbuffer]);
+            OutputShifter::Add(params[0], params[1], params[2], params[3]);
             copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
             break;
 #endif

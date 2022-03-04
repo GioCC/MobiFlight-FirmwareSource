@@ -72,6 +72,8 @@ void initPollIntervals(void)
 
 }
 
+static void updateDevices(uint8_t);
+
 void timedUpdate(uint8_t typ, uint32_t *tim, uint32_t intv)
 {
     if (millis() - (*tim) >= (intv)) { 

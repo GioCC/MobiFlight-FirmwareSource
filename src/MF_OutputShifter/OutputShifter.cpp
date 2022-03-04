@@ -1,63 +1,58 @@
+//
+// OutputShifter.cpp
+//
+
 #include <Arduino.h>
-#include "MFOutputShifter.h"
-#include "allocateMem.h"
-#include "mobiflight.h"
-#include "commandmessenger.h"
-#include "OutputShifter.h"
 #include "MFBoards.h"
+#include "MFOutputShifter.h"
+#include "commandmessenger.h"
+#include "stowManager.h"
+#include "mobiflight.h"
+
+extern CmdMessenger cmdMessenger;
+extern StowManager  Stowage;
 
 namespace OutputShifter
 {
-MFOutputShifter *outputShifters[MAX_OUTPUT_SHIFTERS];
-uint8_t outputShifterRegistered = 0;
+    void Add(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules)
+    {
+        MFOutputShifter *MFS;
 
-void Add(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules)
-{
-  if (outputShifterRegistered == MAX_OUTPUT_SHIFTERS)
-    return;
-  if (!FitInMemory(sizeof(MFOutputShifter)))
-  {
-    // Error Message to Connector
-    cmdMessenger.sendCmd(kStatus, F("OutputShifter does not fit in Memory"));
-    return;
-  }
-  outputShifters[outputShifterRegistered] = new (allocateMemory(sizeof(MFOutputShifter))) MFOutputShifter;
-  outputShifters[outputShifterRegistered]->attach(latchPin, clockPin, dataPin, modules);
-  outputShifters[outputShifterRegistered]->clear();
-  outputShifterRegistered++;
+        Stowage.AddItem(&MFS);
 
-#ifdef DEBUG2CMDMESSENGER
-  cmdMessenger.sendCmd(kStatus, F("Added Output Shifter"));
-#endif
-}
+        if(MFS) {
+            MFS->attach(latchPin, clockPin, dataPin, modules);
+            #ifdef DEBUG
+            cmdMessenger.sendCmd(kStatus, F("Added OutputShifter"));
+        } else {
+            cmdMessenger.sendCmd(kStatus, F("OutputShifter: Memory full"));
+            #endif
+        }
+    }
 
-void Clear()
-{
-  for (uint8_t i = 0; i < outputShifterRegistered; i++)
-  {
-    outputShifters[i]->detach();
-  }
+    void OnInit(void)
+    {
+        MFOutputShifter *MFS;
+        uint8_t module = cmdMessenger.readInt16Arg();
+        MFS = (MFOutputShifter *)(Stowage.getNth((uint8_t)module, kTypeOutShiftReg));
+        if(MFS) {
+            MFS->clear();
+            setLastCommandMillis();
+        }
+    }
 
-  outputShifterRegistered = 0;
-#ifdef DEBUG2CMDMESSENGER
-  cmdMessenger.sendCmd(kStatus, F("Cleared Output Shifter"));
-#endif
-}
+    void OnSet(void)
+    {
+        MFOutputShifter *MFS;
+        int module  = cmdMessenger.readInt16Arg();
+        char *pins  = cmdMessenger.readStringArg();
+        int  value  = cmdMessenger.readInt16Arg();
+        MFS = (MFOutputShifter *)(Stowage.getNth((uint8_t)module, kTypeOutShiftReg));
+        if(MFS) {
+            MFS->setPins(pins, value);
+            setLastCommandMillis();
+        }
+    }
+}   // namespace
 
-void OnInit()     // not used anywhere!?
-{
-  int module = cmdMessenger.readInt16Arg();
-  outputShifters[module]->clear();
-  setLastCommandMillis();
-}
-
-void OnSet()
-{
-
-  int module = cmdMessenger.readInt16Arg();
-  char *pins = cmdMessenger.readStringArg();
-  int value = cmdMessenger.readInt16Arg();
-  outputShifters[module]->setPins(pins, value);
-  setLastCommandMillis();
-}
-}   // end of namespace OutputShifter
+// OutputShifter.cpp

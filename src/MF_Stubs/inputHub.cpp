@@ -2,12 +2,11 @@
 // InputHub.cpp
 //
 
-#include <Arduino.h>
-#include "commandmessenger.h"
-#include "config.h"
-#include "stowManager.h"
-#include "mobiflight.h"
-
+// #include <Arduino.h>
+// #include "commandmessenger.h"
+// #include "config.h"
+// #include "stowManager.h"
+// #include "mobiflight.h"
 // #include "inputHub.h"
 
 // Included by inputHub.h:
@@ -206,13 +205,13 @@
 // 
 // #endif
 
-#if MF_MUX_SUPPORT == 1
-void SetMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin)
-{
-    MUX.attach(Sel0Pin, Sel1Pin, Sel2Pin, Sel3Pin);
-    #ifdef DEBUG
-    cmdMessenger.sendCmd(kStatus, F("Added multiplexer"));
-    #endif
-}
-#endif
+// #if MF_MUX_SUPPORT == 1
+// void SetMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin)
+// {
+//     MUX.attach(Sel0Pin, Sel1Pin, Sel2Pin, Sel3Pin);
+//     #ifdef DEBUG
+//     cmdMessenger.sendCmd(kStatus, F("Added multiplexer"));
+//     #endif
+// }
+// #endif
 // inputHub.cpp

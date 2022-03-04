@@ -51,6 +51,5 @@ private:
     void        update(uint8_t doTrigger);
 
 };
-#endif
 
 // MFInputShifter.h

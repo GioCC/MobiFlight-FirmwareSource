@@ -1,77 +1,69 @@
-#include "LedSegment.h"
+//
+// LedSegment.cpp
+//
+
+#include <Arduino.h>
 #include "MFBoards.h"
 #include "MFSegments.h"
-#include "allocateMem.h"
 #include "commandmessenger.h"
-#include <Arduino.h>
+#include "stowManager.h"
+#include "mobiflight.h"
+
+extern CmdMessenger cmdMessenger;
+extern StowManager  Stowage;
 
 namespace LedSegment
 {
-    MFSegments *ledSegments[MAX_LEDSEGMENTS];
-    uint8_t ledSegmentsRegistered = 0;
-
-    void Add(int dataPin, int csPin, int clkPin, int numDevices, int brightness)
+    void Add(uint8_t dataPin, uint8_t csPin, uint8_t clkPin, uint8_t numDevices, uint8_t brightness)
     {
-        if (ledSegmentsRegistered == MAX_LEDSEGMENTS)
-            return;
+        MFSegments *MFS;
 
-        if (!FitInMemory(sizeof(MFSegments))) {
-            // Error Message to Connector
-            cmdMessenger.sendCmd(kStatus, F("7Segment does not fit in Memory!"));
-            return;
-        }
-        ledSegments[ledSegmentsRegistered] = new (allocateMemory(sizeof(MFSegments))) MFSegments;
-        ledSegments[ledSegmentsRegistered]->attach(dataPin, csPin, clkPin, numDevices, brightness); // lc is our object
-        ledSegmentsRegistered++;
-#ifdef DEBUG2CMDMESSENGER
-        cmdMessenger.sendCmd(kStatus, F("Added Led Segment"));
-#endif
-    }
+        Stowage.AddItem(&MFS);
 
-    void Clear()
-    {
-        for (uint8_t i = 0; i < ledSegmentsRegistered; i++) {
-            ledSegments[i]->detach();
-        }
-        ledSegmentsRegistered = 0;
-#ifdef DEBUG2CMDMESSENGER
-        cmdMessenger.sendCmd(kStatus, F("Cleared segments"));
-#endif
-    }
-
-    void PowerSave(bool state)
-    {
-        for (uint8_t i = 0; i < ledSegmentsRegistered; ++i) {
-            ledSegments[i]->powerSavingMode(state);
+        if(MFS) {
+            MFS->attach(dataPin, csPin, clkPin, numDevices, brightness);
+            #ifdef DEBUG
+            cmdMessenger.sendCmd(kStatus, F("Added LEDSegment"));
+        } else {
+            cmdMessenger.sendCmd(kStatus, F("LEDSegment: Memory full"));
+            #endif
         }
     }
 
-    void OnInitModule()
+    void OnSetBrightness(void)
     {
-        int module = cmdMessenger.readInt16Arg();
-        int subModule = cmdMessenger.readInt16Arg();
-        int brightness = cmdMessenger.readInt16Arg();
-        ledSegments[module]->setBrightness(subModule, brightness);
-        setLastCommandMillis();
+        MFSegments *MFS;
+        int module      = cmdMessenger.readInt16Arg();
+        int subModule   = cmdMessenger.readInt16Arg();
+        int brightness  = cmdMessenger.readInt16Arg();
+        MFS = (MFSegments *)(Stowage.getNth((uint8_t)module, kTypeLedSegment));
+        if(MFS) {
+            MFS->setBrightness(subModule, brightness);
+            setLastCommandMillis();
+        }
+    }
+    
+    void OnInit(void)
+    {
+        OnSetBrightness(); // Same function
     }
 
-    void OnSetModule()
+    void OnSet(void)
     {
-        int module = cmdMessenger.readInt16Arg();
-        int subModule = cmdMessenger.readInt16Arg();
-        char *value = cmdMessenger.readStringArg();
-        uint8_t points = (uint8_t)cmdMessenger.readInt16Arg();
-        uint8_t mask = (uint8_t)cmdMessenger.readInt16Arg();
-        ledSegments[module]->display(subModule, value, points, mask);
-        setLastCommandMillis();
+        MFSegments *MFS;
+        int module      = cmdMessenger.readInt16Arg();
+        int subModule   = cmdMessenger.readInt16Arg();
+        char *value     = cmdMessenger.readStringArg();
+        uint8_t points  = (uint8_t)cmdMessenger.readInt16Arg();
+        uint8_t mask    = (uint8_t)cmdMessenger.readInt16Arg();
+        //MFS = static_cast<MFSegments *>(Stowage.getNth(module, kTypeLedSegment));
+        MFS = (MFSegments *)(Stowage.getNth((uint8_t)module, kTypeLedSegment));
+        if(MFS) {
+            MFS->setval(subModule, value, points, mask);
+            setLastCommandMillis();
+        }
     }
 
-    void OnSetModuleBrightness()
-    {
-        int module = cmdMessenger.readInt16Arg();
-        int subModule = cmdMessenger.readInt16Arg();
-        int brightness = cmdMessenger.readInt16Arg();
-        ledSegments[module]->setBrightness(subModule, brightness);
-        setLastCommandMillis();
-    }
-} // end of namespace LedSegment
+}   // namespace
+
+// LedSegment.cpp

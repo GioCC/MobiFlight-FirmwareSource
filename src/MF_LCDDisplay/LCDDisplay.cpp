@@ -1,48 +1,46 @@
-#include "LCDDisplay.h"
+//
+// LCDDisplay.cpp
+//
+
+#include <Arduino.h>
 #include "MFBoards.h"
 #include "MFLCDDisplay.h"
-#include "allocateMem.h"
 #include "commandmessenger.h"
-#include <Arduino.h>
+#include "stowManager.h"
+#include "mobiflight.h"
+
+extern CmdMessenger cmdMessenger;
+extern StowManager  Stowage;
+
 namespace LCDDisplay
 {
-    MFLCDDisplay *lcd_I2C[MAX_MFLCD_I2C];
-    uint8_t lcd_12cRegistered = 0;
-
-    void Add(uint8_t address, uint8_t cols, uint8_t lines)
+    void Add(uint8_t I2Caddress, uint8_t cols, uint8_t lines)
     {
-        if (lcd_12cRegistered == MAX_MFLCD_I2C)
-            return;
+        MFLCDDisplay *MFL;
+        Stowage.AddItem(&MFL);
 
-        if (!FitInMemory(sizeof(MFLCDDisplay))) {
-            // Error Message to Connector
-            cmdMessenger.sendCmd(kStatus, F("LCD does not fit in Memory!"));
-            return;
+        if(MFL) {
+            MFL->attach(I2Caddress, cols, lines);
+            #ifdef DEBUG
+            cmdMessenger.sendCmd(kStatus, F("Added LCD display"));
+        } else {
+            cmdMessenger.sendCmd(kStatus, F("LCD display: Memory full"));
+            #endif
         }
-        lcd_I2C[lcd_12cRegistered] = new (allocateMemory(sizeof(MFLCDDisplay))) MFLCDDisplay;
-        lcd_I2C[lcd_12cRegistered]->attach(address, cols, lines);
-        lcd_12cRegistered++;
-#ifdef DEBUG2CMDMESSENGER
-        cmdMessenger.sendCmd(kStatus, F("Added lcdDisplay"));
-#endif
     }
 
-    void Clear()
+    void OnSet(void)
     {
-        for (uint8_t i = 0; i < lcd_12cRegistered; i++) {
-            lcd_I2C[i]->detach();
-        }
-        lcd_12cRegistered = 0;
-#ifdef DEBUG2CMDMESSENGER
-        cmdMessenger.sendCmd(kStatus, F("Cleared lcdDisplays"));
-#endif
-    }
-
-    void OnSet()
-    {
-        int address = cmdMessenger.readInt16Arg();
+        MFLCDDisplay *MFL;
+        int     nLCD = cmdMessenger.readInt16Arg();
         char *output = cmdMessenger.readStringArg();
-        lcd_I2C[address]->display(output);
-        setLastCommandMillis();
+        //MFS = static_cast<MFSegments *>(Stowage.getNth(module, kTypeLedSegment));
+        MFL = (MFLCDDisplay *)(Stowage.getNth((uint8_t)nLCD, kTypeLcdDisplayI2C));
+        if(MFL) {
+            MFL->setval(output);
+            setLastCommandMillis();
+        }
     }
-} // end of namespace LCDDisplay
+}   // namespace
+
+// LCDDisplay.cpp

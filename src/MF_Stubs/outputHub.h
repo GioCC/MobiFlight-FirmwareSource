@@ -2,71 +2,70 @@
 // outputHub.h
 //
 
-#ifndef _OUTPUTHUB_H
-#define _OUTPUTHUB_H
+// #ifndef _OUTPUTHUB_H
+// #define _OUTPUTHUB_H
 
-#include <stdint.h>
+// #include <stdint.h>
 
-#include <Arduino.h>
-#include "MFBoards.h"
-#include "StowManager.h"
-#include "commandmessenger.h"
-#include "config.h"
-#include "MFIOdevice.h"
+// #include <Arduino.h>
+// #include "MFBoards.h"
+// #include "StowManager.h"
+// #include "commandmessenger.h"
+// #include "config.h"
+// #include "MFIOdevice.h"
 
-#include "MFOutput.h"
-#include "MFSegments.h"
-#include "MFOutputShifter.h"
-#include "MFServo.h"
-#include "MFStepper.h"
-#include "MFLCDDisplay.h"
+// #include "MFOutput.h"
+// #include "MFSegments.h"
+// #include "MFOutputShifter.h"
+// #include "MFServo.h"
+// #include "MFStepper.h"
+// #include "MFLCDDisplay.h"
 
-extern StowManager  Stowage;
-extern CmdMessenger cmdMessenger;
+// extern StowManager  Stowage;
+// extern CmdMessenger cmdMessenger;
 
+// // Outputs
+// void AddOutput(uint8_t pin);
+// void OnSetPin(void);
 
-// Outputs
-void AddOutput(uint8_t pin);
-void OnSetPin(void);
+// // LED Segments
+// #if MF_SEGMENT_SUPPORT == 1
+// void AddLedSegment(int dataPin, int csPin, int clkPin, int numDevices, int brightness);
+// void OnInitSegments(void);
+// void OnSetSegments(void);
+// void OnSetModuleBrightness(void);
+// #endif
 
-// LED Segments
-#if MF_SEGMENT_SUPPORT == 1
-void AddLedSegment(int dataPin, int csPin, int clkPin, int numDevices, int brightness);
-void OnInitSegments(void);
-void OnSetSegments(void);
-void OnSetModuleBrightness(void);
-#endif
+// // Output Shift Registers
+// #if MF_OUTPUT_SHIFTER_SUPPORT == 1
+// void AddOutShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name = "OutShiftReg");
+// void OnInitShiftRegister(void);
+// void OnSetShiftRegisterPins(void);
+// #endif
 
-// Output Shift Registers
-#if MF_OUTPUT_SHIFTER_SUPPORT == 1
-void AddOutShiftReg(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules, char const *name = "OutShiftReg");
-void OnInitShiftRegister(void);
-void OnSetShiftRegisterPins(void);
-#endif
+// // Servos
+// #if MF_SERVO_SUPPORT == 1
+// void AddServo(int pin);
+// void OnSetServo(void);
+// #endif
 
-// Servos
-#if MF_SERVO_SUPPORT == 1
-void AddServo(int pin);
-void OnSetServo(void);
-#endif
+// // Steppers
+// #if MF_STEPPER_SUPPORT == 1
+// void AddStepper(int pin1, int pin2, int pin3, int pin4, int zeroPin);
+// void OnSetStepper(void);
+// void OnResetStepper(void);
+// void OnSetZeroStepper(void);
+// #endif
 
-// Steppers
-#if MF_STEPPER_SUPPORT == 1
-void AddStepper(int pin1, int pin2, int pin3, int pin4, int zeroPin);
-void OnSetStepper(void);
-void OnResetStepper(void);
-void OnSetZeroStepper(void);
-#endif
-
-// LCDs
-#if MF_LCD_SUPPORT == 1
-void AddLcdDisplay(uint8_t I2Caddress, uint8_t cols, uint8_t lines, char const *name = "LCD");
-void OnSetLcdDisplayI2C(void);
-#endif
-
+// // LCDs
+// #if MF_LCD_SUPPORT == 1
+// void AddLcdDisplay(uint8_t I2Caddress, uint8_t cols, uint8_t lines, char const *name = "LCD");
+// void OnSetLcdDisplayI2C(void);
+// #endif
 
 
-// Device add functions
 
-#endif // _OUTPUTHUB_H
+// // Device add functions
+
+// #endif // _OUTPUTHUB_H
 

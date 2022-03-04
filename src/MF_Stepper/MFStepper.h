@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #include <Arduino.h>
 #include <AccelStepper.h>
-#include "MFButton.h"
 #include "MFIOdevice.h"   // For constants and documentation only!
 
 class MFStepper  
