@@ -3,6 +3,7 @@
 // Copyright (C) 2013-2021
 
 #include "MFSegments.h"
+#include "mobiflight.h"
 
 MFSegments::MFSegments()
 {

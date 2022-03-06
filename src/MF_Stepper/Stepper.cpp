@@ -14,6 +14,8 @@ extern StowManager  Stowage;
 
 namespace Stepper
 {
+    DEFINE_VT_STUBS(MFStepper);   // see IODevice.h
+
     void Add(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4, uint8_t zeroPin)
     {
         MFStepper *MFS;

@@ -1,6 +1,8 @@
 #pragma once
 
+#include <Arduino.h>
 #include "MFBoards.h"
+#include "IODevice.h"
 
 //=======================================
 // Includes for INPUT devices

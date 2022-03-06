@@ -14,6 +14,8 @@ extern StowManager  Stowage;
 
 namespace LCDDisplay
 {
+    DEFINE_VT_STUBS(MFLCDDisplay);   // see IODevice.h
+
     void Add(uint8_t I2Caddress, uint8_t cols, uint8_t lines)
     {
         MFLCDDisplay *MFL;

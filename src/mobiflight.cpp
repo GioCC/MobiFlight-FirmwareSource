@@ -87,227 +87,60 @@ void timedUpdate(uint8_t typ, uint32_t *tim, uint32_t intv)
 //  General I/O handling functions
 // ************************************************************
 
-// INVOKE(detach, p, kTypeButton);
-#define INVOKE(function, devtype)                                  \
-    {                                                              \
-        void *dev;                                                 \
-        uint8_t type;                                              \
-        Stowage.reset();                                           \
-        do {                                                       \
-            if (devtype == StowManager::TypeALL)                   \
-                type = Stowage.getTypeOfNext();                    \
-            dev = Stowage.getNext(devtype);                        \
-            if (dev) {                                             \
-                switch (type) {                                    \
-                case kTypeButton:                                  \
-                    static_cast<MFButton *>(dev)->function;        \
-                    break;                                         \
-                case kTypeAnalogInput:                             \
-                    static_cast<MFAnalog *>(dev)->function;        \
-                    break;                                         \
-                case kTypeEncoder:                                 \
-                case kTypeEncoderSingleDetent:                     \
-                    static_cast<MFEncoder *>(dev)->function;       \
-                    break;                                         \
-                case kTypeInShiftReg:                              \
-                    static_cast<MFInputShifter *>(dev)->function;  \
-                    break;                                         \
-                case kTypeDigInMux:                                \
-                    static_cast<MFDigInMux *>(dev)->function;      \
-                    break;                                         \
-                case kTypeOutput:                                  \
-                    static_cast<MFOutput *>(dev)->function;        \
-                    break;                                         \
-                case kTypeOutShiftReg:                             \
-                    static_cast<MFOutputShifter *>(dev)->function; \
-                    break;                                         \
-                case kTypeLedSegment:                              \
-                    static_cast<MFSegments *>(dev)->function;      \
-                    break;                                         \
-                case kTypeServo:                                   \
-                    static_cast<MFServo *>(dev)->function;         \
-                    break;                                         \
-                case kTypeStepper:                                 \
-                case kTypeStepperDeprecated:                       \
-                    static_cast<MFStepper *>(dev)->function;       \
-                    break;                                         \
-                case kTypeLcdDisplayI2C:                           \
-                    static_cast<MFLCDDisplay *>(dev)->function;    \
-                    break;                                         \
-                default:                                           \
-                    break;                                         \
-                }                                                  \
-            }                                                      \
-        } while (dev);                                             \
-    }
 
-//TODO test: ================================================================
-//#define ALT_POLYMORPH
-#ifdef ALT_POLYMORPH
-// Test for alternate code version:
-// instead of using a macro (INVOKE), polymorphism is basically custom re-implemented
-// with an actual virtual table, but tailored to the application.
-// Some of the code below is just a partial / showcase implementation (limited to some devices).
+void resetDevices(void)
+{
+    uint8_t  typ;
+    uint8_t* dev;
 
-// Declarations required for the virtual table
-typedef void(*funNoArg_t)(void *);
-typedef void(*funByteArg_t)(void *, uint8_t);
+    // Trigger all release events first for inputs, does nothing for outputs
+    Stowage.reset();
+    while((dev = Stowage.getNext())) {        
+        DeviceReset(typ, dev, ONRESET_RELEASE);
+    };
 
-typedef struct  {
-    funNoArg_t   _update;
-    funNoArg_t   _detach;
-    funByteArg_t _reset;
-} funset_t;
 
-// Defines required to access the VT in PROGMEM 
-#define DeviceUpdate(n, ob)      ((funNoArg_t)  pgm_read_word_near(myarr + n))(ob)
-#define DeviceDetach(n, ob)      ((funNoArg_t)  pgm_read_word_near(myarr + n + 1*sizeof(void *)))(ob)
-#define DeviceReset(n, ob, arg)  ((funByteArg_t)pgm_read_word_near(myarr + n + 2*sizeof(void *)))(ob, arg)
-
-// Following functions are stubs to allow accessing the methods from pointers:
-// They should be placed in the <device>.cpp / <device>.h files;
-// the .h should NOT be included if the device is not required (MF_<device>_SUPPORT != 1)!
-namespace Encoder {
-    void Update(void *p)            { static_cast<MFEncoder *>(p)->update(); }
-    void Detach(void *p)            { static_cast<MFEncoder *>(p)->detach(); }
-    void Reset(void *p, uint8_t i)  { static_cast<MFEncoder *>(p)->reset(i); }
+    // ...then trigger all the press events for inputs, and clear outputs
+    Stowage.reset();
+    while((dev = Stowage.getNext())) {        
+        DeviceReset(typ, dev, ONRESET_PRESS);
+    };
+    setLastCommandMillis();
 }
-namespace InputShifter {
-    void Update(void *p)            { static_cast<MFInputShifter *>(p)->update(); }
-    void Detach(void *p)            { static_cast<MFInputShifter *>(p)->detach(); }
-    void Reset(void *p, uint8_t i)  { static_cast<MFInputShifter *>(p)->reset(i); }
+
+void updateDevices(uint8_t typ = StowManager::TypeALL)
+{
+    uint8_t* dev;
+
+    Stowage.reset();
+    while((dev = Stowage.getNext())) {        
+        DeviceUpdate(typ, dev);
+
+    };
+    setLastCommandMillis();
 }
-namespace LEDsegments {
-    void Update(void *p)            { static_cast<MFSegments *>(p)->update(); }
-    void Detach(void *p)            { static_cast<MFSegments *>(p)->detach(); }
-    void Reset(void *p, uint8_t i)  { static_cast<MFSegments *>(p)->reset(i); }
+
+void setPowerSave(uint8_t mode, uint8_t typ = StowManager::TypeALL)
+{
+    uint8_t* dev;
+    Stowage.reset();
+    while((dev = Stowage.getNext())) {        
+        DevicePowerSave(typ, dev, mode);
+    };
+    setLastCommandMillis();
 }
-// Above functions could be also implemented as class static functions:
-// class MFEncoder {
-//      ...
-//      static void Update(void *p)             { static_cast<MFEncoder *>(p)->update(); }
-//      static void Detach(void *p)             { static_cast<MFEncoder *>(p)->detach(); }
-//      static void Reset(void *p, uint8_t i)   { static_cast<MFEncoder *>(p)->reset(i); }
-//      ...
-// }
-// and inserted in the table as  
-// { MFEncoder::Update, MFEncoder::Detach, MFEncoder::Reset },
-
-// For conditional compilation:
-// Alternative 1: cleaner, but more verbose)
-#if MF_INPUT_SHIFTER_SUPPORT != 1
-namespace InputShifter {
-    funNoArg_t    Update = NULL;
-    funNoArg_t    Detach = NULL;
-    funByteArg_t  Reset = NULL;
-}
-#endif
-// Alternative 2: more direct, but less terse
-// Use #ifdef's directly in the table definition, e.g.
-//
-// #if MF_SEGMENT_SUPPORT == 1
-//     { LEDsegments::Update,  LEDsegments::Detach,    LEDsegments::Reset  },
-// #else
-//     { NULL,  NULL,  NULL  },
-// #endif
-// This solution is more likely to disrupt table integrity in case of modifications though.
-
-
-funset_t const myarr[10] PROGMEM = {
-    // all equal, it's just a test dummy for now
-    { Encoder::Update,      Encoder::Detach,        Encoder::Reset      },
-    { InputShifter::Update, InputShifter::Detach,   InputShifter::Reset },
-#if MF_SEGMENT_SUPPORT == 1
-    { LEDsegments::Update,  LEDsegments::Detach,    LEDsegments::Reset  },
-#else
-    { NULL,  NULL,  NULL  },
-#endif
-    { Encoder::Update, Encoder::Detach, Encoder::Reset },
-    { Encoder::Update, Encoder::Detach, Encoder::Reset },
-};
-#endif ALT_POLYMORPH
-
-//TODO END ================================================================
 
 void wipeDevices(void)
 {
     // Reset device storage (this will do all devices)
-    Stowage.reset();
-    INVOKE(detach(), StowManager::TypeALL);
-    Stowage.wipe();
-
-    //TODO test (DUMMY):
-#ifdef ALT_POLYMORPH
-    // Example of how functions without the INNVOKE() macro would be inplemented:
-
-    Stowage.reset();
-   
-    uint8_t  typ;
     uint8_t* dev;
+    uint8_t  typ;
     
-    do {        
-        typ = Stowage.getTypeOfNext();  // if type == TypeALL, otherwise use the function argument
-        dev = Stowage.getNext(typ);
-
-        if(dev) {
-
-            // Problem:
-            //---------
-            // How to make offset computation work with declarations rather than actual objects??
-            // Examples:
-            // uint16_t    offset = (&funset_t::_update - &funset_t::_detach);    // Does NOT work
-            // uint16_t    offset = (&myarr[0]._update - &myarr[0]._detach);      // Works
-            // funNoArg_t  fDetach = (funNoArg_t)pgm_read_word_near(myarr + typ + offset);
-
-            // Vers 1: (local PROGMEM casts)
-            //==============================
-            // funNoArg_t      fDetach = (funNoArg_t)pgm_read_word_near(myarr + typ);
-            // funNoArg_t      fUpdate = (funNoArg_t)pgm_read_word_near(myarr + typ + sizeof(void *));
-            // funByteArg_t    fReset  = (funByteArg_t)pgm_read_word_near(myarr + typ + 2*sizeof(void *));
-            
-            // fDetach(dev);
-            // fUpdate(dev);
-            // fReset(dev, 123);
-            
-            // Vers 2: (PROGMEM casts with macros)
-            //====================================
-            DeviceDetach(typ, dev);
-            DeviceUpdate(typ, dev);
-            DeviceReset(typ, dev, 123);
-
-        }
-    } while (dev);
-
-    //TODO end
-
-    Stowage.wipe();
-
-#endif ALT_POLYMORPH
-
-}
-
-void resetDevices(void)
-{
-    // Trigger all release events first for inputs, does nothing for outputs
-    INVOKE(reset(ONRESET_RELEASE), StowManager::TypeALL);
-    // ...then trigger all the press events for inputs, and clear outputs
-    INVOKE(reset(ONRESET_PRESS), StowManager::TypeALL);
-    
-    setLastCommandMillis();
-}
-
-void updateDevices(uint8_t type = StowManager::TypeALL)
-{
-    INVOKE(update(), type);
-}
-
-void setPowerSave(uint8_t mode)
-{
-    MFIOdevice *in;
     Stowage.reset();
-    while ((in = (MFIOdevice *)(Stowage.getNext())) != NULL) {
-        in->powerSave(mode);
-    }
+    while((dev = Stowage.getNext())) {        
+        DeviceDetach(typ, dev);
+    };
+    Stowage.wipe();
 }
 
 // ************************************************************

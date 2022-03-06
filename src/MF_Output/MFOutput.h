@@ -9,13 +9,12 @@
 #pragma once
 
 #include <Arduino.h>
-#include "MFIOdevice.h"   // For constants and documentation only!
+#include "config.h"
 
 class MFOutput  
-//: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeOutput; }
+    static constexpr uint8_t  getType(void) { return kTypeOutput; }
 
     MFOutput(void);
     

@@ -3,6 +3,7 @@
 // Copyright (C) Mobiflight 2022
 
 #include "MFButton.h"
+#include "mobiflight.h"
 
 buttonEventHandler   MFButton::_handler = NULL;
 

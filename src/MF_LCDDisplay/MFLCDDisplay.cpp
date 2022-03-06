@@ -3,6 +3,7 @@
 // Copyright (C) MobiFlight 2022
 
 #include "MFLCDDisplay.h"
+#include "mobiflight.h"
 
 MFLCDDisplay::MFLCDDisplay() : _address(0xFF) 
 {}
@@ -45,7 +46,7 @@ void MFLCDDisplay::reset(uint8_t action)
     }
 }
 
-void MFLCDDisplay::powerSave(bool state)
+void MFLCDDisplay::powerSave(uint8_t state)
 {
     if (state)
         _lcdDisplay.noBacklight();

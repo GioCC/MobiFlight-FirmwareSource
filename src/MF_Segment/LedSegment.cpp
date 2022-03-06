@@ -14,6 +14,8 @@ extern StowManager  Stowage;
 
 namespace LedSegment
 {
+    DEFINE_VT_STUBS(MFAnalog);   // see IODevice.h
+
     void Add(uint8_t dataPin, uint8_t csPin, uint8_t clkPin, uint8_t numDevices, uint8_t brightness)
     {
         MFSegments *MFS;

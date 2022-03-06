@@ -14,6 +14,8 @@ extern StowManager  Stowage;
 
 namespace Servos
 {
+    DEFINE_VT_STUBS(MFServo);   // see IODevice.h
+
     void Add(uint8_t pin)
     {
         MFServo *MFS;

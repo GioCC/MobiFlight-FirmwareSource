@@ -7,7 +7,7 @@
 #include "commandmessenger.h"
 #include "stowManager.h"
 #include "mobiflight.h"
-#include "config.h"
+//#include "config.h"
 
 // #if MF_ANALOG_SUPPORT == 1
 
@@ -16,6 +16,7 @@ extern StowManager  Stowage;
 
 namespace Analog
 {
+    DEFINE_VT_STUBS(MFAnalog);   // see IODevice.h
 
     void OnChange(int value, uint8_t pin, const char *name)
     {

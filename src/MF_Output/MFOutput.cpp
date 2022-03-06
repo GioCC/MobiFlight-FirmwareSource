@@ -3,6 +3,7 @@
 // Copyright (C) 2013-2014
 
 #include "MFOutput.h"
+#include "mobiflight.h"
 
 MFOutput::MFOutput(void)
 {

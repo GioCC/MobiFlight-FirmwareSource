@@ -10,14 +10,13 @@
 
 #include <Arduino.h>
 #include <LedControl.h>
-#include "MFIOdevice.h"   // For constants and documentation only!
+#include "config.h"
 
 
 class MFSegments  
-//: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeLedSegment; }
+    static constexpr uint8_t  getType(void) { return kTypeLedSegment; }
 
     MFSegments(void);
 

@@ -14,6 +14,8 @@ extern StowManager  Stowage;
 
 namespace Encoder
 {
+    DEFINE_VT_STUBS(MFEncoder);   // see IODevice.h
+
     void OnChange(uint8_t eventId, uint8_t pin, const char *name)
     {
         cmdMessenger.sendCmdStart(kEncoderChange);

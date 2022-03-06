@@ -10,14 +10,12 @@
 
 #include <Arduino.h>
 #include <Servo.h>
-#include "MFIOdevice.h"   // For constants and documentation only!
-
+#include "config.h"
 
 class MFServo  
-//: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeServo; }
+    static constexpr uint8_t  getType(void) { return kTypeServo; }
 
     MFServo();		
 

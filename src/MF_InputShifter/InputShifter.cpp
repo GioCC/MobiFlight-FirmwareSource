@@ -16,6 +16,8 @@ extern StowManager  Stowage;
 namespace InputShifter
 {
 
+    DEFINE_VT_STUBS(MFInputShifter);   // see IODevice.h
+
     void OnChange(uint8_t eventId, uint8_t pin, const char *name)
     {
         cmdMessenger.sendCmdStart(kInputShifterChange);

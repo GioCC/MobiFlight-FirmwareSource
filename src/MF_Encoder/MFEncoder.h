@@ -21,7 +21,7 @@
 #pragma once
 
 #include <Arduino.h>
-#include "MFIOdevice.h"   // For constants and documentation only!
+#include "config.h"
 
 extern "C"
 {
@@ -34,8 +34,7 @@ extern "C"
 // this defines the delta value limit for triggering onFast
 #define MF_ENC_FAST_LIMIT 50 // 50
 
-class MFEncoder  //: public MFIOdevice
-{
+class MFEncoder  {
 public:
     enum {
         encLeft,
@@ -55,7 +54,7 @@ public:
         uint8_t resolutionShift;
     } encoderType;
 
-    static uint8_t  getType(void) { return kTypeEncoder; }
+    static constexpr uint8_t  getType(void) { return kTypeEncoder; }
     static void     attachHandler(encoderEventHandler newHandler) { _handler = newHandler; }
 
     MFEncoder();
@@ -63,6 +62,7 @@ public:
     void    detach(void) {};  // Stub required for emulated polymorphism
     void    reset(uint8_t action) { (void)action; };
     void    update();
+    void    powerSave(uint8_t){}; // dummy stub - see IODevice.h
 
     void    tick(void);     // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
     int16_t getPosition();                      // retrieve the current position

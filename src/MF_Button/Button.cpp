@@ -14,6 +14,7 @@ extern StowManager  Stowage;
 
 namespace Button
 {
+    DEFINE_VT_STUBS(MFButton);   // see IODevice.h
 
     void OnChange(uint8_t eventId, uint8_t pin, const char *name)
     {

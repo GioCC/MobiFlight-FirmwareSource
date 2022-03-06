@@ -11,13 +11,12 @@
 #include <stdlib.h>
 #include <Arduino.h>
 #include <AccelStepper.h>
-#include "MFIOdevice.h"   // For constants and documentation only!
+#include "config.h"
 
 class MFStepper  
-//: public MFIOdevice
 {
 public:
-    static uint8_t getType(void) { return kTypeStepper; }
+    static constexpr uint8_t  getType(void) { return kTypeStepper; }
     
     MFStepper();
 

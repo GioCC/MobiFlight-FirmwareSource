@@ -3,6 +3,7 @@
 // Copyright (C) 2013-2014
 
 #include "MFServo.h"
+#include "mobiflight.h"
 
 MFServo::MFServo() : _servo() 
 {}

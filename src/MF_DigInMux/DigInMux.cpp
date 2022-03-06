@@ -17,6 +17,8 @@ extern StowManager  Stowage;
 
 namespace DigInMux
 {
+    DEFINE_VT_STUBS(MFDigInMux);   // see IODevice.h
+
     void OnChange(uint8_t eventId, uint8_t pin, const char *name)
     {
         cmdMessenger.sendCmdStart(kDigInMuxChange);

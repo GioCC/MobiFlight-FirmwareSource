@@ -4,7 +4,6 @@
 
 #include <Arduino.h>
 #include "MFAnalog.h"
-#include "MFIOdevice.h"   // For constants and documentation only!
 
 analogEventHandler   MFAnalog::_handler = NULL; 
 

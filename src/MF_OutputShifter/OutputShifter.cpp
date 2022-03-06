@@ -14,6 +14,8 @@ extern StowManager  Stowage;
 
 namespace OutputShifter
 {
+    DEFINE_VT_STUBS(MFOutputShifter);   // see IODevice.h
+
     void Add(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin, uint8_t modules)
     {
         MFOutputShifter *MFS;

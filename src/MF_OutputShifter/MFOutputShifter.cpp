@@ -3,6 +3,7 @@
 // Copyright (C) MobiFlight 2022
 
 #include "MFOutputShifter.h"
+#include "mobiflight.h"
 
 MFOutputShifter::MFOutputShifter()
 {

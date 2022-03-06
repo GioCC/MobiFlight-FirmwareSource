@@ -14,6 +14,8 @@ extern StowManager  Stowage;
 
 namespace Output
 {
+    DEFINE_VT_STUBS(MFOutput);   // see IODevice.h
+
     void Add(uint8_t pin)
     {
         MFOutput *MFO;

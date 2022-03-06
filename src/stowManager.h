@@ -66,7 +66,7 @@ template <typename T> T* StowManager::AddItem(T** itemPtr)
     // Since itemPtr argument is required to set signature anyway, 
     // we take advantage of it to carry the return value 
     uint8_t *in;
-    in = add(sizeof(T), T::getType()); // add(T::getSize(), T::getType()); 
+    in = add(sizeof(T), T::getType());
     if(in != NULL) {
         new ((void *)in) T;
         // param init done later outside, by specialized functions
