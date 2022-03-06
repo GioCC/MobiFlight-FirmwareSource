@@ -141,11 +141,149 @@ void timedUpdate(uint8_t typ, uint32_t *tim, uint32_t intv)
         } while (dev);                                             \
     }
 
+//TODO test: ================================================================
+//#define ALT_POLYMORPH
+#ifdef ALT_POLYMORPH
+// Test for alternate code version:
+// instead of using a macro (INVOKE), polymorphism is basically custom re-implemented
+// with an actual virtual table, but tailored to the application.
+// Some of the code below is just a partial / showcase implementation (limited to some devices).
+
+// Declarations required for the virtual table
+typedef void(*funNoArg_t)(void *);
+typedef void(*funByteArg_t)(void *, uint8_t);
+
+typedef struct  {
+    funNoArg_t   _update;
+    funNoArg_t   _detach;
+    funByteArg_t _reset;
+} funset_t;
+
+// Defines required to access the VT in PROGMEM 
+#define DeviceUpdate(n, ob)      ((funNoArg_t)  pgm_read_word_near(myarr + n))(ob)
+#define DeviceDetach(n, ob)      ((funNoArg_t)  pgm_read_word_near(myarr + n + 1*sizeof(void *)))(ob)
+#define DeviceReset(n, ob, arg)  ((funByteArg_t)pgm_read_word_near(myarr + n + 2*sizeof(void *)))(ob, arg)
+
+// Following functions are stubs to allow accessing the methods from pointers:
+// They should be placed in the <device>.cpp / <device>.h files;
+// the .h should NOT be included if the device is not required (MF_<device>_SUPPORT != 1)!
+namespace Encoder {
+    void Update(void *p)            { static_cast<MFEncoder *>(p)->update(); }
+    void Detach(void *p)            { static_cast<MFEncoder *>(p)->detach(); }
+    void Reset(void *p, uint8_t i)  { static_cast<MFEncoder *>(p)->reset(i); }
+}
+namespace InputShifter {
+    void Update(void *p)            { static_cast<MFInputShifter *>(p)->update(); }
+    void Detach(void *p)            { static_cast<MFInputShifter *>(p)->detach(); }
+    void Reset(void *p, uint8_t i)  { static_cast<MFInputShifter *>(p)->reset(i); }
+}
+namespace LEDsegments {
+    void Update(void *p)            { static_cast<MFSegments *>(p)->update(); }
+    void Detach(void *p)            { static_cast<MFSegments *>(p)->detach(); }
+    void Reset(void *p, uint8_t i)  { static_cast<MFSegments *>(p)->reset(i); }
+}
+// Above functions could be also implemented as class static functions:
+// class MFEncoder {
+//      ...
+//      static void Update(void *p)             { static_cast<MFEncoder *>(p)->update(); }
+//      static void Detach(void *p)             { static_cast<MFEncoder *>(p)->detach(); }
+//      static void Reset(void *p, uint8_t i)   { static_cast<MFEncoder *>(p)->reset(i); }
+//      ...
+// }
+// and inserted in the table as  
+// { MFEncoder::Update, MFEncoder::Detach, MFEncoder::Reset },
+
+// For conditional compilation:
+// Alternative 1: cleaner, but more verbose)
+#if MF_INPUT_SHIFTER_SUPPORT != 1
+namespace InputShifter {
+    funNoArg_t    Update = NULL;
+    funNoArg_t    Detach = NULL;
+    funByteArg_t  Reset = NULL;
+}
+#endif
+// Alternative 2: more direct, but less terse
+// Use #ifdef's directly in the table definition, e.g.
+//
+// #if MF_SEGMENT_SUPPORT == 1
+//     { LEDsegments::Update,  LEDsegments::Detach,    LEDsegments::Reset  },
+// #else
+//     { NULL,  NULL,  NULL  },
+// #endif
+// This solution is more likely to disrupt table integrity in case of modifications though.
+
+
+funset_t const myarr[10] PROGMEM = {
+    // all equal, it's just a test dummy for now
+    { Encoder::Update,      Encoder::Detach,        Encoder::Reset      },
+    { InputShifter::Update, InputShifter::Detach,   InputShifter::Reset },
+#if MF_SEGMENT_SUPPORT == 1
+    { LEDsegments::Update,  LEDsegments::Detach,    LEDsegments::Reset  },
+#else
+    { NULL,  NULL,  NULL  },
+#endif
+    { Encoder::Update, Encoder::Detach, Encoder::Reset },
+    { Encoder::Update, Encoder::Detach, Encoder::Reset },
+};
+#endif ALT_POLYMORPH
+
+//TODO END ================================================================
+
 void wipeDevices(void)
 {
     // Reset device storage (this will do all devices)
+    Stowage.reset();
     INVOKE(detach(), StowManager::TypeALL);
     Stowage.wipe();
+
+    //TODO test (DUMMY):
+#ifdef ALT_POLYMORPH
+    // Example of how functions without the INNVOKE() macro would be inplemented:
+
+    Stowage.reset();
+   
+    uint8_t  typ;
+    uint8_t* dev;
+    
+    do {        
+        typ = Stowage.getTypeOfNext();  // if type == TypeALL, otherwise use the function argument
+        dev = Stowage.getNext(typ);
+
+        if(dev) {
+
+            // Problem:
+            //---------
+            // How to make offset computation work with declarations rather than actual objects??
+            // Examples:
+            // uint16_t    offset = (&funset_t::_update - &funset_t::_detach);    // Does NOT work
+            // uint16_t    offset = (&myarr[0]._update - &myarr[0]._detach);      // Works
+            // funNoArg_t  fDetach = (funNoArg_t)pgm_read_word_near(myarr + typ + offset);
+
+            // Vers 1: (local PROGMEM casts)
+            //==============================
+            // funNoArg_t      fDetach = (funNoArg_t)pgm_read_word_near(myarr + typ);
+            // funNoArg_t      fUpdate = (funNoArg_t)pgm_read_word_near(myarr + typ + sizeof(void *));
+            // funByteArg_t    fReset  = (funByteArg_t)pgm_read_word_near(myarr + typ + 2*sizeof(void *));
+            
+            // fDetach(dev);
+            // fUpdate(dev);
+            // fReset(dev, 123);
+            
+            // Vers 2: (PROGMEM casts with macros)
+            //====================================
+            DeviceDetach(typ, dev);
+            DeviceUpdate(typ, dev);
+            DeviceReset(typ, dev, 123);
+
+        }
+    } while (dev);
+
+    //TODO end
+
+    Stowage.wipe();
+
+#endif ALT_POLYMORPH
+
 }
 
 void resetDevices(void)
