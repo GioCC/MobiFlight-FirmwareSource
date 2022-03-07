@@ -62,6 +62,10 @@ namespace OutputShifter { VT_NULL_ENTRY; }
 // The position of each device entry MUST correspond to the device code ("kTypeXxxx")
 // as defined in config.h!
 
+#ifndef __AVR__
+#define PROGMEM
+#endif
+
 funSet_t const VTable[] PROGMEM = 
 {
     VT_ENTRY(blank),        // 0  kTypeNotSet

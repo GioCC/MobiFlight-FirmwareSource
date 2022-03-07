@@ -17,6 +17,13 @@
 // Using the language-enforced polymorphism has therefore been deemed excessive for the limited
 // available resources; instead, a "custom" polymorphism has been implemented by storing a 1-byte
 // type code with each object and managing the virtual tables explicitly.
+//
+// For MCUs with different architectures (STM32, ESP32...) this problem may not exist; however, 
+// the same code, albeit not strictly necessary, can be used.
+// The only part of the code that needs to be changed is the macros that access the VTable memory
+// (DeviceUpdate, DeviceDetach etc); and the VTable ceclaration as PROGMEM; these are reverted to
+// regular memory access / allocation in case the compilation platform is not AVR. 
+
 // 
 // This file contains the required helper data structures and definitions for the implementation above, 
 // with some instructions on the required features of device objects.
@@ -136,7 +143,10 @@ typedef struct  {
     funByteArg_t _powerSave;
 } funSet_t;
 
-// Defines required to access the VT in PROGMEM 
+// Defines required to access the VT in PROGMEM (for AVR)
+#ifndef __AVR__
+#define pgm_read_word_near
+#endif
 #define DeviceUpdate(n, ob)          ((funNoArg_t)  pgm_read_word_near(VTable + n))(ob)
 #define DeviceDetach(n, ob)          ((funNoArg_t)  pgm_read_word_near(VTable + n + 1*sizeof(void *)))(ob)
 #define DeviceReset(n, ob, arg)      ((funByteArg_t)pgm_read_word_near(VTable + n + 2*sizeof(void *)))(ob, arg)
