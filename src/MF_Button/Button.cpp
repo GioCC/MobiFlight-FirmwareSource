@@ -1,13 +1,12 @@
 //
 // Button.cpp
 //
+// (C) MobiFlight Project 2022
+//
 
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFButton.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
+#include "MFButton.h"
 
 extern CmdMessenger cmdMessenger;
 extern StowManager  Stowage;
@@ -35,11 +34,11 @@ namespace Button
         if(MFB) {
             MFB->attach(pin, name);
             MFButton::attachHandler(OnChange);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added Button"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("Button: Memory full"));
-            #endif
+#endif
         }
     }
 }  // namespace

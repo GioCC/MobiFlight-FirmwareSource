@@ -1,6 +1,8 @@
+//
 // MFMuxDriver.cpp
 //
-// Copyright (C) 2021
+// (C) MobiFlight Project 2022
+//
 
 #include "MFMuxDriver.h"
 #include "mobiflight.h"
@@ -43,7 +45,7 @@ void MFMuxDriver::detach()
     bitClear(_flags, MUX_INITED);
 }
 
-/// \brief Sets the driver lines to select the specified channel
+// Sets the driver lines to select the specified channel
 void MFMuxDriver::setChannel(uint8_t value)
 {
     if(!bitRead(_flags, MUX_INITED)) return;
@@ -64,28 +66,29 @@ void MFMuxDriver::setChannel(uint8_t value)
     }
 }
 
-/// \brief Returns currently selected channel
+// Returns currently selected channel
 uint8_t MFMuxDriver::getChannel(void)
 {
     return _channel;
 }
 
-/// \brief  Increments current channel, wraps around to 0
+// Increments current channel, wraps around to 0
 uint8_t MFMuxDriver::nextChannel(void)
 {
     setChannel((++_channel)%16);
     return _channel;
 }
 
-/// \brief  Temporarily stores current channel for later retrieval
+// Temporarily stores current channel for later retrieval
 void MFMuxDriver::saveChannel(void)
 {
     _savedChannel = _channel;
 }
 
-/// \brief  Restored previously stored channel
+// Restored previously stored channel
 void MFMuxDriver::restoreChannel(void)
 {
     setChannel(_savedChannel);
 }
 
+// MFMuxDriver.cpp

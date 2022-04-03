@@ -1,12 +1,11 @@
 //
 // stowManager.cpp
 //
-// A class that manages the stowage of BLOBs in an assigned buffer
+// (C) MobiFlight Project 2022
 // 
 
 #include "stowManager.h"
 #include <new>
-
 
 // Returns the free size in bytes
 uint16_t StowManager::

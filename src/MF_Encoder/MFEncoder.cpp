@@ -1,4 +1,8 @@
+//
 // MFEncoder.cpp
+//
+// (C) MobiFlight Project 2022
+//
 // It is based on the RotaryEncoder library from Matthias Hertel, see below
 // Copyright (C) 2013-2014
 
@@ -33,11 +37,11 @@ const int8_t MFEncoder::KnobDir[] = {
 // This allows simple lookup of detent positions by value.
 const MFEncoder::encoderType
     MFEncoder::EncoderTypes[] = {
-        {{false, false, false, true}, 2}, // 1 detent  per cycle:  00 ,  10 , [11],  01
-        {{true, false, false, false}, 2}, // 1 detent  per cycle: [00],  10 ,  11 ,  01
-        {{true, false, false, true}, 1},  // 2 detents per cycle: [00],  10 , [11],  01
-        {{false, true, true, false}, 1},  // 2 detents per cycle:  00 , [10],  11,  [01]
-        {{true, true, true, true}, 0},    // 4 detents per cycle: [00], [10], [11], [01]
+        {{false, false, false, true}, 2}, 	// 1 detent  per cycle:  00 ,  10 , [11],  01
+        {{true,  false, false, false},2}, 	// 1 detent  per cycle: [00],  10 ,  11 ,  01
+        {{true,  false, false, true}, 1}, 	// 2 detents per cycle: [00],  10 , [11],  01
+        {{false, true,  true,  false},1}, 	// 2 detents per cycle:  00 , [10],  11,  [01]
+        {{true,  true,  true,  true}, 0}, 	// 4 detents per cycle: [00], [10], [11], [01]
 };
 
 encoderEventHandler MFEncoder::_handler = NULL;

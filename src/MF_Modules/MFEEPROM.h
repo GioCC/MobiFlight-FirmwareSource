@@ -1,9 +1,8 @@
+//
 // MFEEPROM.h
 //
-/// \mainpage MF MFEEPROM module for MobiFlight Framework
-/// \par Revision History
-/// \version 1.0 Initial release
-// Copyright (C) 2021
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 

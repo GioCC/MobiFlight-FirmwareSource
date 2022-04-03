@@ -1,11 +1,11 @@
 //
 // Stepper.h
 //
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 #include <stdint.h>
-#include "IOdevice.h"
-#include "MFStepper.h"
 
 namespace Stepper
 {

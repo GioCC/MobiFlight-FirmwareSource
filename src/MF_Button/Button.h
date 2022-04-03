@@ -1,12 +1,12 @@
 //
 // Button.h
 //
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 
 #include <stdint.h>
-#include "IOdevice.h"
-#include "MFButton.h"
 namespace Button
 {
     DECLARE_VT_STUBS;   // see IODevice.h

@@ -1,16 +1,16 @@
 //
 // stowManager.h
 //
-// A class that manages the stowage of BLOBs in an assigned buffer
+// (C) MobiFlight Project 2022
 // 
 
-#ifndef _STOWMGR_H
-#define _STOWMGR_H
+#pragma once
 
 #include <stddef.h>
 #include <stdint.h>
 #include <new>
 
+// A class that manages the stowage of BLOBs in an assigned buffer
 class StowManager
 {
     //public typedef uint8_t      t_index;
@@ -76,5 +76,5 @@ template <typename T> T* StowManager::AddItem(T** itemPtr)
 }
 
 
-#endif // _STOWMGR_H
+// stowManager.h
 

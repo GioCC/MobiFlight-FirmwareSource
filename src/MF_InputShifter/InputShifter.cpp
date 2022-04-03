@@ -1,17 +1,12 @@
 //
 // InputShifter.cpp
 //
+// (C) MobiFlight Project 2022
+//
+
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFInputShifter.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
-
-// #if MF_INPUT_SHIFTER_SUPPORT == 1
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
+#include "MFInputShifter.h"
 
 namespace InputShifter
 {
@@ -36,15 +31,13 @@ namespace InputShifter
         if(MFI) {
             MFI->attach(latchPin, clockPin, dataPin, nModules, name);
             MFInputShifter::attachHandler(OnChange);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added InShiftReg"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("InShiftReg: Memory full"));
-            #endif
+#endif
         }
     }
 }  // namespace
-
-// #endif  // MF_INPUT_SHIFTER_SUPPORT
 
 // InputShifter.cpp

@@ -1,6 +1,8 @@
+//
 // MFDigInMux.cpp
 //
-// Copyright (C) 2022
+// (C) MobiFlight Project 2022
+//
 
 #include "MFDigInMux.h"
 #include "MFMuxDriver.h"

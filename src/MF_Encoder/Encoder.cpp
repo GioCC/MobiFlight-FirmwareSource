@@ -1,16 +1,12 @@
 //
 // Encoder.cpp
 //
+// (C) MobiFlight Project 2022
+//
 
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFEncoder.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
+#include "MFEncoder.h"
 
 namespace Encoder
 {
@@ -33,11 +29,11 @@ namespace Encoder
         if(MFE) {
             MFE->attach(pin1, pin2, encoder_type, name);
             MFEncoder::attachHandler(OnChange);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added Encoder"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("Encoder: Memory full"));
-            #endif
+#endif
         }
     }
 }   // namespace

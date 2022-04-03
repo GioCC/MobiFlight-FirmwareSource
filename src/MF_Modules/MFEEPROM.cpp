@@ -1,9 +1,8 @@
+//
 // MFEEPROM.cpp
 //
-/// \mainpage MF MFEEPROM module for MobiFlight Framework
-/// \par Revision History
-/// \version 1.0 Initial release
-// Copyright (C) 2021
+// (C) MobiFlight Project 2022
+//
 
 // WARNING: This code is based on Arduino / Atmel AVR libraries (although itself not AVR-specific).
 // When compiling for other platforms, check that the available libraries are compatible.

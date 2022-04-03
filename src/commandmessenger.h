@@ -1,5 +1,10 @@
-#ifndef _commandmessenger_h
-#define _commandmessenger_h
+//
+// commandMessenger.h
+//
+// (C) MobiFlight Project 2022
+//
+
+#pragma once
 
 #include <CmdMessenger.h>
 
@@ -50,5 +55,4 @@ void        setLastCommandMillis(void);
 extern CmdMessenger     cmdMessenger;
 //? extern unsigned long    lastCommand;
 
-
-#endif
+// commandMessenger.h

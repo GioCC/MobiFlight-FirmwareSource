@@ -1,12 +1,12 @@
 //
 // Output.h
 //
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 
 #include <stdint.h>
-#include "IOdevice.h"
-#include "MFOutput.h"
 
 namespace Output
 {

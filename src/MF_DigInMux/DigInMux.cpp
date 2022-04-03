@@ -1,19 +1,13 @@
 //
 // DigInMux.cpp
 //
+// (C) MobiFlight Project 2022
+//
+
 #include <Arduino.h>
-#include "MFBoards.h"
+#include "mobiflight.h"
 #include "MFDigInMux.h"
 #include "MFMuxDriver.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
-#include "mobiflight.h"
-
-// #if MF_DIGIN_MUX_SUPPORT == 1
-
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
 
 namespace DigInMux
 {
@@ -39,16 +33,14 @@ namespace DigInMux
             MFI->setLazyMode(mode==MFDigInMux::MuxModeLazy);
             MFDigInMux::setMux(&MUX);
             MFDigInMux::attachHandler(OnChange);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added DigInMux"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("DigInMux: Memory full"));
-            #endif
+#endif
         }
     }
 
 }
-
-// #endif  // MF_DIGIN_MUX_SUPPORT
 
 // DigInMux.cpp

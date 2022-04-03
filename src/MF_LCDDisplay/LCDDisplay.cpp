@@ -1,16 +1,12 @@
 //
 // LCDDisplay.cpp
 //
+// (C) MobiFlight Project 2022
+//
 
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFLCDDisplay.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
+#include "MFLCDDisplay.h"
 
 namespace LCDDisplay
 {
@@ -23,11 +19,11 @@ namespace LCDDisplay
 
         if(MFL) {
             MFL->attach(I2Caddress, cols, lines);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added LCD display"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("LCD display: Memory full"));
-            #endif
+#endif
         }
     }
 

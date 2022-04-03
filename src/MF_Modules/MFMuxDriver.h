@@ -1,15 +1,16 @@
+// 
 // MFMuxDriver.h
- 
+//
+// (C) MobiFlight Project 2022
+// 
+
 #pragma once
 #include <Arduino.h>
 
 class   MFMuxDriver; // forward decl
 extern  MFMuxDriver MUX;
 
-///
-/// \class MFMuxDriver MFMuxDriver.h <MFMuxDriver.h>
-/// \brief  Implements a (system-level) multiplex selector
-///          
+// Implements a (system-level) multiplex selector
 class MFMuxDriver
 {
 public:

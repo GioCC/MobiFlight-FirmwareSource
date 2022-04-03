@@ -28,7 +28,7 @@ I started a branch with individual commits targeting following points:
 1. Move files to new locations
 2. `Mobiflight.cpp` split to `config.*` / `commandmessenger.*` / `inputHub.*`  / `outputHub.*` (see below)
 3. Poll time schedules moved to `main`
-4. `DEBUG` constant renamed to `DEBUG2MSG`
+4. `DEBUG2CMDMESSENGER` constant renamed to `DEBUG2MSG`
 5. `MFEEPROM.init()` moved into the constructor
 6. Removed obsolete Arduino includes for Arduino version < 1.00 (not included in #152)
 7. Replaced "include guards" in .h files with `#pragma` directives

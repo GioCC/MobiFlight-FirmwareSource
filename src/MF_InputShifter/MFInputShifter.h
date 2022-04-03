@@ -1,6 +1,8 @@
+//
 // MFInputShifter.h
 //
-// Copyright (C) Mobiflight 2022
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 

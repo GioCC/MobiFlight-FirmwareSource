@@ -1,5 +1,7 @@
 // 
 // config.h
+//
+// (C) MobiFlight Project 2022
 // 
 
 #pragma once

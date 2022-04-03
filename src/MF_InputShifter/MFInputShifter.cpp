@@ -1,6 +1,9 @@
-// MFSegments.cpp
 //
-// Copyright (C) 2021
+// MFInputShifter.cpp
+//
+// (C) MobiFlight Project 2022
+//
+
 #include "MFInputShifter.h"
 #include "mobiflight.h"
 
@@ -131,7 +134,7 @@ void MFInputShifter::detach(void)
 // Sets the last recorded state of every bit on every shifter to 0.
 void MFInputShifter::clearLastState()
 {
-    for (int i = 0; i < MAX_CHAINED_INPUT_SHIFTERS; i++) {
+    for (uint8_t i = 0; i < MAX_CHAINED_INPUT_SHIFTERS; i++) {
         _lastState[i] = 0;
     }
 }

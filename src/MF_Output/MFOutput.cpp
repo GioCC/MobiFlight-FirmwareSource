@@ -1,6 +1,8 @@
+//
 // MFOutput.cpp
 //
-// Copyright (C) 2013-2014
+// (C) MobiFlight Project 2022
+//
 
 #include "MFOutput.h"
 #include "mobiflight.h"

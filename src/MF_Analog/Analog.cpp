@@ -1,19 +1,11 @@
 //
 // Analog.cpp
+// 
+// (C) MobiFlight Project 2022
 //
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFAnalog.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
-//#include "config.h"
-
-// #if MF_ANALOG_SUPPORT == 1
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
-
+#include "MFAnalog.h"
 namespace Analog
 {
     DEFINE_VT_STUBS(MFAnalog);   // see IODevice.h
@@ -35,11 +27,11 @@ namespace Analog
         if(MFA) {
             MFA->attach(pin, sensitivity, name);
             MFAnalog::attachHandler(OnChange);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added Analog"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("Analog: Memory full"));
-            #endif
+#endif
         }
     }
 
@@ -53,7 +45,5 @@ namespace Analog
         }
     }
 } // namespace
-
-// #endif  //MF_ANALOG_SUPPORT
 
 // Analog.cpp

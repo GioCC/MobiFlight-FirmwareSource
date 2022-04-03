@@ -1,13 +1,13 @@
 //
 // DigInMux.h
 //
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 
 #include <stdint.h>
-#include "IOdevice.h"
 #include "MFDigInMux.h"
-#include "MFMuxDriver.h"
 namespace DigInMux
 {
     DECLARE_VT_STUBS;   // see IODevice.h

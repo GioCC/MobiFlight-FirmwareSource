@@ -1,6 +1,8 @@
+//
 // MFStepper.cpp
 //
-// Copyright (C) 2013-2014
+// (C) MobiFlight Project 2022
+//
 
 #include "MFBoards.h"
 #include "MFStepper.h"

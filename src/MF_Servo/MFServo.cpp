@@ -1,6 +1,8 @@
+//
 // MFServo.cpp
 //
-// Copyright (C) 2013-2014
+// (C) MobiFlight Project 2022
+//
 
 #include "MFServo.h"
 #include "mobiflight.h"

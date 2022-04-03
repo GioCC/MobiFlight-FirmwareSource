@@ -1,6 +1,8 @@
+//
 // MFLCDDisplay.cpp
 //
-// Copyright (C) MobiFlight 2022
+// (C) MobiFlight Project 2022
+//
 
 #include "MFLCDDisplay.h"
 #include "mobiflight.h"

@@ -1,12 +1,12 @@
 //
 // Analog.h
 //
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 
 #include <stdint.h>
-#include "IOdevice.h"
-#include "MFAnalog.h"
 
 namespace Analog
 {

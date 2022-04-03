@@ -1,16 +1,12 @@
 //
 // Servos.cpp
 //
+// (C) MobiFlight Project 2022
+//
 
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFServo.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
+#include "MFServo.h"
 
 namespace Servos
 {
@@ -24,11 +20,11 @@ namespace Servos
 
         if(MFS) {
             MFS->attach(pin, true);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added Servo"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("Servo: Memory full"));
-            #endif
+#endif
         }
     }
 

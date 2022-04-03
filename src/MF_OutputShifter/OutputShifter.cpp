@@ -1,16 +1,12 @@
 //
 // OutputShifter.cpp
 //
+// (C) MobiFlight Project 2022
+//
 
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFOutputShifter.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
+#include "MFOutputShifter.h"
 
 namespace OutputShifter
 {
@@ -24,11 +20,11 @@ namespace OutputShifter
 
         if(MFS) {
             MFS->attach(latchPin, clockPin, dataPin, modules);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added OutputShifter"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("OutputShifter: Memory full"));
-            #endif
+#endif
         }
     }
 

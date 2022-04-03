@@ -1,20 +1,19 @@
 //
 // LedSegment.cpp
 //
+// (C) MobiFlight Project 2022
+//
 
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFSegments.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
+#include "MFSegments.h"
 
 extern CmdMessenger cmdMessenger;
 extern StowManager  Stowage;
 
 namespace LedSegment
 {
-    DEFINE_VT_STUBS(MFAnalog);   // see IODevice.h
+    DEFINE_VT_STUBS(MFSegments);   // see IODevice.h
 
     void Add(uint8_t dataPin, uint8_t csPin, uint8_t clkPin, uint8_t numDevices, uint8_t brightness)
     {
@@ -24,11 +23,11 @@ namespace LedSegment
 
         if(MFS) {
             MFS->attach(dataPin, csPin, clkPin, numDevices, brightness);
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added LEDSegment"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("LEDSegment: Memory full"));
-            #endif
+#endif
         }
     }
 

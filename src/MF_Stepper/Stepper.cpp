@@ -1,16 +1,12 @@
 //
-// OutputShifter.cpp
+// Stepper.cpp
+//
+// (C) MobiFlight Project 2022
 //
 
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFStepper.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
+#include "MFStepper.h"
 
 namespace Stepper
 {
@@ -31,11 +27,11 @@ namespace Stepper
             {
                 MFS->reset(ONRESET_DEFAULT);
             }
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added Stepper"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("Stepper: Memory full"));
-            #endif
+#endif
         }
     }
 

@@ -1,5 +1,10 @@
+//
+// commandMessenger.cpp
+//
+// (C) MobiFlight Project 2022
+//
+
 #include <Arduino.h>
-#include "MFBoards.h"
 #include "commandmessenger.h"
 #include "config.h"
 #include "mobiflight.h"
@@ -54,7 +59,7 @@ void attachCommandCallbacks()
   cmdMessenger.attach(kSetShiftRegisterPins, OutputShifter::OnSet);
 #endif
 
-#ifdef DEBUG2CMDMESSENGER
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Attached callbacks"));
 #endif
 }
@@ -86,3 +91,5 @@ void OnTrigger()
     // #endif
     resetDevices();
 }
+
+// commandMessenger.pp

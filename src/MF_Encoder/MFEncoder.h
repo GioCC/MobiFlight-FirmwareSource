@@ -1,22 +1,10 @@
+//
 // MFEncoder.h
 //
-/// \mainpage MF Button module for MobiFlight Framework
-/// \par Revision History
-/// \version 1.0 Initial release
-/// \author  Sebastian Moebius (mobiflight@moebiuz.de) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
-// Copyright (C) 2013-2014 Sebastian Moebius
-/// \version 1.1 functions from RotaryEncoder library included and TicksPerSecond not any more required
-/// \changes implemented from Ralf Kull
-// It is based on the RotaryEncoder library from Matthias Hertel, see below
-// -----
-// RotaryEncoder.cpp - Library for using rotary encoders.
-// This class is implemented for use with the Arduino environment.
-// Copyright (c) by Matthias Hertel, http://www.mathertel.de
-// This work is licensed under a BSD style license. See http://www.mathertel.de/License.aspx
-// More information on: http://www.mathertel.de/Arduino
-// -----
-// 18.01.2014 created by Matthias Hertel
-// -----
+// (C) MobiFlight Project 2022
+//
+// based on the RotaryEncoder library by Matthias Hertel (c) 2014
+//
 
 #pragma once
 

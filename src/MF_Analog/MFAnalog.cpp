@@ -1,6 +1,8 @@
+// 
 // MFAnalog.cpp
 //
-// Copyright (C) Mobiflight 2022
+// (C) MobiFlight Project 2022
+// 
 
 #include <Arduino.h>
 #include "MFAnalog.h"

@@ -1,18 +1,21 @@
+// 
+// config.cpp
+//
+// (C) MobiFlight Project 2022
+// 
+
 #include <Arduino.h>
-#include "MFBoards.h"
+#include "mobiflight.h"
 #include "config.h"
 #include "MFEEPROM.h"
-#include "StowManager.h"
-#include "commandmessenger.h"
-#include "mobiflight.h"
 
 // Macros used to extract the build version from an environment variable
 #define STRINGIZER(arg) #arg
 #define STR_VALUE(arg)  STRINGIZER(arg)
 #define VERSION         STR_VALUE(BUILD_VERSION)
 
-MFEEPROM      MFeeprom;
-extern MFMuxDriver  MUX;
+MFEEPROM            MFeeprom;
+
 
 // Initialize buffer for objects
 uint8_t       stowBuf[MEMLEN_OBJ_BUFFER];
@@ -79,7 +82,7 @@ bool readConfigLength(void)
 
 void loadConfig(void)
 {
-#ifdef DEBUG2CMDMESSENGER
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Load config"));
 #endif
     if (readConfigLength()) {
@@ -91,7 +94,7 @@ void loadConfig(void)
 
 void OnSetConfig(void)
 {
-#ifdef DEBUG2CMDMESSENGER
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Setting config start"));
 #endif
     setLastCommandMillis();
@@ -104,7 +107,7 @@ void OnSetConfig(void)
         cmdMessenger.sendCmd(kStatus, config.length);
     } else
         cmdMessenger.sendCmd(kStatus, -1); // last successfull saving block is already NULL terminated, nothing more todo
-#ifdef DEBUG2CMDMESSENGER
+#ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Setting config end"));
 #endif
 }
@@ -178,7 +181,7 @@ bool readRecordTailFromEEPROM(char **dest = NULL, char *cap = (char *)0xFFFF)
 void SetMultiplexer(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin)
 {
     MUX.attach(Sel0Pin, Sel1Pin, Sel2Pin, Sel3Pin);
-    #ifdef DEBUG
+    #ifdef DEBUG2MSG
     cmdMessenger.sendCmd(kStatus, F("Added multiplexer"));
     #endif
 }
@@ -444,3 +447,5 @@ void OnSetName()
     _storeName();
     cmdMessenger.sendCmd(kStatus, config.name);
 }
+
+// config.cpp

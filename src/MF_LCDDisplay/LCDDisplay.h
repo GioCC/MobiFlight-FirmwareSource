@@ -1,12 +1,12 @@
 //
 // LCDDisplay.h
 //
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 
 #include <stdint.h>
-#include "IOdevice.h"
-#include "MFLCDDisplay.h"
 
 namespace LCDDisplay
 {

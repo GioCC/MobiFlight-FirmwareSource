@@ -1,12 +1,28 @@
+//
+// mobiflight.h
+//
+// (C) MobiFlight Project 2022
+// 
+
 #pragma once
 
 #include <Arduino.h>
 #include "MFBoards.h"
 #include "IODevice.h"
+#include "stowManager.h"
+#include "commandmessenger.h"
+
+extern CmdMessenger cmdMessenger;
+extern StowManager  Stowage;
 
 //=======================================
 // Includes for INPUT devices
 //=======================================
+
+#ifdef MF_MUX_SUPPORT
+#include "MFMuxDriver.h"
+extern MFMuxDriver  MUX;
+#endif
 
 #include "Button.h"
 #include "Encoder.h"
@@ -15,9 +31,6 @@
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
 #include "InputShifter.h"
-#endif
-#if MF_MUX_SUPPORT == 1
-#include "MFMuxDriver.h"
 #endif
 #if MF_DIGIN_MUX_SUPPORT == 1
 #include "DigInMux.h"

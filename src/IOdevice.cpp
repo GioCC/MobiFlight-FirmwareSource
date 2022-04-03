@@ -1,7 +1,8 @@
 //
 // IOdevice.cpp
 //
-
+// (C) MobiFlight Project 2022
+// 
 
 #include "IOdevice.h"
 #include "mobiflight.h"

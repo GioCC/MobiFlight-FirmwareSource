@@ -1,11 +1,8 @@
+//
 // MFOutputShifter.h
 //
-/// \mainpage MF Output shifter module for MobiFlight Framework
-/// \par Revision History
-/// \version 1.0 Initial release
-/// \author  Manfred Berry (manfred@nystedberry.info) DO NOT CONTACT THE AUTHOR DIRECTLY: USE THE LISTS
-// Copyright (C) 2021 Manfred Berry
-// Modified 2022 Giorgio Croci Candiani
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 

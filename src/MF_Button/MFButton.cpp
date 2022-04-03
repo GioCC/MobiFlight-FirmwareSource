@@ -1,6 +1,8 @@
+// 
 // MFButton.cpp
 //
-// Copyright (C) Mobiflight 2022
+// (C) MobiFlight Project 2022
+// 
 
 #include "MFButton.h"
 #include "mobiflight.h"

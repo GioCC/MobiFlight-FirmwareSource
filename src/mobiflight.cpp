@@ -1,4 +1,11 @@
-//#define DEBUG 1
+//
+// mobiflight.gcc
+//
+// (C) MobiFlight Project 2022
+// 
+
+
+//#define DEBUG2MSG 1
 
 //#define TESTING
 
@@ -6,8 +13,6 @@
 //#include "allocateMem.h"
 #include "MFBoards.h"
 #include "MFEEPROM.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "config.h"
 #include "mobiflight.h"
 
@@ -18,9 +23,6 @@
 #define MF_SERVO_DELAY_MS 5          // time between servo updates
 #define MF_ANALOGAVERAGE_DELAY_MS 10 // time between updating the analog average calculation
 #define MF_ANALOGREAD_DELAY_MS 50    // time between sending analog values
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
 
 bool powerSavingMode = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
@@ -153,12 +155,13 @@ void setPowerSavingMode(bool state)
 
     setPowerSave(state);
 
-#ifdef DEBUG2CMDMESSENGER
-    if (state)
+    #ifdef DEBUG2MSG
+    if (state) {
         cmdMessenger.sendCmd(kStatus, F("On"));
-    else
+    } else {
         cmdMessenger.sendCmd(kStatus, F("Off"));
-#endif
+    }
+    #endif
 }
 
 void updatePowerSaving()
@@ -290,12 +293,6 @@ void setupData(void)
 // ************************************************************
 void resetBoard()
 {
-    // MFeeprom.init();
-    // resetConfig();
-    // generateSerial(false);
-    // lastCommand = millis();
-    // loadConfig();
-
     generateSerial(false);
     setLastCommandMillis();
     loadConfig();
@@ -371,4 +368,4 @@ void loop()
     }
 }
 
-// Mobiflight.cpp
+// mobiflight.cpp

@@ -1,16 +1,12 @@
 //
 // Output.cpp
 //
+// (C) MobiFlight Project 2022
+//
 
 #include <Arduino.h>
-#include "MFBoards.h"
-#include "MFOutput.h"
-#include "commandmessenger.h"
-#include "stowManager.h"
 #include "mobiflight.h"
-
-extern CmdMessenger cmdMessenger;
-extern StowManager  Stowage;
+#include "MFOutput.h"
 
 namespace Output
 {
@@ -25,11 +21,11 @@ namespace Output
         if(MFO) {
             MFO->attach(pin);
 
-            #ifdef DEBUG
+#ifdef DEBUG2MSG
             cmdMessenger.sendCmd(kStatus, F("Added Output"));
         } else {
             cmdMessenger.sendCmd(kStatus, F("MFoutput: Memory full"));
-            #endif
+#endif
         }
     }
 

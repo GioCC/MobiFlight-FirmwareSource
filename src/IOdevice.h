@@ -1,6 +1,8 @@
 //
 // IOdevice.h
 //
+// (C) MobiFlight Project 2022
+// 
 
 // Purpose of this code
 // 
@@ -154,4 +156,4 @@ typedef struct  {
 
 extern funSet_t const VTable[] PROGMEM;
 
-// _IODevice.h
+// IODevice.h

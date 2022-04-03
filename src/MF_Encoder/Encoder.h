@@ -1,12 +1,12 @@
 //
 // Encoder.h
 //
+// (C) MobiFlight Project 2022
+//
 
 #pragma once
 
 #include <stdint.h>
-#include "IOdevice.h"
-#include "MFEncoder.h"
 
 namespace Encoder
 {

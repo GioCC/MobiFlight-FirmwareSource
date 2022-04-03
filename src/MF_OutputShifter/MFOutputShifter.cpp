@@ -1,6 +1,8 @@
+//
 // MFOutputShifter.cpp
 //
-// Copyright (C) MobiFlight 2022
+// (C) MobiFlight Project 2022
+//
 
 #include "MFOutputShifter.h"
 #include "mobiflight.h"
@@ -64,25 +66,25 @@ void MFOutputShifter::setPin(uint8_t pin, uint8_t value, uint8_t refresh)
 
 void MFOutputShifter::setPins(char *pins, uint8_t value)
 {
-    if (_moduleCount) {
-        char *pinTokens = strtok(pins, "|");
-        while (pinTokens != 0) {
-            uint8_t num = (uint8_t)atoi(pinTokens);
-            setPin(num, value, 0);
-            pinTokens = strtok(0, "|");
-        }
-        update();
+    if (_moduleCount == 0) 
+    	return;
+    char *pinTokens = strtok(pins, "|");
+    while (pinTokens != 0) {
+        uint8_t num = (uint8_t)atoi(pinTokens);
+        setPin(num, value, 0);
+        pinTokens = strtok(0, "|");
     }
+    update();
 }
 
 void MFOutputShifter::clear(void)
 {
-    if (_moduleCount) {
-        for (uint8_t i = 0; i < _moduleCount; i++) {
-            _outputBuffer[i] = 0;
-        }
-        update();
+    if (_moduleCount == 0) 
+    	return;
+    for (uint8_t i = 0; i < _moduleCount; i++) {
+        _outputBuffer[i] = 0;
     }
+    update();
 }
 
 void MFOutputShifter::test(void)
