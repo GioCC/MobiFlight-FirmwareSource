@@ -80,16 +80,14 @@ void MFLCDDisplay::_printCentered(const char *str, uint8_t line)
   uint8_t startCol = 0;
   uint8_t printChar = _cols;
   
-  if (_cols > strlen(str))
-  {
+  if (_cols > strlen(str)) {
     startCol = (_cols - strlen(str)) / 2;
     printChar = strlen(str);
   }
 
   _lcdDisplay.setCursor(startCol, line);
   
-  for (uint8_t i = 0; i < printChar; i++)
-  {
+  for (uint8_t i = 0; i < printChar; i++) {
     _lcdDisplay.write(str[i]);
   }
 }

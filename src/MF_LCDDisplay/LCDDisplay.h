@@ -12,7 +12,7 @@ namespace LCDDisplay
 {
     DECLARE_VT_STUBS;   // see IODevice.h
    
-    void Add(uint8_t I2Caddress, uint8_t cols, uint8_t lines);
+    void Add(uint8_t address = 0x24, uint8_t cols = 16, uint8_t lines = 2);
     void OnSet(void);
 
 }

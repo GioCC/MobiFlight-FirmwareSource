@@ -64,10 +64,6 @@ void attachCommandCallbacks()
 #endif
 }
 
-void setLastCommandMillis(uint32_t time) {
-    lastCommand = time;
-}
-
 // Called when a received command has no attached function
 void OnUnknownCommand()
 {
@@ -75,12 +71,19 @@ void OnUnknownCommand()
     cmdMessenger.sendCmd(kStatus, F("n/a"));
 }
 
-uint32_t getLastCommandMillis() {
+uint32_t getLastCommandMillis() 
+{
   return lastCommand;
 }
 
-void setLastCommandMillis() {
-  lastCommand = millis();
+void setLastCommandMillis() 
+{
+    lastCommand = millis();
+}
+
+void setLastCommandMillis(uint32_t time) 
+{
+    lastCommand = time;
 }
 
 void OnTrigger()
@@ -92,4 +95,4 @@ void OnTrigger()
     resetDevices();
 }
 
-// commandMessenger.pp
+// commandMessenger.cpp

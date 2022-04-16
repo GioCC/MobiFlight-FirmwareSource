@@ -44,8 +44,7 @@ void MFStepper::detach()
 void MFStepper::setval(long absolute)
 {
   _resetting = false;
-  if (_targetPos != absolute)
-  {
+  if (_targetPos != absolute) {
     _targetPos = absolute;
     _stepper.moveTo(absolute);
   }
@@ -63,8 +62,7 @@ void MFStepper::setZero()
 
 void MFStepper::setZeroInReset()
 {
-  if (_resetting)
-  {
+  if (_resetting) {
     _stepper.setCurrentPosition(0);
     _resetting = false;
   }

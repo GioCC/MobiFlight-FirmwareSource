@@ -59,15 +59,15 @@ void MFOutputShifter::setPin(uint8_t pin, uint8_t value, uint8_t refresh)
         } else {
             _outputBuffer[idx] &= ~msk;
         }
-        if (refresh)
+        if (refresh) {
             update();
+        }
     }
 }
 
 void MFOutputShifter::setPins(char *pins, uint8_t value)
 {
-    if (_moduleCount == 0) 
-    	return;
+    if (_moduleCount == 0) return;
     char *pinTokens = strtok(pins, "|");
     while (pinTokens != 0) {
         uint8_t num = (uint8_t)atoi(pinTokens);
@@ -79,8 +79,7 @@ void MFOutputShifter::setPins(char *pins, uint8_t value)
 
 void MFOutputShifter::clear(void)
 {
-    if (_moduleCount == 0) 
-    	return;
+    if (_moduleCount == 0) return;
     for (uint8_t i = 0; i < _moduleCount; i++) {
         _outputBuffer[i] = 0;
     }
@@ -93,8 +92,9 @@ void MFOutputShifter::test(void)
         uint8_t idx = (b & 0xF8) >> 3;
         uint8_t msk = (0x01 << (b & 0x07));
         _outputBuffer[idx] = msk;
-        if (msk == 0x01 && idx != 0)
+        if (msk == 0x01 && idx != 0) {
             _outputBuffer[idx - 1] = 0x00;
+        }
         update();
         delay(50);
 

@@ -29,7 +29,9 @@ attach( uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin)
     _selPin[3]  = Sel3Pin;
     _flags      = 0x00;
 
-    for(uint8_t i=0; i<4; i++) pinMode(_selPin[i], OUTPUT);
+    for(uint8_t i = 0; i < 4; i++) {
+    	pinMode(_selPin[i], OUTPUT);
+    }
     bitSet(_flags, MUX_INITED);
     
     setChannel(0);

@@ -49,7 +49,7 @@ void MFInputShifter::update(uint8_t doTrigger)
 
     // Multiple chained modules are handled one at a time. As shiftIn() keeps getting
     // called it will pull in the data from each chained module.
-    for (int i = 0; i < _moduleCount; i++) {
+    for (uint8_t i = 0; i < _moduleCount; i++) {
         uint8_t currentState;
 
         currentState = shiftIn(_dataPin, _clockPin, MSBFIRST);
@@ -138,3 +138,5 @@ void MFInputShifter::clearLastState()
         _lastState[i] = 0;
     }
 }
+
+// MFInputShifter.cpp

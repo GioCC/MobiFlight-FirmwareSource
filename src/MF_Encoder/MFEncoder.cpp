@@ -3,7 +3,7 @@
 //
 // (C) MobiFlight Project 2022
 //
-// It is based on the RotaryEncoder library from Matthias Hertel, see below
+// Based on the RotaryEncoder library from Matthias Hertel, see below
 // Copyright (C) 2013-2014
 
 // -----

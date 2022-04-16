@@ -42,7 +42,8 @@ struct {
     MOBIFLIGHT_TYPE,
     MOBIFLIGHT_NAME,
     MOBIFLIGHT_SERIAL,
-    ""};
+    ""
+};
 
 static bool readConfigLength(void);
 static void readConfig(void);
@@ -308,7 +309,6 @@ void readConfig()
             params[1] = readUintFromEEPROM(); // clock Pin
             params[2] = readUintFromEEPROM(); // data Pin
             params[3] = readUintFromEEPROM(); // number of daisy chained modules
-            // TODO check: OutputShifter::Add(params[0], params[1], params[2], params[3], nameBufPtr);
             OutputShifter::Add(params[0], params[1], params[2], params[3]);
             copySuccess = readRecordTailFromEEPROM(); // check EEPROM until end of name
             break;

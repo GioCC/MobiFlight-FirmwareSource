@@ -12,7 +12,7 @@
 // In order to receive, attach a callback function to these events
 //
 // If you increase this list, make sure to check that the MAXCALLBACKS value
-// in CmdMessenger.h is set apropriately
+// in CmdMessenger.h is set appropriately
 enum {
     kInitModule,           // 0
     kSetModule,            // 1
@@ -48,7 +48,7 @@ enum {
     kDebug = 0xFF          // 255 -> for Debug print later, changes in UI are required
 };
 
-void        attachCommandCallbacks();
+void        attachCommandCallbacks(void);
 uint32_t    getLastCommandMillis(void);
 void        setLastCommandMillis(void);
 

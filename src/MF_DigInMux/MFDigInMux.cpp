@@ -88,8 +88,7 @@ void MFDigInMux::poll(bool detect, bool isLazy)
         volatile uint8_t pinVal;
 
         _MUX->saveChannel();
-        for (uint8_t sel = selMax; sel > 0; sel--)
-        {
+        for (uint8_t sel = selMax; sel > 0; sel--) {
             _MUX->setChannel(sel-1);
             
             // Allow the output to settle from voltage transients:
@@ -111,8 +110,7 @@ void MFDigInMux::poll(bool detect, bool isLazy)
         }
         _MUX->restoreChannel(); // tidy up
 
-        if(_lastState != currentState)
-        {
+        if (_lastState != currentState) {
             if(detect) detectChanges(_lastState, currentState);
             _lastState = currentState;
         }
@@ -145,8 +143,7 @@ void MFDigInMux::detectChanges(uint16_t lastState, uint16_t currentState)
     if(!_MUX) return;
     uint8_t     selMax = (bitRead(_flags, MUX_HALFSIZE) ? 8 : 16);
     uint16_t    diff   = lastState ^ currentState;
-    for (uint8_t i = 0; i < selMax; i++)
-    {
+    for (uint8_t i = 0; i < selMax; i++) {
         if (diff & 0x0001) {
             trigger(i, ((currentState & 0x0001)!=0));
         }
@@ -198,3 +195,5 @@ void MFDigInMux::setLazyMode(bool mode)
         bitClear(_flags, MUX_LAZY);
     }
 }
+
+// MFDigInMux.cpp
