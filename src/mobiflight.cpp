@@ -1,37 +1,19 @@
 //
-// mobiflight.cpp
+// mobiflight.gcc
 //
 // (C) MobiFlight Project 2022
 //
 
+//#define DEBUG2CMDMESSENGER 1
+
+//#define TESTING
+
 #include <Arduino.h>
-#include "mobiflight.h"
-#include "Button.h"
-#include "Encoder.h"
+//#include "allocateMem.h"
+#include "MFBoards.h"
 #include "MFEEPROM.h"
-#include "ArduinoUniqueID.h"
-#if MF_ANALOG_SUPPORT == 1
-#include "Analog.h"
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-#include "InputShifter.h"
-#endif
-#include "Output.h"
-#if MF_SEGMENT_SUPPORT == 1
-#include "LedSegment.h"
-#endif
-#if MF_STEPPER_SUPPORT == 1
-#include "Stepper.h"
-#endif
-#if MF_SERVO_SUPPORT == 1
-#include "Servos.h"
-#endif
-#if MF_OUTPUT_SHIFTER_SUPPORT == 1
-#include "OutputShifter.h"
-#endif
-#if MF_DIGIN_MUX_SUPPORT == 1
-#include "DigInMux.h"
-#endif
+#include "config.h"
+#include "mobiflight.h"
 
 #define MF_BUTTON_DEBOUNCE_MS     10 // time between updating the buttons
 #define MF_ENCODER_DEBOUNCE_MS    1  // time between encoder updates
@@ -44,9 +26,8 @@
 bool                powerSavingMode   = false;
 const unsigned long POWER_SAVING_TIME = 60 * 15; // in seconds
 
-#if MF_MUX_SUPPORT == 1
-MFMuxDriver MUX;
-#endif
+uint32_t lastButtonUpdate  = 0;
+uint32_t lastEncoderUpdate = 0;
 // ==================================================
 //   Polling interval counters
 // ==================================================
@@ -93,52 +74,219 @@ void initPollIntervals(void)
 #endif
 }
 
-void timedUpdate(void (*fun)(), uint32_t *last, uint8_t intv)
+static void updateDevices(uint8_t);
+
+void timedUpdate(uint8_t typ, uint32_t *tim, uint32_t intv)
 {
-    if (millis() - *last >= intv) {
-        fun();
-        *last = millis();
+    if (millis() - (*tim) >= (intv)) {
+        *tim = millis();
+        updateDevices(typ);
     }
 }
 
 // ************************************************************
-// Power saving
+//  General I/O handling functions
 // ************************************************************
-void SetPowerSavingMode(bool state)
+
+void resetDevices(void)
+{
+    uint8_t  typ;
+    uint8_t *dev;
+
+    // Trigger all release events first for inputs, does nothing for outputs
+    Stowage.reset();
+    while ((dev = Stowage.getNext())) {
+        DeviceReset(typ, dev, ONRESET_RELEASE);
+    };
+
+    // ...then trigger all the press events for inputs, and clear outputs
+    Stowage.reset();
+    while ((dev = Stowage.getNext())) {
+        DeviceReset(typ, dev, ONRESET_PRESS);
+    };
+    setLastCommandMillis();
+}
+
+void updateDevices(uint8_t typ = StowManager::TypeALL)
+{
+    uint8_t *dev;
+
+    Stowage.reset();
+    while ((dev = Stowage.getNext())) {
+        DeviceUpdate(typ, dev);
+    };
+    setLastCommandMillis();
+}
+
+void setPowerSave(uint8_t mode, uint8_t typ = StowManager::TypeALL)
+{
+    uint8_t *dev;
+    Stowage.reset();
+    while ((dev = Stowage.getNext())) {
+        DevicePowerSave(typ, dev, mode);
+    };
+    setLastCommandMillis();
+}
+
+void wipeDevices(void)
+{
+    // Reset device storage (this will do all devices)
+    uint8_t *dev;
+    uint8_t  typ;
+
+    Stowage.reset();
+    while ((dev = Stowage.getNext())) {
+        DeviceDetach(typ, dev);
+    };
+    Stowage.wipe();
+}
+
+// ************************************************************
+// Power save management
+// ************************************************************
+void setPowerSavingMode(bool state)
 {
     // disable the lights ;)
     powerSavingMode = state;
-    Output::PowerSave(state);
-#if MF_SEGMENT_SUPPORT == 1
-    LedSegment::PowerSave(state);
-#endif
-#if MF_STEPPER_SUPPORT == 1
-    Stepper::PowerSave(state);
-#endif
+
+    setPowerSave(state);
 
 #ifdef DEBUG2CMDMESSENGER
-    if (state)
+    if (state) {
         cmdMessenger.sendCmd(kDebug, F("On"));
-    else
+    } else {
         cmdMessenger.sendCmd(kDebug, F("Off"));
+    }
 #endif
 }
 
 void updatePowerSaving()
 {
     if (!powerSavingMode && ((millis() - getLastCommandMillis()) > (POWER_SAVING_TIME * 1000))) {
-        // enable power saving
-        SetPowerSavingMode(true);
+        setPowerSavingMode(true);
     } else if (powerSavingMode && ((millis() - getLastCommandMillis()) < (POWER_SAVING_TIME * 1000))) {
-        // disable power saving
-        SetPowerSavingMode(false);
+        setPowerSavingMode(false);
     }
+}
+
+// ************************************************************
+// TEST FUNCTIONS
+// ************************************************************
+
+void printItemSize(void)
+{
+#ifdef TESTING
+
+#define TST_WRITE(s, d)                    \
+    {                                      \
+        sprintf(buf, fmt, s, d);           \
+        cmdMessenger.sendCmd(kDebug, buf); \
+        delay(100);                        \
+    }
+
+    char        buf[40];
+    const char *fmt = "Actual size of each <%s>: %d bytes";
+    // The actual size in the buffer of each device is as follows:
+    // <n> bytes for the "bare" class attributes
+    // + 1 bytes for buffer link pointer (increment to next element in buffer)
+    // + 1 byte  for type code (allowing to cast the object to the correct type)
+    // First component is included in the value returned by sizeof(),
+    // other 2 component are added explicitly below
+    TST_WRITE("Output", sizeof(MFOutput) + 2);
+    TST_WRITE("Button", sizeof(MFButton) + 2);
+    TST_WRITE("Encoder", sizeof(MFEncoder) + 2);
+    TST_WRITE("AnalogIn", sizeof(MFAnalog) + 2);
+    TST_WRITE("InShiftReg", sizeof(MFInputShifter) + 2);
+    TST_WRITE("LEDsegment", sizeof(MFSegments) + 2);
+    TST_WRITE("Stepper", sizeof(MFStepper) + 2);
+    TST_WRITE("Servo", sizeof(MFServo) + 2);
+    TST_WRITE("OutShiftReg", sizeof(MFOutputShifter) + 2);
+    TST_WRITE("LCDdisplay", sizeof(MFLCDDisplay) + 2);
+#endif
+}
+
+void printReport(uint8_t nItems, const char *itemName)
+{
+#ifdef TESTING
+    char buf[40];
+    sprintf(buf, "Added %d %s", nItems, itemName);
+    cmdMessenger.sendCmd(kDebug, buf);
+    sprintf(buf, " used %d bytes, remaining %d",
+            Stowage.getUsedSize(),
+            Stowage.getFreeSize());
+    cmdMessenger.sendCmd(kDebug, buf);
+    delay(1000);
+#endif
+}
+
+void setupData(void)
+{
+#ifdef TESTING
+    uint8_t i;
+    delay(1000);
+
+    printItemSize();
+
+    Stowage.wipe();
+    printReport(0, "-none-");
+
+    // #define MAX_OUTPUTS 40
+    for (i = 0; i < MAX_OUTPUTS; i++)
+        AddOutput(1);
+    printReport(MAX_OUTPUTS, "Outputs");
+
+    // #define MAX_BUTTONS 68
+    for (i = 0; i < MAX_BUTTONS; i++)
+        AddButton(1);
+    printReport(MAX_BUTTONS, "Buttons");
+
+    // #define MAX_ENCODERS 20
+    for (i = 0; i < MAX_ENCODERS; i++)
+        AddEncoder(1, 2, 1);
+    printReport(MAX_ENCODERS, "Encoders");
+
+    // #define MAX_ANALOG_INPUTS 16
+    for (i = 0; i < MAX_ANALOG_INPUTS; i++)
+        AddAnalog(1);
+    printReport(MAX_ANALOG_INPUTS, "AnalogIns");
+
+    // #define MAX_INPUT_SHIFTERS 4
+    for (i = 0; i < MAX_INPUT_SHIFTERS; i++)
+        AddInputShiftReg(1, 2, 3, 2);
+    printReport(MAX_INPUT_SHIFTERS, "InputShiftRegs");
+
+    // #define MAX_LEDSEGMENTS 4
+    for (i = 0; i < MAX_LEDSEGMENTS; i++)
+        AddLedSegment(1, 2, 3, 2, 15);
+    printReport(MAX_LEDSEGMENTS, "LEDSegments");
+
+    // #define MAX_STEPPERS 10
+    for (i = 0; i < MAX_STEPPERS; i++)
+        AddStepper(1, 2, 3, 4, 5);
+    printReport(MAX_STEPPERS, "Steppers");
+
+    // #define MAX_MFSERVOS 10
+    for (i = 0; i < MAX_MFSERVOS; i++)
+        AddServo(1);
+    printReport(MAX_MFSERVOS, "Servos");
+
+    // #define MAX_OUTPUT_SHIFTERS 4
+    for (i = 0; i < MAX_OUTPUT_SHIFTERS; i++)
+        AddOutShiftReg(1, 2, 3, 2);
+    printReport(MAX_OUTPUT_SHIFTERS, "OutShiftRegs");
+
+    // #define MAX_MFLCD_I2C 2
+    for (i = 0; i < MAX_MFLCD_I2C; i++)
+        AddLcdDisplay(1, 40, 2);
+    printReport(MAX_MFLCD_I2C, "LCD displays");
+
+#endif
 }
 
 // ************************************************************
 // Reset Board
 // ************************************************************
-void ResetBoard()
+void resetBoard()
 {
     setLastCommandMillis();
     restoreName();
@@ -151,11 +299,23 @@ void ResetBoard()
 void setup()
 {
     Serial.begin(115200);
-    MFeeprom.init();
+#if MF_DIGIN_MUX_SUPPORT == 1
+    MFDigInMux::setMux(&MUX);
+#endif
     attachCommandCallbacks();
+    // attachEventCallbacks();
+
     cmdMessenger.printLfCr();
-    ResetBoard();
+    resetBoard();
     initPollIntervals();
+    resetDevices();
+
+#ifdef TESTING
+    while (1) {
+        setupData();
+        delay(60000);
+    }
+#endif
 }
 
 // ************************************************************
@@ -172,29 +332,31 @@ void loop()
     // to prevent mangling input for config (shared buffers)
     if (getStatusConfig()) {
 
-        timedUpdate(Button::read, &lastUpdate.Buttons, MF_BUTTON_DEBOUNCE_MS);
+        MUX.nextChannel();
 
-        timedUpdate(Encoder::read, &lastUpdate.Encoders, MF_ENCODER_DEBOUNCE_MS);
+        timedUpdate(kTypeButton, &lastUpdate.Buttons, MF_BUTTON_DEBOUNCE_MS);
+
+        timedUpdate(kTypeEncoder, &lastUpdate.Encoders, MF_ENCODER_DEBOUNCE_MS);
 
 #if MF_STEPPER_SUPPORT == 1
-        Stepper::update();
+        updateDevices(kTypeStepper);
 #endif
-
 #if MF_SERVO_SUPPORT == 1
-        timedUpdate(Servos::update, &lastUpdate.Servos, MF_SERVO_DELAY_MS);
+        timedUpdate(kTypeServo, &lastUpdate.Servos, MF_SERVO_DELAY_MS);
 #endif
-
 #if MF_ANALOG_SUPPORT == 1
-        timedUpdate(Analog::read, &lastUpdate.Analog, MF_ANALOGREAD_DELAY_MS);
-        timedUpdate(Analog::readAverage, &lastUpdate.AnalogAverage, MF_ANALOGAVERAGE_DELAY_MS);
+        timedUpdate(kTypeAnalogInput, &lastUpdate.Analog, MF_ANALOGREAD_DELAY_MS);
+        if (millis() - lastUpdate.AnalogAverage >= MF_ANALOGAVERAGE_DELAY_MS) {
+            lastUpdate.AnalogAverage = millis();
+            Analog::UpdateAverage();
+        }
 #endif
-
 #if MF_INPUT_SHIFTER_SUPPORT == 1
-        timedUpdate(InputShifter::read, &lastUpdate.InputShifters, MF_INSHIFTER_POLL_MS);
+        timedUpdate(kTypeInShiftReg, &lastUpdate.InputShifters, MF_INSHIFTER_POLL_MS);
 #endif
 
 #if MF_DIGIN_MUX_SUPPORT == 1
-        timedUpdate(DigInMux::read, &lastUpdate.DigInMux, MF_INMUX_POLL_MS);
+        timedUpdate(kTypeDigInMux, &lastUpdate.DigInMux, MF_INMUX_POLL_MS);
 #endif
         // lcds, outputs, outputshifters, segments do not need update
     }

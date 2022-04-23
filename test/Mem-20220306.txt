@@ -1,0 +1,26 @@
+Current official beta:
+RAM:   [=====     ]  54.7% (used 4481 bytes from 8192 bytes)
+Flash: [=         ]  10.0% (used 25346 bytes from 253952 bytes)
+Building .pio\build\mega\mobiflight_mega_0_0_1.hex
+
+RAM:   [=======   ]  74.6% (used 1909 bytes from 2560 bytes)
+Flash: [========= ]  90.0% (used 25818 bytes from 28672 bytes)
+Building .pio\build\micro\mobiflight_micro_0_0_1.hex
+
+RAM:   [========  ]  83.7% (used 1714 bytes from 2048 bytes)
+Flash: [=======   ]  73.3% (used 23634 bytes from 32256 bytes)
+Building .pio\build\uno\mobiflight_uno_0_0_1.hex
+
+NoArrays mod:
+RAM:   [====      ]  44.6% (used 3657 bytes from 8192 bytes)
+Flash: [=         ]   9.6% (used 24440 bytes from 253952 bytes)
+Building .pio\build\mega\mobiflight_mega_9_0_1.hex
+
+RAM:   [=======   ]  67.5% (used 1729 bytes from 2560 bytes)
+Flash: [========  ]  84.4% (used 24202 bytes from 28672 bytes)
+Building .pio\build\micro\mobiflight_micro_9_0_1.hex
+
+RAM:   [========  ]  76.4% (used 1564 bytes from 2048 bytes)
+Flash: [=======   ]  67.7% (used 21834 bytes from 32256 bytes)
+Building .pio\build\uno\mobiflight_uno_9_0_1.hex
+

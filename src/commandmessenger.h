@@ -1,5 +1,5 @@
 //
-// commandmessenger.h
+// commandMessenger.h
 //
 // (C) MobiFlight Project 2022
 //
@@ -10,7 +10,9 @@
 
 // This is the list of recognized commands. These can be commands that can either be sent or received.
 // In order to receive, attach a callback function to these events
-
+//
+// If you increase this list, make sure to check that the MAXCALLBACKS value
+// in CmdMessenger.h is set appropriately
 enum {
     kInitModule,           // 0
     kSetModule,            // 1
@@ -47,8 +49,11 @@ enum {
     kDebug = 0xFF          // 255
 };
 
-void     attachCommandCallbacks();
-uint32_t getLastCommandMillis();
-void     setLastCommandMillis();
+void     attachCommandCallbacks(void);
+uint32_t getLastCommandMillis(void);
+void     setLastCommandMillis(void);
 
 extern CmdMessenger cmdMessenger;
+//? extern unsigned long    lastCommand;
+
+// commandMessenger.h

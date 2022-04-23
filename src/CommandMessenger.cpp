@@ -1,44 +1,20 @@
 //
-// commandmessenger.cpp
+// commandMessenger.cpp
 //
 // (C) MobiFlight Project 2022
 //
 
+#include <Arduino.h>
+#include "commandmessenger.h"
+#include "config.h"
 #include "mobiflight.h"
-
-#include "Button.h"
-#include "Encoder.h"
-#if MF_ANALOG_SUPPORT == 1
-#include "Analog.h"
-#endif
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-#include "InputShifter.h"
-#endif
-#include "Output.h"
-#if MF_SEGMENT_SUPPORT == 1
-#include "LedSegment.h"
-#endif
-#if MF_STEPPER_SUPPORT == 1
-#include "Stepper.h"
-#endif
-#if MF_SERVO_SUPPORT == 1
-#include "Servos.h"
-#endif
-#if MF_LCD_SUPPORT == 1
-#include "LCDDisplay.h"
-#endif
-#if MF_OUTPUT_SHIFTER_SUPPORT == 1
-#include "OutputShifter.h"
-#endif
-#if MF_DIGIN_MUX_SUPPORT == 1
-#include "DigInMux.h"
-#endif
 
 CmdMessenger  cmdMessenger = CmdMessenger(Serial);
 unsigned long lastCommand;
 
-void OnTrigger();
-void OnUnknownCommand();
+// Prototypes for forward declarations
+static void OnTrigger();
+static void OnUnknownCommand();
 
 // Callbacks define on which received commands we take action
 void attachCommandCallbacks()
@@ -47,9 +23,9 @@ void attachCommandCallbacks()
     cmdMessenger.attach(OnUnknownCommand);
 
 #if MF_SEGMENT_SUPPORT == 1
-    cmdMessenger.attach(kInitModule, LedSegment::OnInitModule);
-    cmdMessenger.attach(kSetModule, LedSegment::OnSetModule);
-    cmdMessenger.attach(kSetModuleBrightness, LedSegment::OnSetModuleBrightness);
+    cmdMessenger.attach(kInitModule, LedSegment::OnInit);
+    cmdMessenger.attach(kSetModule, LedSegment::OnSet);
+    cmdMessenger.attach(kSetModuleBrightness, LedSegment::OnSetBrightness);
 #endif
 
     cmdMessenger.attach(kSetPin, Output::OnSet);
@@ -92,7 +68,7 @@ void attachCommandCallbacks()
 void OnUnknownCommand()
 {
     lastCommand = millis();
-    cmdMessenger.sendCmd(kStatus, F("n/a"));
+    cmdMessenger.sendCmd(kDebug, F("n/a"));
 }
 
 uint32_t getLastCommandMillis()
@@ -105,18 +81,18 @@ void setLastCommandMillis()
     lastCommand = millis();
 }
 
-void OnTrigger()
+void setLastCommandMillis(uint32_t time)
 {
-    Button::OnTrigger();
-#if MF_INPUT_SHIFTER_SUPPORT == 1
-    InputShifter::OnTrigger();
-#endif
-#if MF_DIGIN_MUX_SUPPORT == 1
-    DigInMux::OnTrigger();
-#endif
-#if MF_ANALOG_SUPPORT == 1
-    Analog::OnTrigger();
-#endif
+    lastCommand = time;
 }
 
-// commandmessenger.cpp
+void OnTrigger()
+{
+    //   Button::OnTrigger();
+    // #if MF_INPUT_SHIFTER_SUPPORT == 1
+    //   InputShifter::OnTrigger();
+    // #endif
+    resetDevices();
+}
+
+// commandMessenger.cpp

@@ -5,13 +5,14 @@
 //
 
 #include "MFInputShifter.h"
+#include "mobiflight.h"
 
-inputShifterEvent MFInputShifter::_inputHandler = NULL;
+inputShifterEventHandler MFInputShifter::_handler = NULL;
 
-MFInputShifter::MFInputShifter(const char *name)
+MFInputShifter::MFInputShifter(void)
 {
-    _initialized = false;
-    _name        = name;
+    _moduleCount = 0;
+    clearLastState();
 }
 
 // Registers a new input shifter and configures the clock, data and latch pins as well
@@ -27,7 +28,6 @@ void MFInputShifter::attach(uint8_t latchPin, uint8_t clockPin, uint8_t dataPin,
     pinMode(_latchPin, OUTPUT);
     pinMode(_clockPin, OUTPUT);
     pinMode(_dataPin, INPUT);
-    _initialized = true;
 
     // And now initialize all buttons with the actual status
     poll(DONT_TRIGGER);
@@ -43,6 +43,7 @@ void MFInputShifter::update()
 
 void MFInputShifter::poll(uint8_t doTrigger)
 {
+    if (0 == _moduleCount) return;
     digitalWrite(_clockPin, HIGH); // Preset clock to retrieve first bit
     digitalWrite(_latchPin, HIGH); // Disable input latching and enable shifting
 
@@ -55,10 +56,10 @@ void MFInputShifter::poll(uint8_t doTrigger)
 
         // If an input changed on the current module from the last time it was read
         // then hand it off to figure out which bits specifically changed.
-        if (currentState != _lastState[module]) {
+        if (doTrigger && (currentState != _lastState[module])) {
             if (doTrigger) detectChanges(_lastState[module], currentState, module);
-            _lastState[module] = currentState;
         }
+        _lastState[module] = currentState;
     }
 
     digitalWrite(_latchPin, LOW); // disable shifting and enable input latching
@@ -68,52 +69,45 @@ void MFInputShifter::poll(uint8_t doTrigger)
 // of a byte's worth of input.
 void MFInputShifter::detectChanges(uint8_t lastState, uint8_t currentState, uint8_t module)
 {
+    uint8_t diff = lastState ^ currentState;
     for (uint8_t i = 0; i < 8; i++) {
         // If last and current input state for the bit are different
         // then the input changed and the handler for the bit needs to fire
-        if ((lastState & 1) ^ (currentState & 1)) {
-            // When triggering event the pin is the actual pin on the chip offset by 8 bits for each
+        if (diff & 0x01) {
+            // When triggering event the pin is the actual pin on the chip, offset by 8 bits for each
             // module beyond the first that it's on. The state of the trigger is the bit currently
             // in position 0 of currentState.
-            trigger(i + (module * 8), currentState & 1);
+            trigger(i + (module * 8), ((currentState & 0x01) != 0));
         }
 
-        lastState    = lastState >> 1;
-        currentState = currentState >> 1;
+        diff >>= 1;
+        currentState >>= 1;
     }
 }
 
-// Reads the current state for all connected modules then fires
-// release events for every released button followed by
-// press events for every pressed button.
-void MFInputShifter::retrigger()
+void MFInputShifter::reset(uint8_t action)
 {
+    // Handle retrigger logic according to:
+    // https://github.com/MobiFlight/MobiFlight-Connector/issues/497
+    // and  https://github.com/MobiFlight/MobiFlight-Connector/pull/502.
     uint8_t state;
 
-    poll(DONT_TRIGGER);
+    if (NULL == _handler) return;
+    if (_moduleCount == 0) return;
 
-    // Trigger all the released buttons
-    for (int module = 0; module < _moduleCount; module++) {
-        state = _lastState[module];
-        for (uint8_t i = 0; i < 8; i++) {
-            // Only trigger if the button is in the off position
-            if (state & 1) {
-                trigger(i + (module * 8), HIGH);
-            }
-            state = state >> 1;
-        }
+    if (action == ONRESET_RELEASE) {
+        poll(DONT_TRIGGER);
     }
 
-    // Trigger all the pressed buttons
     for (int module = 0; module < _moduleCount; module++) {
         state = _lastState[module];
-        for (uint8_t i = 0; i < 8; i++) {
-            // Only trigger if the button is in the on position
-            if (!(state & 1)) {
-                trigger(i + (module * 8), LOW);
-            }
 
-            state = state >> 1;
+        if (action == ONRESET_RELEASE) {
+            // Pass 1/2: Trigger all the 'off' inputs (released buttons) first
+            detectChanges(0x00, state, module);
+        } else if (action == ONRESET_PRESS) {
+            // Pass 2/2: Trigger all the 'on' inputs (pressed buttons)
+            detectChanges(0xFF, state, module);
         }
     }
 }
@@ -122,19 +116,23 @@ void MFInputShifter::retrigger()
 // if a handler is registered.
 void MFInputShifter::trigger(uint8_t pin, bool state)
 {
-    if (!_inputHandler) return;
-    (*_inputHandler)((state == LOW ? inputShifterOnPress : inputShifterOnRelease), pin, _name);
-}
-
-// Attaches a new event handler for the specified event.
-void MFInputShifter::attachHandler(inputShifterEvent newHandler)
-{
-    _inputHandler = newHandler;
+    if (!_handler) return;
+    (*_handler)((state == LOW ? inputShifterOnPress : inputShifterOnRelease), pin, _name);
 }
 
 void MFInputShifter::detach()
 {
-    _initialized = false;
+    _moduleCount = 0;
+}
+
+// Clears the internal state of the shifter, including all received bits
+// and the timestamp for the last time the data was read.
+// Sets the last recorded state of every bit on every shifter to 0.
+void MFInputShifter::clearLastState()
+{
+    for (uint8_t i = 0; i < MAX_CHAINED_INPUT_SHIFTERS; i++) {
+        _lastState[i] = 0;
+    }
 }
 
 // MFInputShifter.cpp

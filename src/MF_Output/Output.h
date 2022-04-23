@@ -5,14 +5,16 @@
 //
 
 #pragma once
+
 #include <stdint.h>
 
 namespace Output
 {
+    DECLARE_VT_STUBS;   // see IODevice.h
+    
     void Add(uint8_t pin = 1);
-    void Clear();
-    void OnSet();
-    void PowerSave(bool state);
+    void OnSet(void);
 }
 
 // Output.h
+
