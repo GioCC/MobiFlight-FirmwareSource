@@ -12,25 +12,31 @@
 #include "Output.h"
 
 #if MF_ANALOG_SUPPORT == 1
-#include "Analog.h"
+    #include "Analog.h"
 #endif
 #if MF_INPUT_SHIFTER_SUPPORT == 1
-#include "InputShifter.h"
+    #include "InputShifter.h"
 #endif
 #if MF_SEGMENT_SUPPORT == 1
-#include "LedSegment.h"
+    #include "LedSegment.h"
 #endif
 #if MF_STEPPER_SUPPORT == 1
-#include "Stepper.h"
+    #include "Stepper.h"
 #endif
 #if MF_SERVO_SUPPORT == 1
-#include "Servos.h"
+    #include "Servos.h"
 #endif
 #if MF_LCD_SUPPORT == 1
-#include "LCDDisplay.h"
+    #include "LCDDisplay.h"
 #endif
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
-#include "OutputShifter.h"
+    #include "OutputShifter.h"
+#endif
+#if MF_MUX_SUPPORT == 1
+#include "MFMuxDriver.h"
+#endif
+#if MF_DIGIN_MUX_SUPPORT == 1
+#include "DigInMux.h"
 #endif
 #if MF_MUX_SUPPORT == 1
 #include "MFMuxDriver.h"
@@ -49,11 +55,11 @@ MFEEPROM MFeeprom;
 extern        MFMuxDriver MUX;
 #endif
 
-const uint8_t MEM_OFFSET_NAME   = 0;
-const uint8_t MEM_LEN_NAME      = 48;
-const uint8_t MEM_OFFSET_SERIAL = MEM_OFFSET_NAME + MEM_LEN_NAME;
-const uint8_t MEM_LEN_SERIAL    = 11;
-const uint8_t MEM_OFFSET_CONFIG = MEM_OFFSET_NAME + MEM_LEN_NAME + MEM_LEN_SERIAL;
+const uint8_t  MEM_OFFSET_NAME   = 0;
+const uint8_t  MEM_LEN_NAME      = 48;
+const uint8_t  MEM_OFFSET_SERIAL = MEM_OFFSET_NAME + MEM_LEN_NAME;
+const uint8_t  MEM_LEN_SERIAL    = 11;
+const uint8_t  MEM_OFFSET_CONFIG = MEM_OFFSET_NAME + MEM_LEN_NAME + MEM_LEN_SERIAL;
 const uint16_t MEM_LEN_CONFIG    = MEMLEN_CONFIG;
 
 struct {
@@ -79,9 +85,10 @@ static void activateConfig(void);
 // configBuffer handling
 // ************************************************************
 // reads the EEPROM until NUL terminator and returns the number of characters incl. terminator, starting from given address
-bool        readConfigLength(void)
+bool readConfigLength(void)
 {
-    char     temp       = 0;
+    char temp = 0;
+    // Use own pointer so as not to interfere with ongoing reading
     uint16_t addreeprom = MEM_OFFSET_CONFIG;
     uint16_t length     = MFeeprom.get_length();
     config.length       = 0;
@@ -101,7 +108,7 @@ bool        readConfigLength(void)
 void loadConfig(void)
 {
 #ifdef DEBUG2CMDMESSENGER
-    cmdMessenger.sendCmd(kStatus, F("Load config"));
+    cmdMessenger.sendCmd(kDebug, F("Load config"));
 #endif
     if (readConfigLength()) {
         readConfig();
@@ -112,7 +119,7 @@ void loadConfig(void)
 void OnSetConfig(void)
 {
 #ifdef DEBUG2CMDMESSENGER
-    cmdMessenger.sendCmd(kStatus, F("Setting config start"));
+    cmdMessenger.sendCmd(kDebug, F("Setting config start"));
 #endif
     setLastCommandMillis();
     char   *cfg    = cmdMessenger.readStringArg();
@@ -126,7 +133,7 @@ void OnSetConfig(void)
         cmdMessenger.sendCmd(kStatus, -1); // last successfull saving block is already NULL terminated, nothing more todo
     }
 #ifdef DEBUG2CMDMESSENGER
-    cmdMessenger.sendCmd(kStatus, F("Setting config end"));
+    cmdMessenger.sendCmd(kDebug, F("Setting config end"));
 #endif
 }
 
@@ -159,9 +166,10 @@ void resetConfig(void)
 #if MF_DIGIN_MUX_SUPPORT == 1
     DigInMux::Clear();
 #endif
-
-    config.length    = 0;
-    config.activated = false;
+    config.length        = 0;
+    config.activated     = false;
+    config.nameBuffer[0] = '\0';
+    ClearMemory();
 }
 
 void OnResetConfig()
@@ -173,6 +181,17 @@ void OnResetConfig()
 void OnSaveConfig(void)
 {
     cmdMessenger.sendCmd(kConfigSaved, F("OK"));
+//  Uncomment the if{} part to reset and load the config via serial terminal for testing w/o the GUI
+//    1: Type "13" to reset the config
+//    2: Type "14" to get the config length
+//    3: Type "16" to load the config
+/*
+    if (readConfigLength())
+    {
+        readConfig();
+        _activateConfig();
+    }
+*/
 }
 
 void OnActivateConfig(void)
@@ -188,6 +207,7 @@ void activateConfig()
 }
 
 void resetEEPROMpointer(uint16_t pos = 0)
+<<<<<<< HEAD
 {
     MFeeprom.setPosition(pos);
 }
@@ -195,6 +215,15 @@ void resetEEPROMpointer(uint16_t pos = 0)
 // Read from EEPROM a '.' terminated ASCII number and return its value
 uint8_t readUintFromEEPROM(void)
 {
+=======
+{
+    MFeeprom.setPosition(pos);
+}
+
+// Read from EEPROM a '.' terminated ASCII number and return its value
+uint8_t readUintFromEEPROM(void)
+{
+>>>>>>> refs/rewritten/main
     char    params[4] = {0}; // max 3 (255) digits, NUL terminated
     uint8_t counter   = 0;
     do {

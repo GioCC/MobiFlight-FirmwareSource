@@ -17,7 +17,7 @@
 #define MF_STEPPER_SUPPORT   1
 #endif
 #ifndef MF_SERVO_SUPPORT
-#define MF_SERVO_SUPPORT 1
+#define MF_SERVO_SUPPORT     0
 #endif
 #ifndef MF_ANALOG_SUPPORT
 #define MF_ANALOG_SUPPORT    1
@@ -25,6 +25,7 @@
 #ifndef MF_OUTPUT_SHIFTER_SUPPORT
 #define MF_OUTPUT_SHIFTER_SUPPORT 1
 #endif
+
 #ifndef MF_INPUT_SHIFTER_SUPPORT
 #define MF_INPUT_SHIFTER_SUPPORT 1
 #endif
@@ -40,7 +41,7 @@
 #define MAX_OUTPUTS         18
 #define MAX_BUTTONS         18
 #define MAX_LEDSEGMENTS     1
-#define MAX_ENCODERS        5
+#define MAX_ENCODERS        9
 #define MAX_STEPPERS        3
 #define MAX_MFSERVOS        3
 #define MAX_MFLCD_I2C       2
