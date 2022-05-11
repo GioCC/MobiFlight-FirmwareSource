@@ -52,14 +52,14 @@
 MFEEPROM MFeeprom;
 
 #if MF_MUX_SUPPORT == 1
-extern        MFMuxDriver MUX;
+extern MFMuxDriver MUX;
 #endif
 
-const uint8_t MEM_OFFSET_NAME   = 0;
-const uint8_t MEM_LEN_NAME      = 48;
-const uint8_t MEM_OFFSET_SERIAL = MEM_OFFSET_NAME + MEM_LEN_NAME;
-const uint8_t MEM_LEN_SERIAL    = 11;
-const uint8_t MEM_OFFSET_CONFIG = MEM_OFFSET_NAME + MEM_LEN_NAME + MEM_LEN_SERIAL;
+const uint8_t  MEM_OFFSET_NAME   = 0;
+const uint8_t  MEM_LEN_NAME      = 48;
+const uint8_t  MEM_OFFSET_SERIAL = MEM_OFFSET_NAME + MEM_LEN_NAME;
+const uint8_t  MEM_LEN_SERIAL    = 11;
+const uint8_t  MEM_OFFSET_CONFIG = MEM_OFFSET_NAME + MEM_LEN_NAME + MEM_LEN_SERIAL;
 const uint16_t MEM_LEN_CONFIG    = MEMLEN_CONFIG;
 
 struct {
@@ -85,9 +85,10 @@ static void activateConfig(void);
 // configBuffer handling
 // ************************************************************
 // reads the EEPROM until NUL terminator and returns the number of characters incl. terminator, starting from given address
-bool        readConfigLength(void)
+bool readConfigLength(void)
 {
-    char     temp       = 0;
+    char temp = 0;
+    // Use own pointer so as not to interfere with ongoing reading
     uint16_t addreeprom = MEM_OFFSET_CONFIG;
     uint16_t length     = MFeeprom.get_length();
     config.length       = 0;
