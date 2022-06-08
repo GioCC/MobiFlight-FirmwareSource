@@ -166,8 +166,9 @@ void resetConfig(void)
 #if MF_DIGIN_MUX_SUPPORT == 1
     DigInMux::Clear();
 #endif
-    configLength    = 0;
-    configActivated = false;
+    config.length        = 0;
+    config.activated     = false;
+    config.nameBuffer[0] = '\0';
     ClearMemory();
 }
 
