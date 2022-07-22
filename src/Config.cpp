@@ -77,8 +77,9 @@ struct {
     MOBIFLIGHT_SERIAL,
     ""};
 
-static void resetConfig(void);
-static void readConfig(void);
+static void resetDeviceConfig(void);
+static void resetStoredConfig(void);
+static void readStoredConfig(void);
 static void activateConfig(void);
 
 // ************************************************************
@@ -111,8 +112,7 @@ void loadConfig(void)
     cmdMessenger.sendCmd(kDebug, F("Load config"));
 #endif
     if (readConfigLength()) {
-        readConfig();
-        activateConfig();
+        readStoredConfig();
     }
 }
 
@@ -137,8 +137,12 @@ void OnSetConfig(void)
 #endif
 }
 
-void resetConfig(void)
+void resetDeviceConfig(void)
 {
+    // Clear device variables
+
+    configActivated = false;
+
     Button::Clear();
     Encoder::Clear();
     Output::Clear();
@@ -166,15 +170,20 @@ void resetConfig(void)
 #if MF_DIGIN_MUX_SUPPORT == 1
     DigInMux::Clear();
 #endif
-    config.length        = 0;
-    config.activated     = false;
+
     config.nameBuffer[0] = '\0';
     ClearMemory();
 }
 
+void resetStoredConfig()
+{
+    // "Clear" config storage in EEPROM
+    configLength = 0;
+}
+
 void OnResetConfig()
 {
-    resetConfig();
+    resetStoredConfig();
     cmdMessenger.sendCmd(kStatus, F("OK"));
 }
 
@@ -188,26 +197,18 @@ void OnSaveConfig(void)
 /*
     if (readConfigLength())
     {
-        readConfig();
-        _activateConfig();
+        readStoredConfig();
     }
 */
 }
 
 void OnActivateConfig(void)
 {
-    readConfig();
-    activateConfig();
-}
-
-void activateConfig()
-{
-    config.activated = true;
+    readStoredConfig();
     cmdMessenger.sendCmd(kConfigActivated, F("OK"));
 }
 
 void resetEEPROMpointer(uint16_t pos = 0)
-<<<<<<< HEAD
 {
     MFeeprom.setPosition(pos);
 }
@@ -215,15 +216,6 @@ void resetEEPROMpointer(uint16_t pos = 0)
 // Read from EEPROM a '.' terminated ASCII number and return its value
 uint8_t readUintFromEEPROM(void)
 {
-=======
-{
-    MFeeprom.setPosition(pos);
-}
-
-// Read from EEPROM a '.' terminated ASCII number and return its value
-uint8_t readUintFromEEPROM(void)
-{
->>>>>>> refs/rewritten/main
     char    params[4] = {0}; // max 3 (255) digits, NUL terminated
     uint8_t counter   = 0;
     do {
@@ -257,7 +249,7 @@ bool readRecordTailFromEEPROM(char **dest = NULL, char *cap = (char *)0xFFFF)
     return (*dest >= cap);
 }
 
-void readConfig(void)
+void readStoredConfig(void)
 {
     if (config.length == 0) // do nothing if no config is available
         return;
@@ -273,6 +265,9 @@ void readConfig(void)
     devCode = readUintFromEEPROM(); // read the first value from EEPROM, it's a device definition
     if (devCode == 0)               // just to be sure, config.length should also be 0
         return;
+
+    // Ensure that config is clean before starting to write to it
+    resetDeviceConfig();
 
     do // go through the EEPROM until it is NULL terminated
     {
@@ -436,6 +431,9 @@ void readConfig(void)
     //     // Was:
     //     // config.nameBuffer[MEMLEN_NAME_BUFFER - 1] = 0x00; // terminate the last copied (part of) string with 0x00
     // }
+
+    // Activate configuration even if not completely read
+    config.activated = true;
 }
 
 void OnGetConfig()
