@@ -387,8 +387,8 @@ void readConfig()
             params[4] = readUintFromEEPROM(&addreeprom); // Sel3 pin
             MUX.attach(params[1], params[2], params[3], params[4]);
             params[5] = readUintFromEEPROM(&addreeprom); // 8-bit registers (1-2)
-            DigInMux::Add(params[0], params[5], &nameBuffer[addrbuffer]);
-            copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer);
+            DigInMux::Add(params[0], params[5]);
+            copy_success = readEndCommandFromEEPROM(&addreeprom);
 
             // cmdMessenger.sendCmd(kDebug, F("Mux loaded"));
             break;
