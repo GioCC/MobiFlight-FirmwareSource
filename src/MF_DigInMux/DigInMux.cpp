@@ -58,8 +58,39 @@ namespace DigInMux
 
     void read()
     {
+        // By-device scan:
+        // version where devices are scanned individually one after another
+
+#if 0
         for (uint8_t i = 0; i < digInMuxRegistered; i++) {
             digInMux[i]->update();
+        }
+#endif
+
+        // By-address scan:
+        // Version where selector values are scanned sequentially,
+        // and for every selector value all devices are scanned for 1 single input
+        //
+        // This version is probably slightly faster (each 4-bit muxDriver address
+        // is set 1 time rather that 4); however it's likely worse with respect to
+        // encoder reading.
+        // Let's assume that an encoder is connected to 2 close Mux pins (most likely
+        // occurrence, could be made a requirement); let's call "N" the number of
+        // configured multiplexers (assume 16 bit), "Ta" the time for setting a selector
+        // address, "Tr" the time to read an input (all including the overhead for
+        // function calls).
+        // With a by-device scan, its inputs are read at (slightly) longer intervals,
+        // but sampled almost at the same instant; the time between their samples is about
+        // (Ta + Tr).
+        // With a by-address scan, the second input is read after a time of about
+        // N * (16 * Tr + Ta), which is likely to be considerably slower (and also
+        // depending on N).
+
+        for (uint8_t sel = 0; sel < 16; sel++) {
+            MUX.setChannel(sel);
+            for (uint8_t i = 0; i < digInMuxRegistered; i++) {
+                digInMux[i]->updateNext(sel);
+            }
         }
     }
 

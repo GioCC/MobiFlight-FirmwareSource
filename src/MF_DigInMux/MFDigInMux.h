@@ -31,7 +31,7 @@ public:
     void     clear();
     void     retrigger();
     void     update() { poll(DO_TRIGGER); };
-    bool     updateNext(bool start) { pollNext(DO_TRIGGER, start); };
+    void     updateNext(uint8_t pass) { pollNext(DO_TRIGGER, pass); };
     uint16_t getValues(void) { return _lastState; }
 
 private:
@@ -52,7 +52,7 @@ private:
     uint16_t    _tempState;
 
     void poll(bool doTrigger);
-    void pollNext(bool doTrigger, bool start);
+    void pollNext(bool doTrigger, uint8_t pass);
     bool detectChanges(uint16_t lastState, uint16_t currentState);
     void trigger(uint8_t channel, bool state);
 };
