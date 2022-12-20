@@ -16,15 +16,26 @@ class MFMuxDriver
 {
 public:
     MFMuxDriver(void);
-    void    attach(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin);
-    void    detach();
+    void attach(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin);
+    void detach();
 
-    // void setChannelOpt(uint8_t mode);
-    void    setChannel(uint8_t value);
-    uint8_t getChannel(void);
-    uint8_t nextChannel(void);
-    void    saveChannel(void); // Not reentrant - one level only
-    void    restoreChannel(void);
+    uint8_t setChannel(uint8_t value);
+
+    // Get stored channel number (see comments to RestoreChannel)
+    uint8_t getChannel(void) { return _channel; };
+
+    // Increments current channel, wraps around to 0
+    uint8_t nextChannel(void) { return setChannel((++_channel) % 16); }
+
+    // Temporarily stores current channel for later retrieval
+    void saveChannel(void) { _savedChannel = _channel; } // Not reentrant - one level only
+
+    // Restores previously stored channel
+    // >>> This intentionally only restores the channel number, NOT the selector outputs,
+    // in order not to waste time.
+    // A caller will most likely set a new channel right away, and use the stored value
+    // just to determine which channel should be next.
+    void restoreChannel(void) { _channel = _savedChannel; }
 
 private:
     enum { MUX_INITED = 0,
