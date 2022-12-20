@@ -8,9 +8,8 @@
 #include "MFMuxDriver.h"
 
 MFMuxDriver::MFMuxDriver(void)
-    : _channel(0), _savedChannel(0)
+    : _flags(0), _channel(0)
 {
-    _flags = 0x00;
     for (uint8_t i = 0; i < 4; i++) {
         _selPin[i] = 0xFF;
     }
@@ -47,7 +46,7 @@ void MFMuxDriver::detach()
 uint8_t MFMuxDriver::setChannel(uint8_t value)
 {
     if (!bitRead(_flags, MUX_INITED)) return 0;
-    if (value > 15) return 0;
+    if (value > 15) return _channel;
 
     // Ideally, setChannel() should change all pins atomically (at the same time):
     // since it doesn't, be advised that there will be signal glitches because
