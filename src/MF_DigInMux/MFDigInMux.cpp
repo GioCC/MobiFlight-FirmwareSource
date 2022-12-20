@@ -56,47 +56,56 @@ void MFDigInMux::detach()
     }
 }
 
+// Helper for "poll" function: does the input reading and triggering part,
+// relying on an external setting for the Mux channel
+// Extrapolated from "poll" so it can be used with different
+// mux address-setting strategies
+void MFDigInMux::pollNext(bool doTrigger, bool start)
+{
+    const uint8_t    selMax = (bitRead(_flags, MUX_HALFSIZE) ? 8 : 16);
+    volatile uint8_t pinVal;
+
+    if (start) _tempState = 0x0000;
+
+    // Allow the output to settle from voltage transients:
+    // transients towards 0 (GND) are negligible, but transients towards 1 (Vcc)
+    // require a pullup to charge parasitic capacities.
+    // These are examples of delay times measured for 0->1 transitions with different pull-ups:
+    // integrated PU -> 1.4us
+    // external, 10k -> 400ns
+    // external, 4k7 -> 250ns
+    // A digitalRead() takes about 5us, therefore even the integrated pullup should be sufficient.
+    // NB An external pullup (10k or 4k7) is recommended anyway for better interference immunity.
+
+    pinVal = digitalRead(_dataPin);
+    _tempState <<= 1;
+    _tempState |= (pinVal ? 1 : 0);
+
+    // if (doTrigger) {
+    //     if( detectChanges(_lastState, _currentState) _lastState = _currentState;
+    // }
+}
+
+// Core function for update() and retrigger()
 // Reads the values from the attached modules, compares them to the previously
 // read values, and calls the registered event handler for any inputs that
 // changed from the previously read state.
-void MFDigInMux::update()
-{
-    poll(DO_TRIGGER);
-}
-
-// Helper function for update() and retrigger()
 void MFDigInMux::poll(bool doTrigger)
 {
     if (!_MUX) return;
 
-    uint8_t          selMax       = (bitRead(_flags, MUX_HALFSIZE) ? 8 : 16);
-    uint16_t         currentState = 0x0000;
-    volatile uint8_t pinVal;
+    uint8_t selMax = (bitRead(_flags, MUX_HALFSIZE) ? 8 : 16);
+    // uint16_t currentState = 0x0000;
+    // volatile uint8_t pinVal;
 
     for (uint8_t sel = selMax; sel > 0; sel--) {
         _MUX->setChannel(sel - 1);
-
-        // Allow the output to settle from voltage transients:
-        // transients towards 0 (GND) are negligible, but transients towards 1 (Vcc)
-        // require a pullup to charge parasitic capacities.
-        // These are examples of delay times measured for 0->1 transitions with different pull-ups:
-        // integrated PU -> 1.4us
-        // external, 10k -> 400ns
-        // external, 4k7 -> 250ns
-        // A digitalRead() takes about 5us, therefore even the integrated pullup should be sufficient;
-        // for added safety, we perform one more (useless) digitalRead().
-        // NB An external pullup (10k or 4k7) is recommended anyway for better interference immunity.
-
-        pinVal = digitalRead(_dataPin);
-        pinVal = digitalRead(_dataPin);
-        // delayMicroseconds(5);  // This is overkill
-        currentState <<= 1;
-        currentState |= (pinVal ? 1 : 0);
+        pollNext(doTrigger, sel - 1);
     }
 
-    if (doTrigger) {
-        if (detectChanges(_lastState, currentState)) _lastState = currentState;
-    }
+    // if (doTrigger) {
+    //     if( detectChanges(_lastState, _currentState) _lastState = _currentState;
+    // }
 }
 
 // Detects changes between the current state and the previously saved state

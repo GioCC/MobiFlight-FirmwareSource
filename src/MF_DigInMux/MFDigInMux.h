@@ -30,7 +30,8 @@ public:
     void     detach();
     void     clear();
     void     retrigger();
-    void     update();
+    void     update() { poll(DO_TRIGGER); };
+    bool     updateNext(bool start) { pollNext(DO_TRIGGER, start); };
     uint16_t getValues(void) { return _lastState; }
 
 private:
@@ -48,8 +49,10 @@ private:
     uint8_t     _dataPin; // Data pin - MUX common, input to AVR
     uint8_t     _flags;
     uint16_t    _lastState;
+    uint16_t    _tempState;
 
-    void poll(bool detect);
+    void poll(bool doTrigger);
+    void pollNext(bool doTrigger, bool start);
     bool detectChanges(uint16_t lastState, uint16_t currentState);
     void trigger(uint8_t channel, bool state);
 };
