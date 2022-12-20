@@ -8,6 +8,7 @@
 #include "MFMuxDriver.h"
 
 MFMuxDriver::MFMuxDriver(void)
+    : _channel(0), _savedChannel(0)
 {
     _flags = 0x00;
     for (uint8_t i = 0; i < 4; i++) {
@@ -43,10 +44,10 @@ void MFMuxDriver::detach()
 }
 
 // Sets the driver lines to select the specified channel
-void MFMuxDriver::setChannel(uint8_t value)
+uint8_t MFMuxDriver::setChannel(uint8_t value)
 {
-    if (!bitRead(_flags, MUX_INITED)) return;
-    if (value > 15) return;
+    if (!bitRead(_flags, MUX_INITED)) return 0;
+    if (value > 15) return 0;
 
     // Ideally, setChannel() should change all pins atomically (at the same time):
     // since it doesn't, be advised that there will be signal glitches because
@@ -61,31 +62,7 @@ void MFMuxDriver::setChannel(uint8_t value)
         digitalWrite(_selPin[i], (value & 0x01));
         value >>= 1;
     }
-}
-
-// Returns currently selected channel
-uint8_t MFMuxDriver::getChannel(void)
-{
     return _channel;
-}
-
-// Increments current channel, wraps around to 0
-uint8_t MFMuxDriver::nextChannel(void)
-{
-    setChannel((++_channel) % 16);
-    return _channel;
-}
-
-// Temporarily stores current channel for later retrieval
-void MFMuxDriver::saveChannel(void)
-{
-    _savedChannel = _channel;
-}
-
-// Restored previously stored channel
-void MFMuxDriver::restoreChannel(void)
-{
-    setChannel(_savedChannel);
 }
 
 // MFMuxDriver.cpp
