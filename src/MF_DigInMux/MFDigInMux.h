@@ -50,7 +50,7 @@ private:
     uint16_t    _lastState;
 
     void poll(bool detect);
-    void detectChanges(uint16_t lastState, uint16_t currentState);
+    bool detectChanges(uint16_t lastState, uint16_t currentState);
     void trigger(uint8_t channel, bool state);
 };
 
