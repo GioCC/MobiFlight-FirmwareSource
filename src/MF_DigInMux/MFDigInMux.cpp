@@ -73,7 +73,6 @@ void MFDigInMux::poll(bool doTrigger)
     uint16_t         currentState = 0x0000;
     volatile uint8_t pinVal;
 
-    _MUX->saveChannel();
     for (uint8_t sel = selMax; sel > 0; sel--) {
         _MUX->setChannel(sel - 1);
 
@@ -94,7 +93,6 @@ void MFDigInMux::poll(bool doTrigger)
         currentState <<= 1;
         currentState |= (pinVal ? 1 : 0);
     }
-    _MUX->restoreChannel(); // tidy up
 
     if (doTrigger) {
         if (detectChanges(_lastState, currentState)) _lastState = currentState;
