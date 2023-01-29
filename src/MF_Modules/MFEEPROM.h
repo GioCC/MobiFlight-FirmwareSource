@@ -10,20 +10,23 @@
 
 class MFEEPROM
 {
-private:
-    uint16_t _eepromLength = 0;
 
 public:
-    MFEEPROM();
-    void     init(void);
-    uint16_t get_length(void);
-    uint8_t read_byte(uint16_t adr);
-    bool write_byte(uint16_t adr, const uint8_t data);
+    MFEEPROM(){};
+    void init(void)
+    {
+#if defined(ARDUINO_ARCH_RP2040)
+        EEPROM.begin(EEPROM_SIZE);
+#endif
+    }
+    uint16_t get_length(void) { return EEPROM.length(); }
+    uint8_t  read_byte(uint16_t adr) { return ((adr >= EEPROM.length()) ? 0 : EEPROM.read(adr)); }
+    bool     write_byte(uint16_t adr, const uint8_t data);
 
     template <typename T>
     bool read_block(uint16_t adr, T &t)
     {
-        if (adr + sizeof(T) > _eepromLength) return false;
+        if (adr + sizeof(T) > EEPROM.length()) return false;
         EEPROM.get(adr, t);
         return true;
     }
@@ -31,8 +34,8 @@ public:
     template <typename T>
     bool read_block(uint16_t adr, T &t, uint16_t len)
     {
-        if (adr + len > _eepromLength) return false;
-        uint8_t *ptr = (uint8_t*) &t;
+        if (adr + len > EEPROM.length()) return false;
+        uint8_t *ptr = (uint8_t *)&t;
         for (uint16_t i = 0; i < len; i++) {
             *ptr++ = EEPROM.read(adr + i);
         }
@@ -42,7 +45,7 @@ public:
     template <typename T>
     const bool write_block(uint16_t adr, const T &t)
     {
-        if (adr + sizeof(T) > _eepromLength) return false;
+        if (adr + sizeof(T) > EEPROM.length()) return false;
         EEPROM.put(adr, t);
 #if defined(ARDUINO_ARCH_RP2040)
         EEPROM.commit();
@@ -53,7 +56,7 @@ public:
     template <typename T>
     const bool write_block(uint16_t adr, const T &t, uint16_t len)
     {
-        if (adr + len > _eepromLength) return false;
+        if (adr + len > EEPROM.length()) return false;
         for (uint16_t i = 0; i < len; i++) {
             EEPROM.put(adr + i, t[i]);
         }
