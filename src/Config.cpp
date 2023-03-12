@@ -323,14 +323,26 @@ void readConfig()
             break;
 
         case kTypeEncoder:
-            params[0] = readUintFromEEPROM(&addreeprom);                             // Pin1 number
-            params[1] = readUintFromEEPROM(&addreeprom);                             // Pin2 number
-            params[2] = readUintFromEEPROM(&addreeprom);                             // type
-            Encoder::Add(params[0], params[1], params[2], &nameBuffer[addrbuffer]);  // MUST be before readNameFromEEPROM because readNameFromEEPROM returns the pointer for the NEXT Name
-            copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer); // copy the NULL terminated name to to nameBuffer and set to next free memory location
-                                                                                     //    copy_success = readEndCommandFromEEPROM(&addreeprom);       // once the nameBuffer is not required anymore uncomment this line and delete the line before
+            params[0] = readUintFromEEPROM(&addreeprom);                                        // Pin1 number
+            params[1] = readUintFromEEPROM(&addreeprom);                                        // Pin2 number
+            params[2] = readUintFromEEPROM(&addreeprom);                                        // type
+            Encoder::Add(params[0], params[1], params[2], 0xFF, 0xFF, &nameBuffer[addrbuffer]); // MUST be before readNameFromEEPROM because readNameFromEEPROM returns the pointer for the NEXT Name
+            copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer);            // copy the NULL terminated name to to nameBuffer and set to next free memory location
+                                                                                                //    copy_success = readEndCommandFromEEPROM(&addreeprom);       // once the nameBuffer is not required anymore uncomment this line and delete the line before
             break;
 
+#if MF_MUX_SUPPORT == 1
+        case kTypeEncoderMux:
+            params[0] = readUintFromEEPROM(&addreeprom);                                                  // Pin1/MuxPin1 number
+            params[1] = readUintFromEEPROM(&addreeprom);                                                  // Pin2/MuxPin2 number
+            params[2] = readUintFromEEPROM(&addreeprom);                                                  // type
+            params[3] = readUintFromEEPROM(&addreeprom);                                                  // Channel1 number
+            params[4] = readUintFromEEPROM(&addreeprom);                                                  // Channel2 number
+            Encoder::Add(params[0], params[1], params[2], params[3], params[4] & nameBuffer[addrbuffer]); // MUST be before readNameFromEEPROM because readNameFromEEPROM returns the pointer for the NEXT Name
+            copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer);                      // copy the NULL terminated name to to nameBuffer and set to next free memory location
+                                                                                                          //    copy_success = readEndCommandFromEEPROM(&addreeprom);       // once the nameBuffer is not required anymore uncomment this line and delete the line before
+            break;
+#endif
 #if MF_LCD_SUPPORT == 1
         case kTypeLcdDisplayI2C:
             params[0] = readUintFromEEPROM(&addreeprom);          // address
