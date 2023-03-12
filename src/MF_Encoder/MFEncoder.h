@@ -20,7 +20,9 @@
 #include <Arduino.h>
 
 extern "C" {
-typedef void (*encoderEvent)(uint8_t, uint8_t, const char *);
+// Reintroduce pin/ch (and remove name) once the "name removal" mod is accepted
+// typedef void (*encoderEvent)(uint8_t, uint8_t, uint8_t, const char *);
+typedef void (*encoderEvent)(uint8_t, const char *);
 };
 
 // this prevents the internal position overflow.
@@ -38,7 +40,7 @@ enum {
 
 typedef struct {
     // Detent positions in the quadrature (by value, not position)
-    bool    detents[4];
+    bool detents[4];
 
     // Bit shift to apply given the detent resolution of this encoder.
     //
@@ -54,30 +56,36 @@ public:
     MFEncoder();
     static void attachHandler(encoderEvent newHandler);
     void        attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char *name = "Encoder");
+    void        attach(uint8_t pin1, uint8_t pin2, uint8_t ch1, uint8_t ch2, uint8_t TypeEncoder, const char *name = "Encoder");
     void        update();
     // call this function every some milliseconds or by using an interrupt for handling state changes of the rotary encoder.
-    void        tick(void);
+    void tick(void);
     // retrieve the current position
-    int16_t     getPosition();
+    int16_t getPosition();
     // adjust the current position
-    void        setPosition(int16_t newPosition);
+    void setPosition(int16_t newPosition);
 
 private:
     static encoderEvent _handler;
-    uint8_t             _pin1;
-    uint8_t             _pin2;
-    bool                _initialized;
-    const char         *_name;
-    int16_t             _pos;
-    uint8_t             _TypeEncoder;
-    uint8_t             _detentCounter;
-    encoderType         _encoderType;
-    int8_t              _oldState;
-    int16_t             _position;         // Internal position (4 times _positionExt)
-    int16_t             _positionExt;      // External position
-    uint32_t            _positionTime;     // time last position change was detected
-    uint32_t            _positionTimePrev; // time previous position change was detected
-    uint32_t            _lastFastDec;
+    uint8_t             _pin1; // Direct pin (<128) or (mux pin)|0x80
+    uint8_t             _pin2; // Direct pin (<128) or (mux pin)|0x80
+    // uint8_t             _channels;  // for encoders on multiplexers: top 4 bits = ch of mux2, bottom 4 bits = ch of mux1
+    struct {
+        uint8_t _ch1 : 4; // for encoders on multiplexers: channel on mux on _pin1
+        uint8_t _ch2 : 4; // for encoders on multiplexers: channel on mux on _pin2
+    };
+    bool        _initialized;
+    const char *_name;
+    int16_t     _pos;
+    uint8_t     _TypeEncoder;
+    uint8_t     _detentCounter;
+    encoderType _encoderType;
+    int8_t      _oldState;
+    int16_t     _position;         // Internal position (4 times _positionExt)
+    int16_t     _positionExt;      // External position
+    uint32_t    _positionTime;     // time last position change was detected
+    uint32_t    _positionTimePrev; // time previous position change was detected
+    uint32_t    _lastFastDec;
 };
 
 // MFEncoder.h

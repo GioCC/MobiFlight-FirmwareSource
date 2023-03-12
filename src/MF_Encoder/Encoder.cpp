@@ -13,15 +13,19 @@ namespace Encoder
     MFEncoder *encoders[MAX_ENCODERS];
     uint8_t    encodersRegistered = 0;
 
-    void       handlerOnEncoder(uint8_t eventId, uint8_t pin, const char *name)
+    // Reintroduce pin/ch (and remove name) once the "name removal" mod is accepted
+    // void       handlerOnEncoder(uint8_t eventId, uint8_t pin, uint8_t ch, const char *name)
+    void handlerOnEncoder(uint8_t eventId, const char *name)
     {
+        // (void) pin;
+        // (void) ch;
         cmdMessenger.sendCmdStart(kEncoderChange);
         cmdMessenger.sendCmdArg(name);
         cmdMessenger.sendCmdArg(eventId);
         cmdMessenger.sendCmdEnd();
     };
 
-    void Add(uint8_t pin1, uint8_t pin2, uint8_t encoder_type, char const *name)
+    void Add(uint8_t pin1, uint8_t pin2, uint8_t ch1, uint8_t ch2, uint8_t encoder_type, char const *name)
     {
         if (encodersRegistered == MAX_ENCODERS)
             return;
@@ -31,8 +35,10 @@ namespace Encoder
             cmdMessenger.sendCmd(kStatus, F("Encoders does not fit in Memory"));
             return;
         }
+        if (ch1 < 16) pin1 |= 0x80;
+        if (ch2 < 16) pin2 |= 0x80;
         encoders[encodersRegistered] = new (allocateMemory(sizeof(MFEncoder))) MFEncoder;
-        encoders[encodersRegistered]->attach(pin1, pin2, encoder_type, name);
+        encoders[encodersRegistered]->attach(pin1, pin2, ch1, ch2, encoder_type, name);
         MFEncoder::attachHandler(handlerOnEncoder);
         encodersRegistered++;
 #ifdef DEBUG2CMDMESSENGER

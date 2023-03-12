@@ -18,6 +18,11 @@
 
 #include "MFEncoder.h"
 
+#if MF_MUX_SUPPORT == 1
+#include "MFMuxDriver.h"
+extern MFMuxDriver MUX;
+#endif
+
 // The array holds the values -1 for the entries where a position was decremented,
 // a 1 for the entries where the position was incremented
 // and 0 in all the other (no change or not valid) cases.
@@ -62,14 +67,21 @@ MFEncoder::MFEncoder()
 
 void MFEncoder::attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const char *name)
 {
+    attach(pin1 | 0x80, 0, pin2 | 0x80, 0, TypeEncoder, name);
+}
+
+void MFEncoder::attach(uint8_t pin1, uint8_t ch1, uint8_t pin2, uint8_t ch2, uint8_t TypeEncoder, const char *name)
+{
     _pos         = 0;
     _name        = name;
     _pin1        = pin1;
+    _ch1         = ch1;
     _pin2        = pin2;
+    _ch2         = ch2;
     _encoderType = encoderTypes[TypeEncoder];
 
-    pinMode(_pin1, INPUT_PULLUP);
-    pinMode(_pin2, INPUT_PULLUP);
+    pinMode(_pin1 & 0x7F, INPUT_PULLUP);
+    pinMode(_pin2 & 0x7F, INPUT_PULLUP);
     // start with position 0;
     _oldState         = 0;
     _position         = 0;
@@ -103,16 +115,20 @@ void MFEncoder::update()
         if (abs(delta) < (MF_ENC_FAST_LIMIT)) {
             // slow turn detected
             if (dir) {
-                (*_handler)(encLeft, _pin1, _name);
+                // (*_handler)(encLeft, _pin1 & 0x7F, _ch1, _name);
+                (*_handler)(encLeft, _name);
             } else {
-                (*_handler)(encRight, _pin2, _name);
+                // (*_handler)(encRight, _pin2 & 0x7F, _ch2, _name);
+                (*_handler)(encRight, _name);
             }
         } else {
             // fast turn detected
             if (dir) {
-                (*_handler)(encLeftFast, _pin1, _name);
+                // (*_handler)(encLeftFast, _pin1 & 0x7F, _ch1, _name);
+                (*_handler)(encLeftFast, _name);
             } else {
-                (*_handler)(encRightFast, _pin2, _name);
+                // (*_handler)(encRightFast, _pin2 & 0x7F, _ch2, _name);
+                (*_handler)(encRightFast, _name);
             }
         }
     }
@@ -127,12 +143,20 @@ void MFEncoder::update()
 
 void MFEncoder::tick(void)
 {
-    bool     sig1      = !digitalRead(_pin1); // to keep backwards compatibility for encoder type digitalRead must be negated
-    bool     sig2      = !digitalRead(_pin2); // to keep backwards compatibility for encoder type digitalRead must be negated
+    bool sig1;
+    bool sig2;
+#if MF_MUX_SUPPORT == 1
+    if (_pin1 & 0x80) MUX.setChannel(_ch1);
+#endif
+    sig1 = !digitalRead(_pin1); // to keep backwards compatibility for encoder type digitalRead must be negated
+#if MF_MUX_SUPPORT == 1
+    if (_pin2 & 0x80) MUX.setChannel(_ch2);
+#endif
+    sig2               = !digitalRead(_pin2); // to keep backwards compatibility for encoder type digitalRead must be negated
     int      _speed    = 0;
     uint32_t currentMs = millis();
 
-    int8_t   thisState = sig1 | (sig2 << 1);
+    int8_t thisState = sig1 | (sig2 << 1);
 
     if (currentMs - _lastFastDec > 100 && _detentCounter > 1) {
         _lastFastDec = currentMs;
