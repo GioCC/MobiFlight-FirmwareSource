@@ -8,6 +8,10 @@
 
 #include <Arduino.h>
 
+#ifdef ARDUINO_ARCH_AVR
+#include "directIO.h"
+#endif
+
 extern "C" {
 typedef void (*MuxDigInEvent)(byte, uint8_t, const char *);
 };
@@ -27,8 +31,12 @@ public:
     void    restoreChannel(void);
 
 private:
-    uint8_t _selPort[4];    // Selector pins; 0 is LSb
-    uint8_t _selPinMask[4]; // Selector pins; 0 is LSb
+#ifdef ARDUINO_ARCH_AVR
+    uint8_t _selPort[4];    // Selector pin ports; 0 is LSb
+    uint8_t _selPinMask[4]; // Selector pin masks; 0 is LSb
+#else
+    uint8_t _selPin[4]; // Selector pins; 0 is LSb
+#endif
     uint8_t _inited;
     uint8_t _channel;
     uint8_t _savedChannel;

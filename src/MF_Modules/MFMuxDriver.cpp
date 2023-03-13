@@ -7,39 +7,16 @@
 #include "mobiflight.h"
 #include "MFMuxDriver.h"
 
-static void directPinMode(uint8_t port, uint8_t pinMsk, uint8_t mode)
-{
-    volatile uint8_t *reg, *out;
-    reg = portModeRegister(port);
-    out = portOutputRegister(port);
-
-    uint8_t oldSREG = SREG;
-    cli();
-    if (mode == INPUT_PULLUP) {
-        *reg &= ~pinMsk;
-        *out |= pinMsk;
-    } else if (mode == OUTPUT) {
-        *reg |= pinMsk;
-    }
-    SREG = oldSREG;
-}
-
-static void directPinOut(uint8_t port, uint8_t pinMsk, uint8_t val)
-{
-    volatile uint8_t *out;
-    out = portOutputRegister(port);
-    uint8_t oldSREG = SREG;
-    cli();
-    (val == LOW ? (*out &= ~pinMsk) : (*out |= pinMsk));
-    SREG = oldSREG;
-}
-
 MFMuxDriver::MFMuxDriver(void)
 {
     _inited = 0;
     for (uint8_t i = 0; i < 4; i++) {
+#ifdef ARDUINO_ARCH_AVR
         _selPort[i]    = 0xFF;
         _selPinMask[i] = 0xFF;
+#else
+        _selPin[i] = 0xFF;
+#endif
     }
 }
 
@@ -47,6 +24,7 @@ MFMuxDriver::MFMuxDriver(void)
 void MFMuxDriver::
     attach(uint8_t Sel0Pin, uint8_t Sel1Pin, uint8_t Sel2Pin, uint8_t Sel3Pin)
 {
+#ifdef ARDUINO_ARCH_AVR
     _selPort[0]    = digitalPinToPort(Sel0Pin);
     _selPinMask[0] = digitalPinToBitMask(Sel0Pin);
     _selPort[1]    = digitalPinToPort(Sel1Pin);
@@ -59,7 +37,17 @@ void MFMuxDriver::
     for (uint8_t i = 0; i < 4; i++) {
         directPinMode(_selPort[i], _selPinMask[i], OUTPUT);
     }
-        
+#else
+    _selPin[0] = Sel0Pin;
+    _selPin[1] = Sel1Pin;
+    _selPin[2] = Sel2Pin;
+    _selPin[3] = Sel3Pin;
+
+    for (uint8_t i = 0; i < 4; i++) {
+        PinMode(_selPin[i], OUTPUT);
+    }
+#endif
+
     _inited = 1;
     setChannel(0);
 }
@@ -67,10 +55,16 @@ void MFMuxDriver::
 void MFMuxDriver::detach()
 {
     for (uint8_t i = 0; i < 4; i++) {
+#ifdef ARDUINO_ARCH_AVR
         if (_selPort[i] == 0xFF) continue;
         directPinMode(_selPort[i], _selPinMask[i], INPUT_PULLUP);
         _selPort[i]    = 0xFF;
         _selPinMask[i] = 0xFF;
+#else
+        if (_selPin[i] == 0xFF) continue;
+        pinMode(_selPin[i], INPUT_PULLUP);
+        _selPin[i] = 0xFF;
+#endif
     }
     _inited = 0;
 }
@@ -89,12 +83,18 @@ void MFMuxDriver::setChannel(uint8_t value)
     // However, this effect might have to be taken into account.
 
     _channel = value;
-    directPinOut(_selPort[0], _selPinMask[0], (value & 0x01)!=0);
-    directPinOut(_selPort[1], _selPinMask[1], (value & 0x02)!=0);
-    directPinOut(_selPort[2], _selPinMask[2], (value & 0x04)!=0);
-    directPinOut(_selPort[3], _selPinMask[3], (value & 0x08)!=0);
+#ifdef ARDUINO_ARCH_AVR
+    directPinOut(_selPort[0], _selPinMask[0], (value & 0x01) != 0);
+    directPinOut(_selPort[1], _selPinMask[1], (value & 0x02) != 0);
+    directPinOut(_selPort[2], _selPinMask[2], (value & 0x04) != 0);
+    directPinOut(_selPort[3], _selPinMask[3], (value & 0x08) != 0);
+#else
+    digitalWrite(_selPin[0], (value & 0x01) != 0);
+    digitalWrite(_selPin[1], (value & 0x02) != 0);
+    digitalWrite(_selPin[2], (value & 0x04) != 0);
+    digitalWrite(_selPin[3], (value & 0x08) != 0);
+#endif
 }
-
 
 // Returns currently selected channel
 uint8_t MFMuxDriver::getChannel(void)
