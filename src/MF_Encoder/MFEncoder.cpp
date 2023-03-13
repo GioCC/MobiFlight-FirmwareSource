@@ -17,6 +17,7 @@
 // -----
 
 #include "MFEncoder.h"
+#include "directIO.h"
 
 // The array holds the values -1 for the entries where a position was decremented,
 // a 1 for the entries where the position was incremented
@@ -67,9 +68,17 @@ void MFEncoder::attach(uint8_t pin1, uint8_t pin2, uint8_t TypeEncoder, const ch
     _pin1        = pin1;
     _pin2        = pin2;
     _encoderType = encoderTypes[TypeEncoder];
-
+#ifdef ARDUINO_ARCH_AVR
+    _pin1Port = digitalPinToPort(pin1);
+    _pin1Mask = digitalPinToBitMask(pin1);
+    _pin2Port = digitalPinToPort(pin2);
+    _pin2Mask = digitalPinToBitMask(pin2);
+    directPinMode(_pin1Port, _pin1Mask, INPUT_PULLUP);
+    directPinMode(_pin2Port, _pin2Mask, INPUT_PULLUP);
+#else
     pinMode(_pin1, INPUT_PULLUP);
     pinMode(_pin2, INPUT_PULLUP);
+#endif
     // start with position 0;
     _oldState         = 0;
     _position         = 0;
@@ -127,12 +136,19 @@ void MFEncoder::update()
 
 void MFEncoder::tick(void)
 {
-    bool     sig1      = !digitalRead(_pin1); // to keep backwards compatibility for encoder type digitalRead must be negated
-    bool     sig2      = !digitalRead(_pin2); // to keep backwards compatibility for encoder type digitalRead must be negated
+    bool sig1;
+    bool sig2;
+#ifdef ARDUINO_ARCH_AVR
+    sig1 = directPinin(_pin1Port, _pin1Mask);
+    sig2 = directPinin(_pin2Port, _pin2Mask);
+#else
+    sig1 = !digitalRead(_pin1); // to keep backwards compatibility for encoder type digitalRead must be negated
+    sig2 = !digitalRead(_pin2); // to keep backwards compatibility for encoder type digitalRead must be negated
+#endif
     int      _speed    = 0;
     uint32_t currentMs = millis();
 
-    int8_t   thisState = sig1 | (sig2 << 1);
+    int8_t thisState = sig1 | (sig2 << 1);
 
     if (currentMs - _lastFastDec > 100 && _detentCounter > 1) {
         _lastFastDec = currentMs;
