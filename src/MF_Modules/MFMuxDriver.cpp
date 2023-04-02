@@ -84,10 +84,18 @@ void MFMuxDriver::setChannel(uint8_t value)
 
     _channel = value;
 #ifdef ARDUINO_ARCH_AVR
-    directPinOut(_selPort[0], _selPinMask[0], (value & 0x01) != 0);
-    directPinOut(_selPort[1], _selPinMask[1], (value & 0x02) != 0);
-    directPinOut(_selPort[2], _selPinMask[2], (value & 0x04) != 0);
-    directPinOut(_selPort[3], _selPinMask[3], (value & 0x08) != 0);
+    volatile uint8_t *out;
+    uint8_t           oldSREG = SREG;
+    cli();
+    out = portOutputRegister(_selPort[0]);
+    ((value & 0x01) ? (*out &= ~_selPinMask[0]) : (*out |= _selPinMask[0]));
+    out = portOutputRegister(_selPort[1]);
+    ((value & 0x02) ? (*out &= ~_selPinMask[1]) : (*out |= _selPinMask[1]));
+    out = portOutputRegister(_selPort[2]);
+    ((value & 0x04) ? (*out &= ~_selPinMask[2]) : (*out |= _selPinMask[2]));
+    out = portOutputRegister(_selPort[3]);
+    ((value & 0x08) ? (*out &= ~_selPinMask[3]) : (*out |= _selPinMask[3]));
+    SREG = oldSREG;
 #else
     digitalWrite(_selPin[0], (value & 0x01) != 0);
     digitalWrite(_selPin[1], (value & 0x02) != 0);
