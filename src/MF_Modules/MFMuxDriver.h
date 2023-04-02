@@ -24,11 +24,14 @@ public:
     void detach();
 
     // void setChannelOpt(uint8_t mode);
-    void    setChannel(uint8_t value);
-    uint8_t getChannel(void);
-    uint8_t nextChannel(void);
-    void    saveChannel(void); // Not reentrant - one level only
-    void    restoreChannel(void);
+    bool readChannel(uint8_t value, uint8_t pin = 0xFF);
+    void setChannel(uint8_t value) { readChannel(value); }
+
+    // Obsolete - not compatible with atomic access
+    // uint8_t getChannel(void);
+    // uint8_t nextChannel(void);
+    // void    saveChannel(void); // Not reentrant - one level only
+    // void    restoreChannel(void);
 
 private:
 #ifdef ARDUINO_ARCH_AVR
