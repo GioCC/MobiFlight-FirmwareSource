@@ -146,13 +146,20 @@ void MFEncoder::tick(void)
     bool sig1;
     bool sig2;
 #if MF_MUX_SUPPORT == 1
-    if (_pin1 & 0x80) MUX.setChannel(_ch1);
+    if (_pin1 & 0x80) {
+        sig1 = !MUX.readChannel(_ch1, _pin1); // to keep backwards compatibility for encoder type digitalRead must be negated
+    } else
 #endif
-    sig1 = !digitalRead(_pin1); // to keep backwards compatibility for encoder type digitalRead must be negated
+        sig1 = !digitalRead(_pin1); // to keep backwards compatibility for encoder type digitalRead must be negated
+
 #if MF_MUX_SUPPORT == 1
     if (_pin2 & 0x80) MUX.setChannel(_ch2);
+    if (_pin2 & 0x80) {
+        sig2 = !MUX.readChannel(_ch2, _pin2); // to keep backwards compatibility for encoder type digitalRead must be negated
+    } else
 #endif
-    sig2               = !digitalRead(_pin2); // to keep backwards compatibility for encoder type digitalRead must be negated
+        sig2 = !digitalRead(_pin2); // to keep backwards compatibility for encoder type digitalRead must be negated
+
     int      _speed    = 0;
     uint32_t currentMs = millis();
 
