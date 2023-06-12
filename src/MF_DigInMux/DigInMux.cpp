@@ -30,7 +30,7 @@ namespace DigInMux
 
         if (MFI) {
             MFI->attach(dataPin, (nRegs == 1), name);
-            MFI->setLazyMode(mode == MFDigInMux::MuxModeLazy);
+            // MFI->setLazyMode(mode == MFDigInMux::MuxModeLazy);
             MFDigInMux::setMux(&MUX);
             MFDigInMux::attachHandler(OnChange);
 #ifdef DEBUG2CMDMESSENGER
