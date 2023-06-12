@@ -25,54 +25,77 @@ MFStepper::MFStepper()
 
 void MFStepper::attach(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4, uint8_t btnPin5, uint8_t mode, int8_t backlash, bool deactivateOutput)
 {
-    if (!FitInMemory(sizeof(AccelStepper))) {
-        // Error Message to Connector
-        cmdMessenger.sendCmd(kStatus, F("MFStepper does not fit in Memory"));
-        return;
-    }
+    // if (!FitInMemory(sizeof(AccelStepper))) {
+    //     // Error Message to Connector
+    //     cmdMessenger.sendCmd(kStatus, F("MFStepper does not fit in Memory"));
+    //     return;
+    // }
     uint16_t maxSpeed = 0;
     uint16_t Accel    = 0;
 
-    switch (mode) {
-    case FULL4WIRE:
-        maxSpeed = STEPPER_SPEED;
-        Accel    = STEPPER_ACCEL;
-        if (pin1 == pin3 && pin2 == pin4) // for backwards compatibility
-            _stepper = new (allocateMemory(sizeof(AccelStepper))) AccelStepper(AccelStepper::DRIVER, pin1, pin2);
-        else
-            _stepper = new (allocateMemory(sizeof(AccelStepper))) AccelStepper(AccelStepper::FULL4WIRE, pin4, pin2, pin1, pin3);
-        break;
-    case HALF4WIRE:
-        _stepper = new (allocateMemory(sizeof(AccelStepper))) AccelStepper(AccelStepper::HALF4WIRE, pin4, pin2, pin1, pin3);
-        maxSpeed = STEPPER_SPEED;
-        Accel    = STEPPER_ACCEL;
-        break;
-    case DRIVER:
-        _stepper = new (allocateMemory(sizeof(AccelStepper))) AccelStepper(AccelStepper::DRIVER, pin1, pin2);
-        maxSpeed = STEPPER_SPEED;
-        Accel    = STEPPER_ACCEL;
-        break;
-    default:
-        _initialized = false;
-        return;
-        break;
+    //=================================================
+    MFAccelStepper *AS;
+
+    Stowage.AddItem(&AS);
+
+    if (AS) {
+        _stepper = static_cast<AccelStepper *>(AS);
+        // AS->attach(pin1, pin2, pin3, pin4, btnPin1, mode, backlash, deactivateOutput);
+
+        // if (btnPin1 > 0) {
+        //     // this triggers the auto reset if we need to reset
+        //     AS->reset(ONRESET_DEFAULT);
+        // }
+
+        // Now replace the dummy object with the real one
+        switch (mode) {
+        case FULL4WIRE:
+            maxSpeed = STEPPER_SPEED;
+            Accel    = STEPPER_ACCEL;
+            if (pin1 == pin3 && pin2 == pin4) {
+                // for backwards compatibility
+                new (_stepper) AccelStepper(AccelStepper::DRIVER, pin1, pin2);
+            } else {
+                new (_stepper) AccelStepper(AccelStepper::FULL4WIRE, pin4, pin2, pin1, pin3);
+            }
+            break;
+        case HALF4WIRE:
+            new (_stepper) AccelStepper(AccelStepper::HALF4WIRE, pin4, pin2, pin1, pin3);
+            maxSpeed = STEPPER_SPEED;
+            Accel    = STEPPER_ACCEL;
+            break;
+        case DRIVER:
+            new (_stepper) AccelStepper(AccelStepper::DRIVER, pin1, pin2);
+            maxSpeed = STEPPER_SPEED;
+            Accel    = STEPPER_ACCEL;
+            break;
+        default:
+            _initialized = false;
+            return;
+            break;
+        }
+
+        _stepper->setMaxSpeed(maxSpeed);
+        _stepper->setAcceleration(Accel);
+        _zeroPin      = btnPin5;
+        _zeroPinState = HIGH;
+
+        if (_zeroPin) {
+            pinMode(_zeroPin, INPUT_PULLUP);
+        }
+
+        _backlash         = backlash;
+        _deactivateOutput = deactivateOutput;
+        _initialized      = true;
+        _resetting        = false;
+        _isStopped        = true;
+        _inMove           = MOVE_CW;
+
+#ifdef DEBUG2CMDMESSENGER
+    } else {
+        cmdMessenger.sendCmd(kDebug, F("AccelStepper: Memory full"));
+#endif
     }
-
-    _stepper->setMaxSpeed(maxSpeed);
-    _stepper->setAcceleration(Accel);
-    _zeroPin      = btnPin5;
-    _zeroPinState = HIGH;
-
-    if (_zeroPin) {
-        pinMode(_zeroPin, INPUT_PULLUP);
-    }
-
-    _backlash         = backlash;
-    _deactivateOutput = deactivateOutput;
-    _initialized      = true;
-    _resetting        = false;
-    _isStopped        = true;
-    _inMove           = MOVE_CW;
 }
 
 void MFStepper::detach()

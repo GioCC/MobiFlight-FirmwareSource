@@ -9,7 +9,7 @@
 
 analogEventHandler MFAnalog::_handler = NULL;
 
-MFAnalog::MFAnalog(uint8_t pin, const char *name, uint8_t sensitivity)
+void MFAnalog::attach(uint8_t pin, uint8_t sensitivity, const char *name)
 {
     _sensitivity = sensitivity;
     _pin         = pin;
@@ -17,7 +17,7 @@ MFAnalog::MFAnalog(uint8_t pin, const char *name, uint8_t sensitivity)
     pinMode(_pin, INPUT_PULLUP); // set pin to input. Could use OUTPUT for analog, but shows the intention :-)
     // Fill averaging buffers with initial reading
     for (uint8_t i = 0; i < ADC_MAX_AVERAGE; i++) {
-        readBuffer();
+        updateAverage();
     }
     // and set initial value from buffers
     _lastValue = ADC_Average_Total >> ADC_MAX_AVERAGE_LOG2;

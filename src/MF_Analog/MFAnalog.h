@@ -27,6 +27,7 @@ public:
     static void              attachHandler(analogEventHandler newHandler) { _handler = newHandler; }
 
     MFAnalog(void){};
+    void init(uint8_t pin, const char *name, uint8_t sensitivity);
 
     void attach(uint8_t pin, uint8_t sensitivity = 2, const char *name = "Analog Input");
     void detach(void){}; // Stub required for emulated polymorphism

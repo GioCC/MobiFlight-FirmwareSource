@@ -35,7 +35,7 @@ namespace Servos
         int      value  = cmdMessenger.readInt16Arg();
         MFS             = (MFServo *)(Stowage.getNth((uint8_t)nServo, kTypeServo));
         if (MFS) {
-            MFS->setval(value);
+            MFS->moveTo(value);
             setLastCommandMillis();
         }
     }

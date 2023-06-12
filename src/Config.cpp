@@ -5,6 +5,7 @@
 //
 
 #include <Arduino.h>
+#include <ArduinoUniqueID.h>
 #include "mobiflight.h"
 #include "config.h"
 #include "MFEEPROM.h"
@@ -20,12 +21,11 @@ MFEEPROM MFeeprom;
 uint8_t     stowBuf[MEMLEN_OBJ_BUFFER];
 StowManager Stowage(stowBuf, MEMLEN_OBJ_BUFFER);
 
-const uint8_t  EEP_OFFSET_NAME   = 0;
-const uint8_t  MEM_LEN_NAME      = 48;
-const uint8_t  EEP_OFFSET_SERIAL = EEP_OFFSET_NAME + MEM_LEN_NAME;
-const uint8_t  MEM_LEN_SERIAL    = 11;
-const uint8_t  EEP_OFFSET_CONFIG = EEP_OFFSET_NAME + MEM_LEN_NAME + MEM_LEN_SERIAL;
-const uint16_t EEP_LEN_CONFIG    = MEMLEN_CONFIG_MAX; // EEPROM_SIZE - EEP_OFFSET_CONFIG;
+const uint8_t MEM_OFFSET_NAME   = 0;
+const uint8_t MEM_LEN_NAME      = 48;
+const uint8_t MEM_OFFSET_SERIAL = MEM_OFFSET_NAME + MEM_LEN_NAME;
+const uint8_t MEM_LEN_SERIAL    = 3 + UniqueIDsize * 2 + 1;
+const uint8_t MEM_OFFSET_CONFIG = MEM_OFFSET_NAME + MEM_LEN_NAME + MEM_LEN_SERIAL;
 
 struct {
     boolean    activated;
@@ -50,9 +50,9 @@ static void activateConfig(void);
 void resetConfig(void)
 {
     wipeDevices();
-    config.length        = 0;
-    config.activated     = false;
-    config.nameBuffer[0] = '\0';
+    config.length    = 0;
+    config.activated = false;
+    // config.nameBuffer[0] = '\0';
 }
 
 // ************************************************************
@@ -62,11 +62,11 @@ void resetConfig(void)
 bool readConfigLength(void)
 {
     char     temp       = 0;
-    uint16_t addreeprom = EEP_OFFSET_CONFIG;
+    uint16_t addreeprom = MEM_OFFSET_CONFIG;
     uint16_t length     = MFeeprom.get_length();
     config.length       = 0;
     do {
-        temp = MFeeprom.read_char(addreeprom++);
+        temp = MFeeprom.read_byte(addreeprom++);
         config.length++;
         if (addreeprom > length)                                      // abort if EEPROM size will be exceeded
         {
@@ -99,8 +99,8 @@ void OnSetConfig()
     char   *cfg    = cmdMessenger.readStringArg();
     uint8_t cfgLen = strlen(cfg);
 
-    if (config.length + cfgLen + 1 < EEP_LEN_CONFIG) {
-        MFeeprom.write_block(EEP_OFFSET_CONFIG + config.length, cfg, cfgLen + 1);
+    if (config.length + cfgLen + 1 < MEM_LEN_NAME) {
+        MFeeprom.write_block(MEM_OFFSET_CONFIG + config.length, cfg, cfgLen + 1);
         config.length += cfgLen;
         cmdMessenger.sendCmd(kDebug, config.length);
     } else
@@ -155,7 +155,7 @@ uint8_t readUintFromEEPROM(void)
     char    params[4] = {0}; // max 3 (255) digits, NUL terminated
     uint8_t counter   = 0;
     do {
-        params[counter++] = MFeeprom.read_char();                     // read character from eeprom and locate next buffer and eeprom location
+        params[counter++] = MFeeprom.read_byte();                     // read character from eeprom and locate next buffer and eeprom location
     } while (params[counter - 1] != '.' && counter < sizeof(params)); // reads until limiter '.' and for safety reason not more then size of params[]
     params[counter - 1] = 0x00;                                       // replace '.' by NULL to terminate the string
     return atoi(params);
@@ -171,7 +171,7 @@ bool readRecordTailFromEEPROM(char **dest = NULL, char *cap = (char *)0xFFFF)
 {
     char temp = 0;
     do {
-        temp = MFeeprom.read_char(); // read the first character
+        temp = MFeeprom.read_byte(); // read the first character
         if (dest) {
             *((*dest)++) = temp;
             // TODO: this function should be buffer-agnostic -
@@ -199,7 +199,7 @@ void readConfig()
 {
     if (config.length == 0) // do nothing if no config is available
         return;
-    // uint16_t bufferIdx   = 0;                   // and start with first memory location from nameBuffer
+    // uint16_t bufferIdx   = 0;                                      // and start with first memory location from nameBuffer
     char *nameBufPtr  = config.nameBuffer;                      // Current position in name buffer
     char *topOfBuf    = config.nameBuffer + MEMLEN_NAME_BUFFER; // Max available position (+ 1) in name buffer
     char  params[6]   = "";
@@ -207,7 +207,7 @@ void readConfig()
     bool  copySuccess = true;                                   // will be set to false if copying input names to nameBuffer exceeds array dimensions
                                                                 // (no longer required when pins will be transferred to the UI instead of names)
 
-    resetEEPROMpointer(EEP_OFFSET_CONFIG);                      // Start from first memory location where config is saved in EEPROM
+    resetEEPROMpointer(MEM_OFFSET_CONFIG);                      // Start from first memory location where config is saved in EEPROM
 
     devCode = readUintFromEEPROM();                             // read the first value from EEPROM, it's a device definition
     if (devCode == 0)                                           // just to be sure, config.length should also be 0
@@ -384,9 +384,9 @@ void OnGetConfig()
 {
     setLastCommandMillis();
     cmdMessenger.sendCmdStart(kInfo);
-    cmdMessenger.sendCmdArg(MFeeprom.read_char(EEP_OFFSET_CONFIG));
+    cmdMessenger.sendCmdArg(MFeeprom.read_byte(MEM_OFFSET_CONFIG));
     for (uint16_t i = 1; i < config.length; i++) {
-        cmdMessenger.sendArg(MFeeprom.read_char(EEP_OFFSET_CONFIG + i));
+        cmdMessenger.sendArg(MFeeprom.read_byte(MEM_OFFSET_CONFIG + i));
     }
     cmdMessenger.sendCmdEnd();
 }
@@ -418,15 +418,15 @@ bool getStatusConfig()
 void generateRandomSerial()
 {
     randomSeed(millis());
-    sprintf(serial, "SN-%03x-%03x", (unsigned int)random(4095), (unsigned int)random(4095));
-    MFeeprom.write_block(MEM_OFFSET_SERIAL, serial, MEM_LEN_SERIAL);
+    sprintf(config.serial, "SN-%03x-%03x", (unsigned int)random(4095), (unsigned int)random(4095));
+    MFeeprom.write_block(MEM_OFFSET_SERIAL, config.serial, MEM_LEN_SERIAL);
 }
 
 void generateUniqueSerial()
 {
-    sprintf(serial, "SN-");
+    sprintf(config.serial, "SN-");
     for (size_t i = 0; i < UniqueIDsize; i++) {
-        sprintf(&serial[3 + i * 2], "%02X", UniqueID[i]);
+        sprintf(&config.serial[3 + i * 2], "%02X", UniqueID[i]);
     }
 }
 
@@ -441,7 +441,7 @@ void generateSerial(bool force)
 
     // A serial number according old style is already generated and saved to the eeprom
     if (MFeeprom.read_byte(MEM_OFFSET_SERIAL) == 'S' && MFeeprom.read_byte(MEM_OFFSET_SERIAL + 1) == 'N') {
-        MFeeprom.read_block(MEM_OFFSET_SERIAL, serial, MEM_LEN_SERIAL);
+        MFeeprom.read_block(MEM_OFFSET_SERIAL, config.serial, MEM_LEN_SERIAL);
         return;
     }
 
@@ -481,18 +481,18 @@ void OnGenNewSerial()
 void _storeName()
 {
     char prefix[] = "#";
-    MFeeprom.write_block(EEP_OFFSET_NAME, prefix, 1);
-    MFeeprom.write_block(EEP_OFFSET_NAME + 1, config.name, MEM_LEN_NAME - 1);
+    MFeeprom.write_block(MEM_OFFSET_NAME, prefix, 1);
+    MFeeprom.write_block(MEM_OFFSET_NAME + 1, config.name, MEM_LEN_NAME - 1);
 }
 
 void restoreName()
 {
     char testHasName[1] = "";
-    MFeeprom.read_block(EEP_OFFSET_NAME, testHasName, 1);
+    MFeeprom.read_block(MEM_OFFSET_NAME, testHasName, 1);
     if (testHasName[0] != '#')
         return;
 
-    MFeeprom.read_block(EEP_OFFSET_NAME + 1, config.name, MEM_LEN_NAME - 1);
+    MFeeprom.read_block(MEM_OFFSET_NAME + 1, config.name, MEM_LEN_NAME - 1);
 }
 
 void OnSetName()

@@ -7,10 +7,33 @@
 #include "MFServo.h"
 #include "mobiflight.h"
 
-MFServo::MFServo() : _servo() 
-{}
+MFServo::MFServo()
+    : _servo(),
+      _pin(0xFF), _initialized(false), _targetPos(0), _currentPos(0), speed(0)
+{
+    setExternalRange(0, 180);
+    setInternalRange(0, 180);
+}
 
 void MFServo::attach(uint8_t pin, bool enable)
+{
+    _initialized = false;
+    _targetPos   = 0;
+    _currentPos  = 0;
+    setExternalRange(0, 180);
+    setInternalRange(0, 180);
+    _pin = pin;
+}
+
+void MFServo::detach()
+{
+    if (_initialized) {
+        _servo.detach();
+        _initialized = false;
+    }
+}
+
+void MFServo::moveTo(int absolute)
 {
     int newValue = map(absolute, _mapRange[0], _mapRange[1], _mapRange[2], _mapRange[3]);
     if (_targetPos != newValue) {
@@ -40,18 +63,6 @@ void MFServo::update()
         _currentPos++;
 
     _servo.write(_currentPos);
-}
-
-void MFServo::setval(int absolute)
-{
-    int newValue = map(absolute, _mapRange[0], _mapRange[1], _mapRange[2], _mapRange[3]);
-    if (_targetPos != newValue) {
-        _targetPos = newValue;
-        if (!_initialized) {
-            _servo.attach(_pin);
-            _initialized = true;
-        }
-    }
 }
 
 void MFServo::setExternalRange(int min, int max)

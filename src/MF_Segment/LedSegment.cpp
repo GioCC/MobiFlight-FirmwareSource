@@ -37,7 +37,9 @@ namespace LedSegment
         int         module     = cmdMessenger.readInt16Arg();
         int         subModule  = cmdMessenger.readInt16Arg();
         int         brightness = cmdMessenger.readInt16Arg();
-        MFS                    = (MFSegments *)(Stowage.getNth((uint8_t)module, kTypeLedSegment));
+
+        // MFS = (MFSegments *)(Stowage.getNth((uint8_t)module, kTypeLedSegment));
+        MFS = reinterpret_cast<MFSegments *>(Stowage.getNth((uint8_t)module, kTypeLedSegment));
         if (MFS) {
             MFS->setBrightness(subModule, brightness);
             setLastCommandMillis();
@@ -57,8 +59,8 @@ namespace LedSegment
         char       *value     = cmdMessenger.readStringArg();
         uint8_t     points    = (uint8_t)cmdMessenger.readInt16Arg();
         uint8_t     mask      = (uint8_t)cmdMessenger.readInt16Arg();
-        // MFS = static_cast<MFSegments *>(Stowage.getNth(module, kTypeLedSegment));
-        MFS = (MFSegments *)(Stowage.getNth((uint8_t)module, kTypeLedSegment));
+        // MFS = (MFSegments *)(Stowage.getNth((uint8_t)module, kTypeLedSegment));
+        MFS = reinterpret_cast<MFSegments *>(Stowage.getNth(module, kTypeLedSegment));
         if (MFS) {
             MFS->setval(subModule, value, points, mask);
             setLastCommandMillis();

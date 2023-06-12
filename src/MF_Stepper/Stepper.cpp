@@ -10,9 +10,6 @@
 
 namespace Stepper
 {
-    MFStepper *steppers[MAX_STEPPERS];
-    uint8_t    steppersRegistered = 0;
-
     DEFINE_VT_STUBS(MFStepper); // see IODevice.h
 
     void Add(uint8_t pin1, uint8_t pin2, uint8_t pin3, uint8_t pin4, uint8_t btnPin1, uint8_t mode, int8_t backlash, bool deactivateOutput)
@@ -62,10 +59,11 @@ namespace Stepper
 
     void Clear()
     {
-        for (uint8_t i = 0; i < steppersRegistered; i++) {
-            steppers[i]->detach();
+        MFStepper *MFS;
+        Stowage.reset();
+        while (nullptr != (MFS = reinterpret_cast<MFStepper *>(Stowage.getNext(kTypeStepper)))) {
+            MFS->detach();
         }
-        steppersRegistered = 0;
 #ifdef DEBUG2CMDMESSENGER
         cmdMessenger.sendCmd(kDebug, F("Cleared steppers"));
 #endif
@@ -73,58 +71,71 @@ namespace Stepper
 
     void OnSet()
     {
-        uint8_t stepper = (uint8_t)cmdMessenger.readInt16Arg();
-        long    newPos  = cmdMessenger.readInt32Arg();
+        MFStepper *MFS;
+        uint8_t    index  = (uint8_t)cmdMessenger.readInt16Arg();
+        long       newPos = cmdMessenger.readInt32Arg();
 
-        if (stepper >= steppersRegistered)
-            return;
-        steppers[stepper]->moveTo(newPos);
-        setLastCommandMillis();
+        MFS = reinterpret_cast<MFStepper *>(Stowage.getNth(index, kTypeStepper));
+        if (MFS) {
+            MFS->moveTo(newPos);
+            setLastCommandMillis();
+        }
     }
 
     void OnReset()
     {
-        uint8_t stepper = (uint8_t)cmdMessenger.readInt16Arg();
+        MFStepper *MFS;
+        uint8_t    index = (uint8_t)cmdMessenger.readInt16Arg();
 
-        if (stepper >= steppersRegistered)
-            return;
-        steppers[stepper]->reset();
-        setLastCommandMillis();
+        MFS = reinterpret_cast<MFStepper *>(Stowage.getNth(index, kTypeStepper));
+        if (MFS) {
+            MFS->reset();
+            setLastCommandMillis();
+        }
     }
 
     void OnSetZero()
     {
-        uint8_t stepper = (uint8_t)cmdMessenger.readInt16Arg();
+        MFStepper *MFS;
+        uint8_t    index = (uint8_t)cmdMessenger.readInt16Arg();
 
-        if (stepper >= steppersRegistered)
-            return;
-        steppers[stepper]->setZero();
-        setLastCommandMillis();
+        MFS = reinterpret_cast<MFStepper *>(Stowage.getNth(index, kTypeStepper));
+        if (MFS) {
+            MFS->setZero();
+            setLastCommandMillis();
+        }
     }
 
     void OnSetSpeedAccel()
     {
-        uint8_t  stepper  = (uint8_t)cmdMessenger.readInt16Arg();
-        uint16_t maxSpeed = cmdMessenger.readInt16Arg();
-        uint16_t maxAccel = cmdMessenger.readInt16Arg();
+        MFStepper *MFS;
+        uint8_t    index    = (uint8_t)cmdMessenger.readInt16Arg();
+        uint16_t   maxSpeed = cmdMessenger.readInt16Arg();
+        uint16_t   maxAccel = cmdMessenger.readInt16Arg();
 
-        if (stepper >= steppersRegistered)
-            return;
-        steppers[stepper]->setMaxSpeed(maxSpeed);
-        steppers[stepper]->setAcceleration(maxAccel);
+        MFS = reinterpret_cast<MFStepper *>(Stowage.getNth(index, kTypeStepper));
+        if (MFS) {
+            MFS->setMaxSpeed(maxSpeed);
+            MFS->setAcceleration(maxAccel);
+            // setLastCommandMillis();
+        }
     }
 
     void Update()
     {
-        for (uint8_t i = 0; i < steppersRegistered; i++) {
-            steppers[i]->update();
+        MFStepper *MFS;
+        Stowage.reset();
+        while (nullptr != (MFS = reinterpret_cast<MFStepper *>(Stowage.getNext(kTypeStepper)))) {
+            MFS->update();
         }
     }
 
     void PowerSave(bool state)
     {
-        for (uint8_t i = 0; i < steppersRegistered; ++i) {
-            steppers[i]->powerSavingMode(state);
+        MFStepper *MFS;
+        Stowage.reset();
+        while (nullptr != (MFS = reinterpret_cast<MFStepper *>(Stowage.getNext(kTypeStepper)))) {
+            MFS->powerSave(state);
         }
     }
 
