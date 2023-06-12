@@ -7,7 +7,7 @@
 #include <Arduino.h>
 #include "MFAnalog.h"
 
-analogEvent MFAnalog::_handler = NULL;
+analogEventHandler MFAnalog::_handler = NULL;
 
 MFAnalog::MFAnalog(uint8_t pin, const char *name, uint8_t sensitivity)
 {
