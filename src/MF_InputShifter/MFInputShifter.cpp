@@ -56,8 +56,8 @@ void MFInputShifter::poll(uint8_t doTrigger)
 
         // If an input changed on the current module from the last time it was read
         // then hand it off to figure out which bits specifically changed.
-        if (doTrigger && (currentState != _lastState[module])) {
-            if (doTrigger) detectChanges(_lastState[module], currentState, module);
+        if (doTrigger) {
+            if (detectChanges(_lastState[module], currentState, module)) _lastState[module] = currentState;
         }
         _lastState[module] = currentState;
     }
@@ -67,9 +67,10 @@ void MFInputShifter::poll(uint8_t doTrigger)
 
 // Detects changes between the current state and the previously saved state
 // of a byte's worth of input.
-void MFInputShifter::detectChanges(uint8_t lastState, uint8_t currentState, uint8_t module)
+bool MFInputShifter::detectChanges(uint8_t lastState, uint8_t currentState, uint8_t module)
 {
     uint8_t diff = lastState ^ currentState;
+    if (diff == 0) return false;
     for (uint8_t i = 0; i < 8; i++) {
         // If last and current input state for the bit are different
         // then the input changed and the handler for the bit needs to fire
@@ -83,6 +84,7 @@ void MFInputShifter::detectChanges(uint8_t lastState, uint8_t currentState, uint
         diff >>= 1;
         currentState >>= 1;
     }
+    return true;
 }
 
 void MFInputShifter::reset(uint8_t action)

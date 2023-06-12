@@ -88,16 +88,16 @@ void MFDigInMux::poll(bool doTrigger)
     }
     // _MUX->restoreChannel(); // tidy up
 
-    if (_lastState != currentState) {
-        if (doTrigger) detectChanges(_lastState, currentState);
+    if (doTrigger) {
+        if (detectChanges(_lastState, currentState)) _lastState = currentState;
     }
     _lastState = currentState;
 }
 
 // Detects changes between the current state and the previously saved state
-void MFDigInMux::detectChanges(uint16_t lastState, uint16_t currentState)
+bool MFDigInMux::detectChanges(uint16_t lastState, uint16_t currentState)
 {
-    if (!_MUX) return;
+    if (!_MUX || (lastState == currentState)) return false;
     uint8_t  selMax = (bitRead(_flags, MUX_HALFSIZE) ? 8 : 16);
     uint16_t diff   = lastState ^ currentState;
     for (uint8_t i = 0; i < selMax; i++) {
@@ -107,6 +107,7 @@ void MFDigInMux::detectChanges(uint16_t lastState, uint16_t currentState)
         diff >>= 1;
         currentState >>= 1;
     }
+    return true;
 }
 
 // Clears the internal state

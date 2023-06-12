@@ -54,8 +54,8 @@ private:
     uint8_t     _flags;
     uint16_t    _lastState;
 
-    void poll(bool doTrigger);
-    void detectChanges(uint16_t lastState, uint16_t currentState);
+    void poll(bool detect);
+    bool detectChanges(uint16_t lastState, uint16_t currentState);
     void trigger(uint8_t channel, bool state);
 };
 // MFDigInMux.h
