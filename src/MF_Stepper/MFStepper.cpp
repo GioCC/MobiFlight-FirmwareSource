@@ -94,7 +94,7 @@ void MFStepper::moveTo(long newPosition)
             _inMove = MOVE_CCW;
         if (_inMove == MOVE_CCW && newPosition > currentPosition && newPosition > _targetPos)
             _inMove = MOVE_CW;
-        
+
         _stepper->moveTo(newPosition + _backlash * _inMove);
         _targetPos = newPosition;
     }
@@ -140,8 +140,10 @@ void MFStepper::update()
     }
 }
 
-void MFStepper::reset()
+void MFStepper::reset(uint8_t action)
 {
+    if (action != ONRESET_DEFAULT)
+        return;
     // we are not a auto reset stepper if this pin is 0
     if (_zeroPin == 0)
         return;
@@ -167,7 +169,7 @@ void MFStepper::setAcceleration(uint16_t acceleration)
     _stepper->setAcceleration(acceleration);
 }
 
-void MFStepper::powerSavingMode(bool state)
+void MFStepper::powerSave(bool state)
 {
     if (state)
         _stepper->disableOutputs();

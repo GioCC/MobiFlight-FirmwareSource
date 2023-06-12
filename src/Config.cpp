@@ -68,7 +68,7 @@ bool readConfigLength(void)
     do {
         temp = MFeeprom.read_char(addreeprom++);
         config.length++;
-        if (addreeprom > length) // abort if EEPROM size will be exceeded
+        if (addreeprom > length)                                      // abort if EEPROM size will be exceeded
         {
             cmdMessenger.sendCmd(kDebug, F("Loading config failed")); // text or "-1" like config upload?
             return false;
@@ -178,9 +178,9 @@ bool readRecordTailFromEEPROM(char **dest = NULL, char *cap = (char *)0xFFFF)
             //  the specific constant for buffer size should not be hardcoded!
             if (*dest >= cap) break; // nameBuffer full: stop copying
         }
-    } while (temp != ':'); // reads until limiter ':' and locates the next free buffer position
+    } while (temp != ':');           // reads until limiter ':' and locates the next free buffer position
     if (dest) {
-        *((*dest) - 1) = 0x00; // replace ':' by NULL, terminates the string
+        *((*dest) - 1) = 0x00;       // replace ':' by NULL, terminates the string
     }
     return (*dest <= cap);
 }
@@ -203,14 +203,14 @@ void readConfig()
     char *nameBufPtr  = config.nameBuffer;                      // Current position in name buffer
     char *topOfBuf    = config.nameBuffer + MEMLEN_NAME_BUFFER; // Max available position (+ 1) in name buffer
     char  params[6]   = "";
-    char  devCode     = 0;    // Code for device type
-    bool  copySuccess = true; // will be set to false if copying input names to nameBuffer exceeds array dimensions
-                              // (no longer required when pins will be transferred to the UI instead of names)
+    char  devCode     = 0;                                      // Code for device type
+    bool  copySuccess = true;                                   // will be set to false if copying input names to nameBuffer exceeds array dimensions
+                                                                // (no longer required when pins will be transferred to the UI instead of names)
 
-    resetEEPROMpointer(EEP_OFFSET_CONFIG); // Start from first memory location where config is saved in EEPROM
+    resetEEPROMpointer(EEP_OFFSET_CONFIG);                      // Start from first memory location where config is saved in EEPROM
 
-    devCode = readUintFromEEPROM(); // read the first value from EEPROM, it's a device definition
-    if (devCode == 0)               // just to be sure, config.length should also be 0
+    devCode = readUintFromEEPROM();                             // read the first value from EEPROM, it's a device definition
+    if (devCode == 0)                                           // just to be sure, config.length should also be 0
         return;
 
     do // go through the EEPROM until it is NULL terminated
@@ -223,18 +223,18 @@ void readConfig()
             break;
 
         case kTypeOutput:
-            params[0] = readUintFromEEPROM(); // Pin
+            params[0] = readUintFromEEPROM();         // Pin
             Output::Add(params[0]);
             copySuccess = readRecordTailFromEEPROM(); // check EEPROM until end of name
             break;
 
 #if MF_SEGMENT_SUPPORT == 1
         case kTypeLedSegment:
-            params[0] = readUintFromEEPROM(); // Pin Data
-            params[1] = readUintFromEEPROM(); // Pin CS
-            params[2] = readUintFromEEPROM(); // Pin CLK
-            params[3] = readUintFromEEPROM(); // brightness
-            params[4] = readUintFromEEPROM(); // numModules
+            params[0] = readUintFromEEPROM();         // Pin Data
+            params[1] = readUintFromEEPROM();         // Pin CS
+            params[2] = readUintFromEEPROM();         // Pin CLK
+            params[3] = readUintFromEEPROM();         // brightness
+            params[4] = readUintFromEEPROM();         // numModules
             LedSegment::Add(params[0], params[1], params[2], params[4], params[3]);
             copySuccess = readRecordTailFromEEPROM(); // check EEPROM until end of name
             break;
@@ -243,45 +243,34 @@ void readConfig()
 #if MF_STEPPER_SUPPORT == 1
         case kTypeStepperDeprecated1:
             // this is for backwards compatibility
-            params[0] = readUintFromEEPROM(); // Pin1
-            params[1] = readUintFromEEPROM(); // Pin2
-            params[2] = readUintFromEEPROM(); // Pin3
-            params[3] = readUintFromEEPROM(); // Pin4
-            params[4] = readUintFromEEPROM(); // Button
+            params[0] = readUintFromEEPROM();         // Pin1
+            params[1] = readUintFromEEPROM();         // Pin2
+            params[2] = readUintFromEEPROM();         // Pin3
+            params[3] = readUintFromEEPROM();         // Pin4
+            params[4] = readUintFromEEPROM();         // Button
             Stepper::Add(params[0], params[1], params[2], params[3], 0);
             copySuccess = readRecordTailFromEEPROM(); // check EEPROM until end of name
             break;
 
-#if MF_STEPPER_SUPPORT == 1
         case kTypeStepper:
-            params[0] = readUintFromEEPROM(); // Pin1
-            params[1] = readUintFromEEPROM(); // Pin2
-            params[2] = readUintFromEEPROM(); // Pin3
-            params[3] = readUintFromEEPROM(); // Pin4
-            params[4] = readUintFromEEPROM(); // Button
-            Stepper::Add(params[0], params[1], params[2], params[3], params[4]);
-            copySuccess = readRecordTailFromEEPROM(); // check EEPROM until end of name
-            break;
-
-        case kTypeStepper:
-            params[0] = readUintFromEEPROM(&addreeprom); // Pin1 number
-            params[1] = readUintFromEEPROM(&addreeprom); // Pin2 number
-            params[2] = readUintFromEEPROM(&addreeprom); // Pin3 number
-            params[3] = readUintFromEEPROM(&addreeprom); // Pin4 number
-            params[4] = readUintFromEEPROM(&addreeprom); // Button number
-            params[5] = readUintFromEEPROM(&addreeprom); // Stepper Mode
-            params[6] = readUintFromEEPROM(&addreeprom); // backlash
-            params[7] = readUintFromEEPROM(&addreeprom); // deactivate output
+            params[0] = readUintFromEEPROM(); // Pin1 number
+            params[1] = readUintFromEEPROM(); // Pin2 number
+            params[2] = readUintFromEEPROM(); // Pin3 number
+            params[3] = readUintFromEEPROM(); // Pin4 number
+            params[4] = readUintFromEEPROM(); // Button number
+            params[5] = readUintFromEEPROM(); // Stepper Mode
+            params[6] = readUintFromEEPROM(); // backlash
+            params[7] = readUintFromEEPROM(); // deactivate output
             // there is an additional 9th parameter stored in the config (profileID) which is not needed in the firmware
             // and therefor not read in, it is just skipped like the name with reading until end of command
             Stepper::Add(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
-            copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
+            copySuccess = readRecordTailFromEEPROM(); // check EEPROM until end of name
             break;
 #endif
 
 #if MF_SERVO_SUPPORT == 1
         case kTypeServo:
-            params[0] = readUintFromEEPROM(); // Pin
+            params[0] = readUintFromEEPROM();         // Pin
             Servos::Add(params[0]);
             copySuccess = readRecordTailFromEEPROM(); // check EEPROM until end of name
             break;
@@ -326,10 +315,10 @@ void readConfig()
 
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
         case kTypeOutShiftReg:
-            params[0] = readUintFromEEPROM(); // latch Pin
-            params[1] = readUintFromEEPROM(); // clock Pin
-            params[2] = readUintFromEEPROM(); // data Pin
-            params[3] = readUintFromEEPROM(); // number of daisy chained modules
+            params[0] = readUintFromEEPROM();         // latch Pin
+            params[1] = readUintFromEEPROM();         // clock Pin
+            params[2] = readUintFromEEPROM();         // data Pin
+            params[3] = readUintFromEEPROM();         // number of daisy chained modules
             OutputShifter::Add(params[0], params[1], params[2], params[3]);
             copySuccess = readRecordTailFromEEPROM(); // check EEPROM until end of name
             break;
@@ -337,10 +326,10 @@ void readConfig()
 
 #if MF_INPUT_SHIFTER_SUPPORT == 1
         case kTypeInShiftReg:
-            params[0] = readUintFromEEPROM(); // latch Pin
-            params[1] = readUintFromEEPROM(); // clock Pin
-            params[2] = readUintFromEEPROM(); // data Pin
-            params[3] = readUintFromEEPROM(); // number of daisy chained modules
+            params[0] = readUintFromEEPROM();                              // latch Pin
+            params[1] = readUintFromEEPROM();                              // clock Pin
+            params[2] = readUintFromEEPROM();                              // data Pin
+            params[3] = readUintFromEEPROM();                              // number of daisy chained modules
             InputShifter::Add(params[0], params[1], params[2], params[3], nameBufPtr);
             copySuccess = readRecordTailFromEEPROM(&nameBufPtr, topOfBuf); // copy the NULL terminated name to to nameBuffer and set to next free memory location
             break;
