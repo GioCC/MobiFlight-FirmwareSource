@@ -78,8 +78,7 @@ bool readConfigLength()
 
     while (MFeeprom.read_byte(addreeprom++) != 0x00) {
         configLength++;
-        if (addreeprom > length)
-        {
+        if (addreeprom > length) {
             cmdMessenger.sendCmd(kStatus, F("Loading config failed")); // text or "-1" like config upload?
             return false;
         }
@@ -227,6 +226,13 @@ bool readEndCommandFromEEPROM(uint16_t *addreeprom)
     return true;
 }
 
+void readInts(uint8_t nparms, char *params, volatile uint16_t *paddr)
+{
+    while (nparms-- > 0) {
+        *params++ = readUintFromEEPROM(paddr);
+    }
+}
+
 void readConfig()
 {
     if (configLength == 0)                                   // do nothing if no config is available
@@ -258,11 +264,12 @@ void readConfig()
 
 #if MF_SEGMENT_SUPPORT == 1
         case kTypeLedSegment:
-            params[0] = readUintFromEEPROM(&addreeprom);          // Pin Data number
-            params[1] = readUintFromEEPROM(&addreeprom);          // Pin CS number
-            params[2] = readUintFromEEPROM(&addreeprom);          // Pin CLK number
-            params[3] = readUintFromEEPROM(&addreeprom);          // brightness
-            params[4] = readUintFromEEPROM(&addreeprom);          // number of modules
+            // params[0] = readUintFromEEPROM(&addreeprom);          // Pin Data number
+            // params[1] = readUintFromEEPROM(&addreeprom);          // Pin CS number
+            // params[2] = readUintFromEEPROM(&addreeprom);          // Pin CLK number
+            // params[3] = readUintFromEEPROM(&addreeprom);          // brightness
+            // params[4] = readUintFromEEPROM(&addreeprom);          // number of modules
+            readInts(5, params, &addreeprom);
             LedSegment::Add(params[0], params[1], params[2], params[4], params[3]);
             copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
             break;
@@ -271,34 +278,37 @@ void readConfig()
 #if MF_STEPPER_SUPPORT == 1
         case kTypeStepperDeprecated1:
             // this is for backwards compatibility
-            params[0] = readUintFromEEPROM(&addreeprom);          // Pin1 number
-            params[1] = readUintFromEEPROM(&addreeprom);          // Pin2 number
-            params[2] = readUintFromEEPROM(&addreeprom);          // Pin3 number
-            params[3] = readUintFromEEPROM(&addreeprom);          // Pin4 number
-            params[4] = readUintFromEEPROM(&addreeprom);          // Button number
+            // params[0] = readUintFromEEPROM(&addreeprom);          // Pin1 number
+            // params[1] = readUintFromEEPROM(&addreeprom);          // Pin2 number
+            // params[2] = readUintFromEEPROM(&addreeprom);          // Pin3 number
+            // params[3] = readUintFromEEPROM(&addreeprom);          // Pin4 number
+            // params[4] = readUintFromEEPROM(&addreeprom);          // Button number
+            readInts(5, params, &addreeprom);
             Stepper::Add(params[0], params[1], params[2], params[3], 0);
             copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
             break;
 
         case kTypeStepperDeprecated2:
-            params[0] = readUintFromEEPROM(&addreeprom);          // Pin1 number
-            params[1] = readUintFromEEPROM(&addreeprom);          // Pin2 number
-            params[2] = readUintFromEEPROM(&addreeprom);          // Pin3 number
-            params[3] = readUintFromEEPROM(&addreeprom);          // Pin4 number
-            params[4] = readUintFromEEPROM(&addreeprom);          // Button number
+            // params[0] = readUintFromEEPROM(&addreeprom);          // Pin1 number
+            // params[1] = readUintFromEEPROM(&addreeprom);          // Pin2 number
+            // params[2] = readUintFromEEPROM(&addreeprom);          // Pin3 number
+            // params[3] = readUintFromEEPROM(&addreeprom);          // Pin4 number
+            // params[4] = readUintFromEEPROM(&addreeprom);          // Button number
+            readInts(5, params, &addreeprom);
             Stepper::Add(params[0], params[1], params[2], params[3], params[4]);
             copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
             break;
 
         case kTypeStepper:
-            params[0] = readUintFromEEPROM(&addreeprom); // Pin1 number
-            params[1] = readUintFromEEPROM(&addreeprom); // Pin2 number
-            params[2] = readUintFromEEPROM(&addreeprom); // Pin3 number
-            params[3] = readUintFromEEPROM(&addreeprom); // Pin4 number
-            params[4] = readUintFromEEPROM(&addreeprom); // Button number
-            params[5] = readUintFromEEPROM(&addreeprom); // Stepper Mode
-            params[6] = readUintFromEEPROM(&addreeprom); // backlash
-            params[7] = readUintFromEEPROM(&addreeprom); // deactivate output
+            // params[0] = readUintFromEEPROM(&addreeprom); // Pin1 number
+            // params[1] = readUintFromEEPROM(&addreeprom); // Pin2 number
+            // params[2] = readUintFromEEPROM(&addreeprom); // Pin3 number
+            // params[3] = readUintFromEEPROM(&addreeprom); // Pin4 number
+            // params[4] = readUintFromEEPROM(&addreeprom); // Button number
+            // params[5] = readUintFromEEPROM(&addreeprom); // Stepper Mode
+            // params[6] = readUintFromEEPROM(&addreeprom); // backlash
+            // params[7] = readUintFromEEPROM(&addreeprom); // deactivate output
+            readInts(8, params, &addreeprom);
             // there is an additional 9th parameter stored in the config (profileID) which is not needed in the firmware
             // and therefor not read in, it is just skipped like the name with reading until end of command
             Stepper::Add(params[0], params[1], params[2], params[3], params[4], params[5], params[6], params[7]);
@@ -315,17 +325,19 @@ void readConfig()
 #endif
 
         case kTypeEncoderSingleDetent:
-            params[0] = readUintFromEEPROM(&addreeprom);                             // Pin1 number
-            params[1] = readUintFromEEPROM(&addreeprom);                             // Pin2 number
+            // params[0] = readUintFromEEPROM(&addreeprom);                             // Pin1 number
+            // params[1] = readUintFromEEPROM(&addreeprom);                             // Pin2 number
+            readInts(2, params, &addreeprom);
             Encoder::Add(params[0], params[1], 0, &nameBuffer[addrbuffer]);          // MUST be before readNameFromEEPROM because readNameFromEEPROM returns the pointer for the NEXT Name
             copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer); // copy the NULL terminated name to nameBuffer and set to next free memory location
                                                                                      //    copy_success = readEndCommandFromEEPROM(&addreeprom);       // once the nameBuffer is not required anymore uncomment this line and delete the line before
             break;
 
         case kTypeEncoder:
-            params[0] = readUintFromEEPROM(&addreeprom);                             // Pin1 number
-            params[1] = readUintFromEEPROM(&addreeprom);                             // Pin2 number
-            params[2] = readUintFromEEPROM(&addreeprom);                             // type
+            // params[0] = readUintFromEEPROM(&addreeprom);                             // Pin1 number
+            // params[1] = readUintFromEEPROM(&addreeprom);                             // Pin2 number
+            // params[2] = readUintFromEEPROM(&addreeprom);                             // type
+            readInts(3, params, &addreeprom);
             Encoder::Add(params[0], params[1], params[2], &nameBuffer[addrbuffer]);  // MUST be before readNameFromEEPROM because readNameFromEEPROM returns the pointer for the NEXT Name
             copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer); // copy the NULL terminated name to to nameBuffer and set to next free memory location
                                                                                      //    copy_success = readEndCommandFromEEPROM(&addreeprom);       // once the nameBuffer is not required anymore uncomment this line and delete the line before
@@ -333,9 +345,10 @@ void readConfig()
 
 #if MF_LCD_SUPPORT == 1
         case kTypeLcdDisplayI2C:
-            params[0] = readUintFromEEPROM(&addreeprom);          // address
-            params[1] = readUintFromEEPROM(&addreeprom);          // columns
-            params[2] = readUintFromEEPROM(&addreeprom);          // lines
+            // params[0] = readUintFromEEPROM(&addreeprom);          // address
+            // params[1] = readUintFromEEPROM(&addreeprom);          // columns
+            // params[2] = readUintFromEEPROM(&addreeprom);          // lines
+            readInts(3, params, &addreeprom);
             LCDDisplay::Add(params[0], params[1], params[2]);
             copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
             break;
@@ -343,8 +356,9 @@ void readConfig()
 
 #if MF_ANALOG_SUPPORT == 1
         case kTypeAnalogInput:
-            params[0] = readUintFromEEPROM(&addreeprom);                             // pin number
-            params[1] = readUintFromEEPROM(&addreeprom);                             // sensitivity
+            // params[0] = readUintFromEEPROM(&addreeprom);                             // pin number
+            // params[1] = readUintFromEEPROM(&addreeprom);                             // sensitivity
+            readInts(2, params, &addreeprom);
             Analog::Add(params[0], &nameBuffer[addrbuffer], params[1]);              // MUST be before readNameFromEEPROM because readNameFromEEPROM returns the pointer for the NEXT Name
             copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer); // copy the NULL terminated name to to nameBuffer and set to next free memory location
                                                                                      //    copy_success = readEndCommandFromEEPROM(&addreeprom);       // once the nameBuffer is not required anymore uncomment this line and delete the line before
@@ -353,10 +367,11 @@ void readConfig()
 
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
         case kTypeOutputShifter:
-            params[0] = readUintFromEEPROM(&addreeprom);          // latch Pin
-            params[1] = readUintFromEEPROM(&addreeprom);          // clock Pin
-            params[2] = readUintFromEEPROM(&addreeprom);          // data Pin
-            params[3] = readUintFromEEPROM(&addreeprom);          // number of daisy chained modules
+            // params[0] = readUintFromEEPROM(&addreeprom);          // latch Pin
+            // params[1] = readUintFromEEPROM(&addreeprom);          // clock Pin
+            // params[2] = readUintFromEEPROM(&addreeprom);          // data Pin
+            // params[3] = readUintFromEEPROM(&addreeprom);          // number of daisy chained modules
+            readInts(4, params, &addreeprom);
             OutputShifter::Add(params[0], params[1], params[2], params[3]);
             copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
             break;
@@ -364,10 +379,11 @@ void readConfig()
 
 #if MF_INPUT_SHIFTER_SUPPORT == 1
         case kTypeInputShifter:
-            params[0] = readUintFromEEPROM(&addreeprom);                             // latch Pin
-            params[1] = readUintFromEEPROM(&addreeprom);                             // clock Pin
-            params[2] = readUintFromEEPROM(&addreeprom);                             // data Pin
-            params[3] = readUintFromEEPROM(&addreeprom);                             // number of daisy chained modules
+            // params[0] = readUintFromEEPROM(&addreeprom);                             // latch Pin
+            // params[1] = readUintFromEEPROM(&addreeprom);                             // clock Pin
+            // params[2] = readUintFromEEPROM(&addreeprom);                             // data Pin
+            // params[3] = readUintFromEEPROM(&addreeprom);                             // number of daisy chained modules
+            readInts(4, params, &addreeprom);
             InputShifter::Add(params[0], params[1], params[2], params[3], &nameBuffer[addrbuffer]);
             copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer); // copy the NULL terminated name to to nameBuffer and set to next free memory location
                                                                                      //    copy_success = readEndCommandFromEEPROM(&addreeprom);       // once the nameBuffer is not required anymore uncomment this line and delete the line before
@@ -387,16 +403,17 @@ void readConfig()
 
 #if MF_DIGIN_MUX_SUPPORT == 1
         case kTypeDigInMux:
-            params[0] = readUintFromEEPROM(&addreeprom); // data pin
             // Mux driver section
             // Repeated commands do not define more objects, but change the only existing one
             // therefore beware that all DigInMux configuration commands are consistent!
-            params[1] = readUintFromEEPROM(&addreeprom); // Sel0 pin
-            params[2] = readUintFromEEPROM(&addreeprom); // Sel1 pin
-            params[3] = readUintFromEEPROM(&addreeprom); // Sel2 pin
-            params[4] = readUintFromEEPROM(&addreeprom); // Sel3 pin
+            // params[0] = readUintFromEEPROM(&addreeprom); // data pin
+            // params[1] = readUintFromEEPROM(&addreeprom); // Sel0 pin
+            // params[2] = readUintFromEEPROM(&addreeprom); // Sel1 pin
+            // params[3] = readUintFromEEPROM(&addreeprom); // Sel2 pin
+            // params[4] = readUintFromEEPROM(&addreeprom); // Sel3 pin
+            // params[5] = readUintFromEEPROM(&addreeprom); // 8-bit registers (1-2)
+            readInts(6, params, &addreeprom);
             MUX.attach(params[1], params[2], params[3], params[4]);
-            params[5] = readUintFromEEPROM(&addreeprom); // 8-bit registers (1-2)
             DigInMux::Add(params[0], params[5], &nameBuffer[addrbuffer]);
             copy_success = readNameFromEEPROM(&addreeprom, nameBuffer, &addrbuffer);
 

@@ -1,0 +1,34 @@
+// Current:
+Mega:
+RAM:   [======    ]  55.2% (used 4524 bytes from 8192 bytes)
+Flash: [=         ]  10.8% (used 27520 bytes from 253952 bytes)
+
+Micro:
+RAM:   [========  ]  76.8% (used 1966 bytes from 2560 bytes)
+Flash: [==========]  97.2% (used 27876 bytes from 28672 bytes)
+
+Uno:
+RAM:   [========= ]  86.4% (used 1769 bytes from 2048 bytes)
+Flash: [========  ]  79.3% (used 25582 bytes from 32256 bytes)
+
+Nano:
+RAM:   [========= ]  86.6% (used 1773 bytes from 2048 bytes)
+Flash: [========  ]  83.3% (used 25584 bytes from 30720 bytes)
+
+
+// New:
+Mega:
+RAM:   [======    ]  55.2% (used 4524 bytes from 8192 bytes)
+Flash: [=         ]  10.8% (used 27374 bytes from 253952 bytes)
+
+Micro:
+RAM:   [========  ]  76.8% (used 1966 bytes from 2560 bytes)
+Flash: [==========]  96.9% (used 27788 bytes from 28672 bytes)
+
+Uno:
+RAM:   [========= ]  86.4% (used 1769 bytes from 2048 bytes)
+Flash: [========  ]  79.0% (used 25488 bytes from 32256 bytes)
+
+Nano:
+RAM:   [========= ]  86.6% (used 1773 bytes from 2048 bytes)
+Flash: [========  ]  83.0% (used 25490 bytes from 30720 bytes)
