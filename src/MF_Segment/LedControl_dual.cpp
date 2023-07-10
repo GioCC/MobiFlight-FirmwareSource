@@ -4,7 +4,7 @@
 // @project     MobiFlight custom Firmware
 //
 // @author      GiorgioCC (g.crocic@gmail.com) - 2023-06-29
-// @modifiedby  GiorgioCC - 2023-07-05 10:28
+// @modifiedby  GiorgioCC - 2023-07-09 20:13
 //
 // A library for controlling LED 7-segment displays with either
 // a MAX7219/MAX7221 or a TM1637 (4/6 digit) driver
@@ -158,10 +158,9 @@ void LedControl::begin(uint8_t dataPin, uint8_t clkPin, uint8_t csPin, uint8_t n
     IO_DTA = dataPin;
     IO_CLK = clkPin;
     IO_CS  = csPin;
-    maxUnits  = numDevices;
     if (isMAX()) {
-        if ((maxUnits - 1) > 7) maxUnits = 8;
-        maxDigits = 8;
+        if ((numDevices - 1) > 7) numDevices = 8;
+        maxUnits = numDevices;
         pinMode(IO_DTA, OUTPUT);
         pinMode(IO_CLK, OUTPUT);
         pinMode(IO_CS, OUTPUT);
@@ -174,7 +173,7 @@ void LedControl::begin(uint8_t dataPin, uint8_t clkPin, uint8_t csPin, uint8_t n
             shutdown(i, true);                // we go into shutdown-mode on startup
         }
     } else {
-        maxDigits = (maxUnits == 0xFD ? 4 : 6);
+        maxUnits = (IO_CS == 0xFD ? 4 : 6);
         // Both pins are set as inputs, allowing the pull-up resistors to pull them up
         pinMode(IO_CLK, INPUT_PULLUP);
         pinMode(IO_DTA, INPUT_PULLUP);
@@ -234,7 +233,7 @@ void LedControl::clearDisplay(uint8_t addr)
             writeOneDigit(i, 0);
         }
 #else
-        memset(rawdata, 0, maxDigits);
+        memset(rawdata, 0, maxUnits);
         writeBuffer();
 #endif
     }
@@ -251,7 +250,7 @@ void LedControl::setDigit(uint8_t addr, uint8_t digit, uint8_t value, bool dp, b
 void LedControl::setChar(uint8_t addr, uint8_t digit, char value, bool dp, bool sendNow)
 {
     uint8_t v;
-    if (isMAX() && addr >= maxUnits) return;
+    if (addr >= maxUnits) return;
     v = (uint8_t)value;  // Get rid of signedness
     if (v > 127) v = 32; // undefined: replace with space char
     if (dp) v |= 0x80;
@@ -276,7 +275,7 @@ void LedControl::setPattern(uint8_t addr, uint8_t digit, uint8_t value, bool sen
 #ifdef LEDCONTROL_NO_BUF
         writeOneDigit(digit, v);
 #else
-        rawdata[(maxDigits-1) - digit] = v; // Change only the individual affected digit in static buffer
+        rawdata[(maxUnits-1) - digit] = v; // Change only the individual affected digit in static buffer
         if(sendNow) {
             writeDigits(digit, 1);
         }
@@ -381,8 +380,8 @@ void LedControl::writeOneDigit(uint8_t ndigit, uint8_t pattern)
     stop();
 
     start();
-    ndigit = (maxDigits-1)-ndigit;
-    b = ((maxDigits == 4) ? ndigit : digitmap[ndigit]);
+    ndigit = (maxUnits-1)-ndigit;
+    b = ((maxUnits == 4) ? ndigit : digitmap[ndigit]);
     writeByte(TM1637_I2C_COMM2 + b);
     // Write only raw data bit-reversed (to use the existing data in MAX-format)
     writeByte(pattern, true);
@@ -399,7 +398,7 @@ void LedControl::writeOneDigit(uint8_t ndigit, uint8_t pattern)
 
 void LedControl::writeDigits(uint8_t startd, uint8_t len)
 {
-    bool is4Digit = (maxDigits == 4);
+    bool is4Digit = (maxUnits == 4);
     uint8_t b;
 
     // Write COMM1
@@ -407,13 +406,13 @@ void LedControl::writeDigits(uint8_t startd, uint8_t len)
     writeByte(TM1637_I2C_COMM1);
     stop();
 
-    uint8_t pos = (maxDigits-1) - startd;
+    uint8_t pos = (maxUnits-1) - startd;
     b = (is4Digit ? pos : digitmap[pos+len-1]);
 
     start();
     writeByte(TM1637_I2C_COMM2 + b);
     // Write the data bytes
-    if(pos + len > maxDigits) len = maxDigits - pos;
+    if(pos + len > maxUnits) len = maxUnits - pos;
     uint8_t k;
     for (b = 0; b < len; b++) {
         k = (is4Digit ? b : len - b - 1);

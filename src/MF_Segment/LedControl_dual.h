@@ -4,7 +4,7 @@
 // @project     MobiFlight custom Firmware
 //
 // @author      GiorgioCC (g.crocic@gmail.com) - 2023-06-29
-// @modifiedby  GiorgioCC - 2023-07-05 10:28
+// @modifiedby  GiorgioCC - 2023-07-04 15:45
 //
 // A library for controlling LED 7-segment displays with either
 // a MAX7219/MAX7221 or a TM1637 (4/6 digit) driver
@@ -82,8 +82,7 @@ private:
     static
 #endif
     uint8_t rawdata[16];    
-    uint8_t maxUnits   = 0;
-    uint8_t maxDigits  = 0;
+    uint8_t maxUnits   = 0; // MAX: N. of chained units; TM: N. of digits
     uint8_t brightness = MAX_BRIGHTNESS;
     void    setPattern(uint8_t addr, uint8_t digit, uint8_t value, bool sendNow = true);
 
@@ -103,7 +102,7 @@ private:
 #else
     // Has buffer available
     void    writeDigits(uint8_t ndigit, uint8_t len);
-    void    writeBuffer(void) { writeDigits(maxDigits-1, maxDigits); };
+    void    writeBuffer(void) { writeDigits(maxUnits-1, maxUnits); };
 #endif
 
 public:
@@ -111,9 +110,9 @@ public:
 
     void    begin(uint8_t dataPin, uint8_t clkPin, uint8_t csPin, uint8_t numDevices = 1);
 
-    bool    isMAX(void) { return (maxUnits < TM_4D); }
+    bool    isMAX(void) { return (IO_CS + 1) < TM_6D; }
     uint8_t getDeviceCount(void) { return (isMAX() ? maxUnits : 1); };
-    uint8_t getDigitCount(void) { return maxDigits; };
+    uint8_t getDigitCount(void) { return (isMAX() ? 8 : maxUnits); };
 
     void    shutdown(uint8_t addr, bool status);
     void    setIntensity(uint8_t addr, uint8_t intensity);
