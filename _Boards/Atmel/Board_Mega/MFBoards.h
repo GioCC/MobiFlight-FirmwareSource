@@ -13,6 +13,9 @@
 #ifndef MF_LCD_SUPPORT
 #define MF_LCD_SUPPORT 1
 #endif
+#ifndef MF_I2COUT_SUPPORT
+#define MF_I2COUT_SUPPORT 1
+#endif
 #ifndef MF_STEPPER_SUPPORT
 #define MF_STEPPER_SUPPORT 1
 #endif
@@ -43,6 +46,7 @@
 #define MAX_STEPPERS        10
 #define MAX_MFSERVOS        10
 #define MAX_MFLCD_I2C       2
+#define MAX_MFI2COUT        2
 #define MAX_ANALOG_INPUTS   16
 #define MAX_OUTPUT_SHIFTERS 4
 #define MAX_INPUT_SHIFTERS  4
@@ -55,7 +59,6 @@
 #define MEMLEN_CONFIG       1496 // max. size for config which wil be stored in EEPROM
 #define MEMLEN_NAMES_BUFFER 1000 // max. size for configBuffer, contains only names from inputs
 #define MF_MAX_DEVICEMEM    1500 // max. memory size for devices
-
 
 #endif
 

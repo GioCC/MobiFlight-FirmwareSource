@@ -7,6 +7,9 @@
 #ifndef MF_LCD_SUPPORT
 #define MF_LCD_SUPPORT 1
 #endif
+#ifndef MF_I2COUT_SUPPORT
+#define MF_I2COUT_SUPPORT 1
+#endif
 #ifndef MF_STEPPER_SUPPORT
 #define MF_STEPPER_SUPPORT 1
 #endif
@@ -37,21 +40,22 @@
 #define MAX_STEPPERS        6
 #define MAX_MFSERVOS        8
 #define MAX_MFLCD_I2C       2
+#define MAX_MFI2COUT        2
 #define MAX_ANALOG_INPUTS   3
 #define MAX_OUTPUT_SHIFTERS 4
 #define MAX_INPUT_SHIFTERS  4
 #define MAX_DIGIN_MUX       4
 
-#define STEPS               64
-#define STEPPER_SPEED       400     // 300 already worked, 467, too?
-#define STEPPER_ACCEL       800
+#define STEPS         64
+#define STEPPER_SPEED 400 // 300 already worked, 467, too?
+#define STEPPER_ACCEL 800
 
-#define MOBIFLIGHT_TYPE         "MobiFlight RaspiPico"
-#define MOBIFLIGHT_SERIAL       "0987654321"
-#define MOBIFLIGHT_NAME         "MobiFlight RaspiPico"
-#define EEPROM_SIZE             4096    // EEPROMSizeRaspberryPico
-#define MEMLEN_CONFIG           1496    // MUST be less than EEPROM_SIZE!! MEM_OFFSET_CONFIG + MEM_LEN_CONFIG <= EEPROM_SIZE, see: eeprom_write_block (MEM_OFFSET_CONFIG, configBuffer, MEM_LEN_CONFIG);
-#define MEMLEN_NAMES_BUFFER     1000    // max. size for configBuffer, contains only names from inputs
-#define MF_MAX_DEVICEMEM        2000    // max. memory size for devices
+#define MOBIFLIGHT_TYPE     "MobiFlight RaspiPico"
+#define MOBIFLIGHT_SERIAL   "0987654321"
+#define MOBIFLIGHT_NAME     "MobiFlight RaspiPico"
+#define EEPROM_SIZE         4096 // EEPROMSizeRaspberryPico
+#define MEMLEN_CONFIG       1496 // MUST be less than EEPROM_SIZE!! MEM_OFFSET_CONFIG + MEM_LEN_CONFIG <= EEPROM_SIZE, see: eeprom_write_block (MEM_OFFSET_CONFIG, configBuffer, MEM_LEN_CONFIG);
+#define MEMLEN_NAMES_BUFFER 1000 // max. size for configBuffer, contains only names from inputs
+#define MF_MAX_DEVICEMEM    2000 // max. memory size for devices
 
 #endif

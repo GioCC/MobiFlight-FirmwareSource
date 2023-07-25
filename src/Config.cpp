@@ -29,6 +29,9 @@
 #if MF_LCD_SUPPORT == 1
 #include "LCDDisplay.h"
 #endif
+#if MF_I2COUT_SUPPORT == 1
+#include "I2Coutput.h"
+#endif
 #if MF_OUTPUT_SHIFTER_SUPPORT == 1
 #include "OutputShifter.h"
 #endif
@@ -78,8 +81,7 @@ bool readConfigLength()
 
     while (MFeeprom.read_byte(addreeprom++) != 0x00) {
         configLength++;
-        if (addreeprom > length)
-        {
+        if (addreeprom > length) {
             cmdMessenger.sendCmd(kStatus, F("Loading config failed")); // text or "-1" like config upload?
             return false;
         }
@@ -243,6 +245,14 @@ void readConfig()
 
     do // go through the EEPROM until it is NULL terminated
     {
+        if (command == kTypeLcdDisplayI2C) {
+            params[0] = readUintFromEEPROM(&addreeprom); // address
+#if MF_I2COUT_SUPPORT == 1
+            if (I2Coutput::isLCD((uint8_t)params[0])) {
+                command = kTypeI2Coutput;
+            }
+#endif
+        }
         switch (command) {
         case kTypeButton:
             params[0] = readUintFromEEPROM(&addreeprom);                             // Pin number
@@ -333,10 +343,20 @@ void readConfig()
 
 #if MF_LCD_SUPPORT == 1
         case kTypeLcdDisplayI2C:
-            params[0] = readUintFromEEPROM(&addreeprom);          // address
+            // params[0] = readUintFromEEPROM(&addreeprom);          // address
             params[1] = readUintFromEEPROM(&addreeprom);          // columns
             params[2] = readUintFromEEPROM(&addreeprom);          // lines
             LCDDisplay::Add(params[0], params[1], params[2]);
+            copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
+            break;
+#endif
+
+#if MF_I2COUT_SUPPORT == 1
+        case kTypeI2Coutput:
+            // Already read:        params[0] = readUintFromEEPROM(&addreeprom);          // address
+            params[1] = readUintFromEEPROM(&addreeprom);          // columns
+            params[2] = readUintFromEEPROM(&addreeprom);          // lines
+            I2Coutput::Add(params[0], params[1], params[2]);
             copy_success = readEndCommandFromEEPROM(&addreeprom); // check EEPROM until end of name
             break;
 #endif
