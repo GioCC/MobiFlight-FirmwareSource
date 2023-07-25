@@ -26,7 +26,9 @@ private:
     byte              _cols;
     byte              _lines;
 
-    void              _printCentered(const char *str, uint8_t line);
+    void _printCentered(const char *str, uint8_t line);
+    bool _isLCD(void);
+    void _sendStr(const char *str, uint8_t len);
 };
 
 // MFLCDDisplay.h

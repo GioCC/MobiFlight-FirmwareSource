@@ -1,0 +1,28 @@
+Branch MOD_LCD_customDev
+
+Modification to allow easier attachment of custom I2C devices (output only) using the standard MF LCD device driver.
+
+Rationale:
+Modify the LCD FW code so that, if the I2C address is not in the range of standard LCD module addresses, the data block is forwarded unchanged (without adding LCD control codes) to the device.
+
+Notes:
+- The standard LCD addresses are: 0x20-0x27, 0x38-0x3F
+- The Connector only allows the input of those fixed set of addresses; it should be modified to also allow a free input.
+
+Two variants:
+- V1. The I2Coutput is an actual LCD, but does not use most of its resources; depending on its nature, different end operations are performed.
+  Advantages: 
+  - Does not require an additional device type (Device code, class, board constants, flash space). 
+  - Does not require a "hack" to discern the different device.
+  - Fewer modifications to std fw.
+  Drawbacks: 
+  - Requires more space, which is surely (RAM) or potentially (flash) wasted.
+- V2. Full-fledged (albeit very simple) new device "[MF]I2Coutput". 
+  Has a typecode, but doesn't have an associated message; the connector handles it like an actual LCD, then the FW discerns its type upon processing the config message, by looking at the address.
+  Advantages: 
+  - Cleaner; from the config message on wards it's a proper device.
+  - I2Coutputs can be enabled independently from LCDs (spares memory).
+  - Can be easily "promoted" later to ordinary device.
+  Drawbacks: 
+  - Connector only knows (and limits) the max number of LCDs, although there are two max numbers for LCDs and I2Coutputs.
+  - Ugly hack to discern an I2Coutput from an LCD.
